@@ -47,12 +47,7 @@
         <section id="home" class="hero-section">
             <!-- 背景動画 -->
             <div class="video-background">
-                <!-- 
-                    注意: 'assets/bg-video.mp4' という名前の動画ファイルを
-                    'assets' フォルダにアップロードする必要があります。
-                -->
                 <video src="assets/bg-video.mp4" autoplay loop muted playsinline></video>
-                <!-- 動画の上のオーバーレイ -->
                 <div class="video-overlay"></div>
             </div>
 
@@ -69,57 +64,16 @@
         <!-- WORKS (制作実績) -->
         <section id="works" class="content-section">
             <h2 class="section-title">WORKS</h2>
+            
+            <!--
+                ↓↓↓ ここが重要！ ↓↓↓
+                作品カード（article）をすべて削除し、
+                JavaScriptが自動生成するための「空のコンテナ」だけを残します。
+            -->
             <div class="works-grid">
-                <!-- 作品アイテム (移植) -->
-                <article class="work-card">
-                    <div class="work-image">🎨</div>
-                    <div class="work-content">
-                        <span class="work-category">GIFT</span>
-                        <h3 class="work-title">Gift Animations</h3>
-                        <p class="work-description">ギフト演出動画。華やかなエフェクトで特別な瞬間を演出。</p>
-                    </div>
-                </article>
-                <article class="work-card">
-                    <div class="work-image">😊</div>
-                    <div class="work-content">
-                        <span class="work-category">EMOTE</span>
-                        <h3 class="work-title">Animated Emotes</h3>
-                        <p class="work-description">動きのあるエモートスタンプ。感情を豊かに表現するアニメーション。</p>
-                    </div>
-                </article>
-                <article class="work-card">
-                    <div class="work-image">🖼️</div>
-                    <div class="work-content">
-                        <span class="work-category">FRAME</span>
-                        <h3 class="work-title">Cyber Frames</h3>
-                        <p class="work-description">サイバーパンクなアイコンフレーム。ネオンとグリッチエフェクトを融合。</p>
-                    </div>
-                </article>
-                <article class="work-card">
-                    <div class="work-image">👤</div>
-                    <div class="work-content">
-                        <span class="work-category">CHARA</span>
-                        <h3 class="work-title">Character Design</h3>
-                        <p class="work-description">あなたの「æ」となる分身をデザインします。</p>
-                    </div>
-                </article>
-                <article class="work-card">
-                    <div class="work-image">✍️</div>
-                    <div class="work-content">
-                        <span class="work-category">LINE</span>
-                        <h3 class="work-title">LINE Stamps</h3>
-                        <p class="work-description">日常で使えるオリジナルLINEスタンプ。</p>
-                    </div>
-                </article>
-                <article class="work-card">
-                    <div class="work-image">🌐</div>
-                    <div class="work-content">
-                        <span class="work-category">WEB</span>
-                        <h3 class="work-title">Site Production</h3>
-                        <p class="work-description">簡易的なWebサイト制作（このサイトのような）も承ります。</p>
-                    </div>
-                </article>
+                <!-- JavaScriptによって作品カードがここに挿入されます -->
             </div>
+
         </section>
 
         <!-- MY æ (ABOUT) -->
@@ -127,10 +81,7 @@
             <h2 class="section-title">MY æ</h2>
             <div class="about-content">
                 <div class="about-visual">
-                    <!-- アバター (移植) -->
-                    <div class="about-avatar">
-                        æ
-                    </div>
+                    <div class="about-avatar">æ</div>
                 </div>
                 <div class="about-text-content">
                     <p class="about-text">
@@ -138,7 +89,6 @@
                         現実と仮想の境界で新しい表現を追求しています。
                         あなたの「想い」を、ビジュアルで"Synk"（接続）させるお手伝いをさせてください。
                     </p>
-                    <!-- スキルタグ (移植) -->
                     <div class="skills">
                         <span class="skill-tag">ICON DESIGN</span>
                         <span class="skill-tag">EMOTE CREATION</span>
@@ -155,16 +105,17 @@
         <section id="contact" class="content-section">
             <h2 class="section-title">CONNECT</h2>
             <div class="contact-content">
-                <!-- コンタクトボックス (移植) -->
                 <div class="contact-box">
                     <div class="contact-box-content">
-                        <p class="contact-intro">ご依頼・ご相談は、お気軽に下記SNSまたはメールにてご連絡ください。</p>
+                        <p class="contact-intro">
+                            ご依頼・ご相談は、お気軽に下記SNSまたはメールにてご連絡ください。
+                            <br><strong>※参考画像などもメールに添付してお送りいただけます。</strong>
+                        </p>
                         <p class="contact-email">okamotokazuya.creator@gmail.com</p>
                         <div class="social-links">
-                            <!-- アイコンは絵文字やFontAwesome(別途導入)に置き換え推奨 -->
                             <a href="#" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Twitter">X</a>
                             <a href="#" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="TikTok">Ti</a>
-                            <a href="#" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Email">Mail</a>
+                            <a href="mailto:okamotokazuya.creator@gmail.com" class="social-link" aria-label="Email">Mail</a>
                             <a href="#" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Pixiv">P</a>
                         </div>
                     </div>
