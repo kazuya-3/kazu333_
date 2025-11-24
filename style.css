@@ -1,729 +1,187 @@
-/* --- CSS変数 (カラーとフォント) --- */
+/* --- CSS変数 --- */
 :root {
     --color-bg-dark: #000000;
-    --color-bg-deep-purple: #1A0B2E;
     --color-text-primary: #FFFFFF;
-    --color-text-secondary: #c0c0c0; /* シルバー */
-    --color-neon-purple: #8a2be2; /* #7A00FFから変更 (移植コードに合わせる) */
-    --color-neon-cyan: #00ffff; /* #00F0FFから変更 (移植コードに合わせる) */
-
-    --font-heading: 'Orbitron', 'Russo One', sans-serif; /* サイバー系 */
-    --font-logo: 'Orbitron', sans-serif; /* ロゴはOrbitronに変更 */
-    --font-body: 'Noto Sans JP', sans-serif; /* 日本語対応 */
+    --color-text-secondary: #c0c0c0;
+    --color-neon-purple: #8a2be2;
+    --color-neon-cyan: #00ffff;
+    --font-heading: 'Orbitron', sans-serif;
+    --font-logo: 'Orbitron', sans-serif;
+    --font-body: 'Noto Sans JP', sans-serif;
 }
 
 /* --- 基本設定 --- */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
     font-family: var(--font-body);
     background-color: var(--color-bg-dark);
     color: var(--color-text-secondary);
     line-height: 1.7;
-    overflow-x: hidden; /* 横スクロール防止 */
+    overflow-x: hidden;
 }
 
-/* --- ホログラフィック背景 (移植) --- */
+/* --- ホログラフィック背景 --- */
 .holographic-bg {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: 
         radial-gradient(circle at 20% 50%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 40%);
-    pointer-events: none;
-    z-index: -3; /* 動画よりさらに後ろ */
+        radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.15) 0%, transparent 50%);
+    z-index: -3;
     animation: holographicShift 15s ease-in-out infinite;
 }
-
 @keyframes holographicShift {
     0%, 100% { opacity: 0.6; transform: scale(1); }
     50% { opacity: 0.8; transform: scale(1.1); }
 }
 
-/* --- ヘッダー & ナビゲーション --- */
+/* --- ヘッダー --- */
 .site-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    position: fixed; top: 0; width: 100%;
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     z-index: 1000;
     border-bottom: 1px solid rgba(138, 43, 226, 0.3);
 }
-
 .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1.5rem 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 1400px; margin: 0 auto; padding: 1.5rem 5%;
 }
-
 .logo a {
-    font-family: var(--font-logo);
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
+    font-family: var(--font-logo); font-size: 1.5rem; font-weight: bold; text-decoration: none;
     background: linear-gradient(135deg, #c0c0c0, #ffffff, #c0c0c0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     letter-spacing: 3px;
-    text-shadow: 0 0 20px rgba(192, 192, 192, 0.5);
 }
-
-.nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
 .nav-links a {
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-    transition: all 0.3s;
-    position: relative;
-    font-weight: 500;
-    font-family: var(--font-heading);
+    color: var(--color-text-secondary); text-decoration: none; font-size: 0.9rem;
+    letter-spacing: 2px; font-family: var(--font-heading); transition: 0.3s;
 }
+.nav-links a:hover { color: var(--color-neon-cyan); text-shadow: 0 0 10px var(--color-neon-cyan); }
+.nav-toggle, .nav-toggle-label { display: none; }
 
-.nav-links a:hover {
-    color: var(--color-neon-cyan);
-    text-shadow: 0 0 10px var(--color-neon-cyan);
-}
-
-.nav-links a::after { /* (移植) */
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--color-neon-purple), var(--color-neon-cyan));
-    transition: width 0.3s;
-}
-
-.nav-links a:hover::after {
-    width: 100%;
-}
-
-/* ハンバーガーメニュー (スマホ用) - 初期非表示 */
-.nav-toggle, .nav-toggle-label {
-    display: none;
-}
-
-/* --- HOME (ヒーローセクション) (オリジナル構造) --- */
+/* --- HOME --- */
 .hero-section {
-    position: relative;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    position: relative; height: 100vh;
+    display: flex; justify-content: center; align-items: center; text-align: center;
     overflow: hidden;
 }
-
-.video-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2;
-}
-
-.video-background video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* 動画を全画面にフィット */
-}
-
-.video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* 動画を少し暗くする */
-    z-index: -1;
-}
-
-.hero-text {
-    z-index: 1;
-    padding: 1rem;
-    animation: fadeInUp 1s ease-out 0.3s both; /* (移植) */
-}
-
+.video-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+.video-background video { width: 100%; height: 100%; object-fit: cover; }
+.video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: -1; }
+.hero-text { z-index: 1; padding: 1rem; animation: fadeInUp 1s ease-out 0.3s both; }
 .hero-text h1 {
-    font-family: var(--font-heading);
-    font-size: 4rem; /* サイズ調整 */
-    font-weight: 900;
-    margin-bottom: 1rem;
+    font-family: var(--font-heading); font-size: 4rem; font-weight: 900;
     background: linear-gradient(135deg, #ffffff, #c0c0c0, var(--color-neon-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     letter-spacing: 10px;
 }
+.hero-text p { color: var(--color-neon-cyan); font-family: var(--font-heading); letter-spacing: 4px; }
+.hero-text .hero-description { font-size: 1rem; color: var(--color-text-secondary); font-family: var(--font-body); }
 
-.hero-text p {
-    font-size: 1.5rem;
-    color: var(--color-neon-cyan);
-    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-    letter-spacing: 4px;
-    margin-bottom: 1rem;
+/* --- グリッチエフェクト --- */
+.glitch { position: relative; animation: glitchSkew 3s infinite; }
+@keyframes glitchSkew { 0%, 100% { transform: skew(0deg); } 91% { transform: skew(-2deg); } 92% { transform: skew(2deg); } }
+.glitch::before, .glitch::after {
+    content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0;
+}
+.glitch::before { animation: glitchBefore 3s infinite; color: var(--color-neon-cyan); z-index: -1; }
+.glitch::after { animation: glitchAfter 3s infinite; color: var(--color-neon-purple); z-index: -2; }
+@keyframes glitchBefore { 0%, 90% { opacity: 0; } 91% { opacity: 0.7; transform: translate(-2px, 2px); } 92% { opacity: 0; } }
+@keyframes glitchAfter { 0%, 90% { opacity: 0; } 91.5% { opacity: 0.7; transform: translate(2px, -2px); } 92.5% { opacity: 0; } }
+
+/* --- WORKS --- */
+.content-section { padding: 6rem 5% 4rem; opacity: 0; transform: translateY(30px); transition: 0.8s; }
+.content-section.visible { opacity: 1; transform: translateY(0); }
+.section-title {
+    font-size: 4rem; text-align: center; margin-bottom: 4rem;
     font-family: var(--font-heading);
-}
-.hero-text .hero-description {
-    font-size: 1rem;
-    color: var(--color-text-secondary);
-    text-shadow: none;
-    letter-spacing: 2px;
-    font-family: var(--font-body);
+    background: linear-gradient(135deg, #c0c0c0, var(--color-neon-purple), var(--color-neon-cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-/* --- グリッチエフェクト (移植) --- */
-.glitch {
-    position: relative;
-    animation: glitchSkew 3s infinite;
-}
-
-@keyframes glitchSkew {
-    0%, 90%, 100% { transform: skew(0deg); }
-    91% { transform: skew(-2deg); }
-    92% { transform: skew(2deg); }
-    93% { transform: skew(-1deg); }
-}
-
-.glitch::before,
-.glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-}
-
-.glitch::before {
-    animation: glitchBefore 3s infinite;
-    color: var(--color-neon-cyan);
-    z-index: -1;
-}
-
-.glitch::after {
-    animation: glitchAfter 3s infinite;
-    color: var(--color-neon-purple);
-    z-index: -2;
-}
-
-@keyframes glitchBefore {
-    0%, 90%, 100% { opacity: 0; transform: translate(0); }
-    91% { opacity: 0.7; transform: translate(-2px, 2px); }
-    92% { opacity: 0; }
-}
-
-@keyframes glitchAfter {
-    0%, 90%, 100% { opacity: 0; transform: translate(0); }
-    91.5% { opacity: 0.7; transform: translate(2px, -2px); }
-    92.5% { opacity: 0; }
-}
-
-
-/* --- 汎用セクションスタイル --- */
-.content-section {
-    padding: 6rem 5% 4rem;
-    position: relative;
-    z-index: 1;
-    /* スクロールアニメーション用 */
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-
-/* JSによって .visible クラスが付与されたら表示 */
-.content-section.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.section-title { /* (移植) */
-    font-size: 4rem;
-    text-align: center;
-    margin-bottom: 4rem;
-    background: linear-gradient(135deg, #c0c0c0, #ffffff, var(--color-neon-purple), var(--color-neon-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 8px;
-    font-weight: bold;
-    font-family: var(--font-heading);
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* セクションごとの背景色 */
-#works {
-    background: rgba(0, 0, 0, 0.5);
-}
-#about {
-    background: rgba(10, 10, 10, 0.8);
-}
-#contact {
-    background: rgba(0, 0, 0, 0.7);
-}
-
-/* --- WORKS (制作実績) (移植) --- */
 .works-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem; max-width: 1200px; margin: 0 auto;
 }
-
 .work-card {
     background: linear-gradient(135deg, rgba(20, 20, 20, 0.8), rgba(40, 40, 40, 0.6));
-    border: 1px solid rgba(192, 192, 192, 0.2);
-    border-radius: 15px;
-    padding: 0;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    display: flex; /* ボタンを底に固定するため */
-    flex-direction: column; /* ボタンを底に固定するため */
+    border: 1px solid rgba(192, 192, 192, 0.2); border-radius: 15px;
+    transition: 0.4s; display: flex; flex-direction: column; overflow: hidden;
 }
+.work-card:hover { transform: translateY(-10px); border-color: var(--color-neon-cyan); box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
 
-.work-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.2), transparent);
-    transition: left 0.5s;
+/* 画像エリアの修正（丸くアイコン風に） */
+.work-card .work-image {
+    background: transparent; padding: 1.5rem; height: 280px;
+    display: flex; justify-content: center; align-items: center;
 }
-
-.work-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    border-color: rgba(138, 43, 226, 0.6);
-    box-shadow: 0 20px 40px rgba(138, 43, 226, 0.3);
+.work-image-file {
+    width: 220px; height: 220px; object-fit: cover;
+    border-radius: 50%; /* 丸く切り抜く */
+    border: 3px solid var(--color-neon-cyan);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    transition: 0.5s;
 }
+.work-card:hover .work-image-file { transform: scale(1.05) rotate(5deg); }
 
-.work-card:hover::before {
-    left: 100%;
-}
-
-.work-image {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(135deg, var(--color-neon-purple), var(--color-neon-cyan));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.work-image::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(255, 255, 255, 0.05) 10px, rgba(255, 255, 255, 0.05) 11px);
-    animation: scanline 3s linear infinite;
-}
-
-@keyframes scanline {
-    from { transform: translateY(-100%); }
-    to { transform: translateY(100%); }
-}
-
-.work-content {
-    padding: 1.5rem;
-    flex-grow: 1; /* ボタンを底に固定するため */
-    display: flex; /* ボタンを底に固定するため */
-    flex-direction: column; /* ボタンを底に固定するため */
-}
-
+.work-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
 .work-category {
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    background: rgba(138, 43, 226, 0.2);
-    border: 1px solid var(--color-neon-purple);
-    border-radius: 20px;
-    font-size: 0.75rem;
-    color: var(--color-neon-purple);
-    letter-spacing: 1px;
-    margin-bottom: 1rem;
-    align-self: flex-start; /* カテゴリタグが複数行にならないように */
+    align-self: flex-start; padding: 0.3rem 0.8rem; margin-bottom: 1rem;
+    border: 1px solid var(--color-neon-purple); border-radius: 20px;
+    color: var(--color-neon-purple); font-size: 0.75rem;
 }
-
-.work-title {
-    font-size: 1.3rem;
-    margin-bottom: 0.8rem;
-    color: var(--color-text-primary);
-    font-weight: bold;
-    font-family: var(--font-heading);
-}
-
-.work-description {
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    font-size: 0.9rem;
-    margin-bottom: 1rem; /* ボタンとのスペース */
-    flex-grow: 1; /* ボタンを底に固定するため */
-}
-
-/* --- ▼▼ ダウンロードボタンのスタイルを追加 ▼▼ --- */
+.work-title { font-family: var(--font-heading); color: #FFF; margin-bottom: 0.5rem; }
 .download-button {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background: rgba(0, 255, 255, 0.1);
-    border: 1px solid var(--color-neon-cyan);
-    border-radius: 20px;
-    color: var(--color-neon-cyan);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-family: var(--font-heading);
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    text-align: center;
-    margin-top: auto; /* ボタンを底に固定するため */
+    margin-top: auto; display: inline-block; padding: 0.5rem 1rem; text-align: center;
+    border: 1px solid var(--color-neon-cyan); color: var(--color-neon-cyan);
+    text-decoration: none; border-radius: 20px; transition: 0.3s;
 }
+.download-button:hover { background: rgba(0, 255, 255, 0.2); color: #FFF; }
 
-.download-button:hover {
-    background: rgba(0, 255, 255, 0.3);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-    transform: translateY(-2px);
-    color: var(--color-text-primary);
-}
-
-
-/* --- MY æ (ABOUT) (移植) --- */
-.about-content {
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    gap: 4rem;
-    align-items: center;
-}
-
-.about-visual {
-    flex: 0 0 300px;
-}
-
+/* --- ABOUT & CONTACT --- */
+.about-content { display: flex; gap: 4rem; align-items: center; max-width: 900px; margin: 0 auto; }
 .about-avatar {
-    width: 300px;
-    height: 300px;
-    background: linear-gradient(135deg, var(--color-neon-purple), var(--color-neon-cyan), var(--color-neon-purple));
-    border-radius: 50%;
-    border: 3px solid rgba(192, 192, 192, 0.3);
-    box-shadow: 0 0 50px rgba(138, 43, 226, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8rem;
-    position: relative;
-    animation: rotate 20s linear infinite;
+    width: 250px; height: 250px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-neon-purple), var(--color-neon-cyan));
+    display: flex; justify-content: center; align-items: center;
+    font-size: 5rem; color: rgba(255,255,255,0.8);
     font-family: var(--font-logo);
-    color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 30px var(--color-neon-purple);
 }
-
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.about-avatar::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: linear-gradient(45deg, var(--color-neon-purple), var(--color-neon-cyan), var(--color-neon-purple), var(--color-neon-cyan));
-    border-radius: 50%;
-    z-index: -1;
-    opacity: 0.5;
-    filter: blur(20px);
-    animation: rotate 3s linear infinite;
-}
-
-.about-text-content {
-    flex: 1;
-}
-
-.about-text {
-    font-size: 1.1rem;
-    line-height: 2;
-    color: var(--color-text-secondary);
-    margin-bottom: 2rem;
-}
-
-.skills {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
 .skill-tag {
-    padding: 0.8rem 1.5rem;
-    background: rgba(0, 255, 255, 0.1);
-    border: 1px solid var(--color-neon-cyan);
-    border-radius: 25px;
-    color: var(--color-neon-cyan);
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-    transition: all 0.3s;
-    font-family: var(--font-heading);
+    padding: 0.5rem 1rem; border: 1px solid var(--color-neon-cyan); color: var(--color-neon-cyan);
+    border-radius: 20px; font-size: 0.8rem; margin: 0.2rem; display: inline-block;
 }
-
-.skill-tag:hover {
-    background: rgba(0, 255, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-    transform: translateY(-2px);
-}
-
-/* --- CONNECT (CONTACT) (移植) --- */
-.contact-content {
-    max-width: 700px;
-    margin: 0 auto;
-    text-align: center;
-}
-
 .contact-box {
     background: linear-gradient(135deg, rgba(20, 20, 20, 0.9), rgba(40, 40, 40, 0.7));
-    border: 2px solid rgba(138, 43, 226, 0.3);
-    border-radius: 20px;
-    padding: 3rem;
-    position: relative;
-    overflow: hidden;
+    border: 2px solid rgba(138, 43, 226, 0.3); border-radius: 20px; padding: 3rem;
+    max-width: 700px; margin: 0 auto; text-align: center;
 }
-
-.contact-box::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(138, 43, 226, 0.1), transparent);
-    animation: rotate 10s linear infinite;
-}
-
-.contact-box-content {
-    position: relative;
-    z-index: 1;
-}
-
-.contact-intro {
-    font-size: 1.1rem;
-    color: var(--color-text-secondary);
-    margin-bottom: 2rem;
-    line-height: 1.8; /* 2行になっても大丈夫なように */
-}
-
-.contact-email {
-    font-size: 1.8rem;
-    color: var(--color-neon-cyan);
-    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-    margin-bottom: 2rem;
-    letter-spacing: 2px;
-    word-break: break-all;
-}
-
-.social-links {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 2.5rem;
-}
-
+.social-links { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; }
 .social-link {
-    width: 70px;
-    height: 70px;
-    background: rgba(138, 43, 226, 0.2);
-    border: 2px solid var(--color-neon-purple);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem; /* アイコンフォント用調整 */
-    transition: all 0.3s;
-    text-decoration: none;
-    color: var(--color-neon-purple);
-    position: relative;
-    font-family: var(--font-heading);
+    width: 60px; height: 60px; border: 2px solid var(--color-neon-purple); border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    color: var(--color-neon-purple); text-decoration: none; font-size: 1.2rem; transition: 0.3s;
 }
+.social-link:hover { transform: scale(1.1); background: var(--color-neon-purple); color: #FFF; }
+.site-footer { background: #000; padding: 2rem; text-align: center; border-top: 1px solid #333; font-size: 0.8rem; }
 
-.social-link:hover {
-    transform: scale(1.1) translateY(-5px);
-    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5);
-    color: var(--color-text-primary);
-    background: rgba(138, 43, 226, 0.4);
-}
-
-/* --- フッター --- */
-.site-footer {
-    background: rgba(0, 0, 0, 0.95);
-    border-top: 1px solid rgba(138, 43, 226, 0.3);
-    padding: 2rem;
-    text-align: center;
-    color: #666666;
-    position: relative;
-    z-index: 1;
-    font-size: 0.9rem;
-}
-.logo-font {
-    font-family: var(--font-logo);
-    color: #888;
-}
-
-
-/* --- レスポンシブ対応 (スマホ) --- */
+/* --- スマホ対応 --- */
 @media (max-width: 768px) {
-    .header-container {
-        padding: 1rem;
-    }
-
-    /* ハンバーガーメニューの表示 (オリジナル) */
-    .nav-toggle-label {
-        display: block;
-        position: relative;
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-        z-index: 1001;
-    }
-
-    .nav-toggle-label span,
-    .nav-toggle-label span::before,
-    .nav-toggle-label span::after {
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 3px;
-        background-color: var(--color-text-primary);
-        border-radius: 2px;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-
-    .nav-toggle-label span { top: 13px; }
-    .nav-toggle-label span::before { content: ''; top: -10px; }
-    .nav-toggle-label span::after { content: ''; top: 10px; }
-
-    /* ナビゲーションメニューを隠す */
     .nav-links {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(10, 0, 20, 0.95);
-        backdrop-filter: blur(15px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 2.5rem;
-        transform: translateX(100%);
-        transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1);
+        position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+        background: rgba(0,0,0,0.95); flex-direction: column; justify-content: center;
+        transform: translateX(100%); transition: 0.4s;
     }
-
-    .nav-links a { font-size: 1.8rem; }
-
-    /* ハンバーガーがチェックされた時の動作 */
-    .nav-toggle:checked ~ .nav-links {
-        transform: translateX(0); /* メニューを表示 */
+    .nav-toggle:checked ~ .nav-links { transform: translateX(0); }
+    .nav-toggle-label { display: block; position: relative; z-index: 1001; width: 30px; height: 30px; cursor: pointer; }
+    .nav-toggle-label span, .nav-toggle-label span::before, .nav-toggle-label span::after {
+        position: absolute; width: 100%; height: 3px; background: #FFF; transition: 0.3s;
     }
-    .nav-toggle:checked ~ .nav-toggle-label span {
-        transform: rotate(45deg); /* バツ印 (真ん中) */
-    }
-    .nav-toggle:checked ~ .nav-toggle-label span::before {
-        transform: translateY(10px) rotate(90deg);
-        opacity: 0;
-    }
-    .nav-toggle:checked ~ .nav-toggle-label span::after {
-        transform: translateY(-10px) rotate(-90deg);
-    }
-
-    /* ヒーローテキスト */
-    .hero-text h1 {
-        font-size: 2.5rem; /* スマホ用に調整 */
-        letter-spacing: 5px;
-    }
-    .hero-text p {
-        font-size: 1rem;
-    }
-    .hero-text .hero-description {
-        font-size: 0.9rem;
-    }
-
-    /* セクション */
-    .content-section {
-        padding: 4rem 1rem 2rem;
-    }
-    .section-title {
-        font-size: 2.5rem;
-        letter-spacing: 4px;
-    }
-
-    /* ABOUT */
-    .about-content {
-        flex-direction: column;
-        gap: 2rem;
-    }
-    .about-visual {
-        flex: 0 0 auto;
-    }
-    .about-avatar {
-        width: 200px;
-        height: 200px;
-        font-size: 5rem;
-    }
-
-    /* Contact */
-    .contact-box {
-        padding: 2rem;
-    }
-    .contact-email {
-        font-size: 1.2rem; /* スマホ用に調整 */
-    }
-    .social-links {
-        gap: 1rem;
-    }
-    .social-link {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
-    }
+    .nav-toggle-label span { top: 13px; } .nav-toggle-label span::before { content:''; top:-10px; } .nav-toggle-label span::after { content:''; top:10px; }
+    .hero-text h1 { font-size: 2.5rem; }
+    .about-content { flex-direction: column; text-align: center; }
 }
