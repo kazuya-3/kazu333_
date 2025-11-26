@@ -7,57 +7,57 @@ const worksData = [
         category: 'FRAME',
         title: 'The Phantom Glitch',
         description: 'デジタルノイズと崩壊美。サイバーパンクな世界観を演出。',
-        imageUrl: 'assets/frame_glitch.jpg',
-        downloadUrl: 'assets/frame_glitch.jpg',
-        downloadText: 'Download'
+        imageUrl: 'assets/ae-code_vol1_03.png',
+        downloadUrl: 'https://ae-code.booth.pm/items/7692625',
+        downloadText: 'Get on BOOTH'
     },
     {
         category: 'FRAME',
         title: 'Zero-Gravity Aqua',
         description: '無重力の水流。癒やしと透明感を与えるアクアブルー。',
-        imageUrl: 'assets/frame_water.jpg',
-        downloadUrl: 'assets/frame_water.jpg',
-        downloadText: 'Download'
+        imageUrl: 'assets/ae-code_vol1_02.png',
+        downloadUrl: 'https://ae-code.booth.pm/items/7692625',
+        downloadText: 'Get on BOOTH'
     },
     {
         category: 'FRAME',
         title: 'The Sonic Ring',
         description: '音に反応する光。配信者や音楽好きのためのビジュアライザー。',
-        imageUrl: 'assets/frame_sound.jpg',
-        downloadUrl: 'assets/frame_sound.jpg',
-        downloadText: 'Download'
+        imageUrl: 'assets/ae-code_vol1_06.png',
+        downloadUrl: 'https://ae-code.booth.pm/items/7692625',
+        downloadText: 'Get on BOOTH'
     },
     {
         category: 'FRAME',
         title: 'Nebula Gate',
         description: '銀河の入り口。壮大なストーリーを感じさせる宇宙デザイン。',
         imageUrl: 'assets/frame_nebula.jpg',
-        downloadUrl: 'assets/frame_nebula.jpg',
-        downloadText: 'Download'
+        downloadUrl: 'https://ae-code.booth.pm/items/7692625',
+        downloadText: 'Get on BOOTH'
     },
     {
         category: 'FRAME',
         title: 'Celestial Crown',
         description: '天上の王冠。カリスマ性と品格を高めるラグジュアリー装飾。',
-        imageUrl: 'assets/frame_crown.jpg',
-        downloadUrl: 'assets/frame_crown.jpg',
-        downloadText: 'Download'
+        imageUrl: 'assets/ae-code_vol1_05.png',
+        downloadUrl: 'https://ae-code.booth.pm/items/7692625',
+        downloadText: 'Get on BOOTH'
     },
     {
         category: 'FRAME',
         title: 'Crystalline Matrix',
         description: '結晶構造。知的な強さと繊細さを併せ持つ幾何学デザイン。',
         imageUrl: 'assets/frame_poly.jpg',
-        downloadUrl: 'assets/frame_poly.jpg',
-        downloadText: 'Download'
+        downloadUrl: 'https://ae-code.booth.pm/items/7692625',
+        downloadText: 'Get on BOOTH'
     },
     {
         category: 'FRAME',
         title: 'Aero-Silver',
         description: '流線型の銀。シンプルを極めた究極の機能美。',
         imageUrl: 'assets/frame_silver.jpg',
-        downloadUrl: 'assets/frame_silver.jpg',
-        downloadText: 'Download'
+        downloadUrl: 'https://ae-code.booth.pm/items/7692625',
+        downloadText: 'Get on BOOTH'
     },
     {
         category: 'FRAME',
