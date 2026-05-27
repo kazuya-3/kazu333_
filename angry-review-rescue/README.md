@@ -39,28 +39,35 @@ Then open <http://localhost:3000>.
 ```
 angry-review-rescue/
 ├── app/
-│   ├── layout.tsx            # Root layout, fonts, metadata
-│   ├── page.tsx              # Landing page (composes all sections)
-│   ├── globals.css           # Tailwind base + custom utilities
+│   ├── layout.tsx              # Root layout, SEO + OG metadata
+│   ├── page.tsx                # Landing page (composes all sections)
+│   ├── globals.css             # Tailwind base + custom utilities
+│   ├── thank-you/page.tsx      # Post-purchase welcome + founder promise
 │   └── checkout/
-│       ├── founder/page.tsx  # Placeholder — wire to Stripe/Gumroad
-│       └── agency/page.tsx   # Placeholder — wire to Stripe/Gumroad
+│       ├── founder/page.tsx    # Env-driven Stripe/Gumroad redirect
+│       └── agency/page.tsx     # Env-driven Stripe/Gumroad redirect
 ├── components/
 │   ├── Nav.tsx
-│   ├── Hero.tsx
-│   ├── DemoGenerator.tsx     # The interactive rescue tool
+│   ├── Hero.tsx                # Sharpened positioning
+│   ├── TrustStrip.tsx          # No-auto-posting / no-fake-reviews bar
+│   ├── DemoGenerator.tsx       # The interactive rescue tool
 │   ├── RiskScoreCard.tsx
 │   ├── ReplyCard.tsx
 │   ├── BeforeAfter.tsx
 │   ├── WhyItMatters.tsx
+│   ├── BuiltFor.tsx            # Audience cards (no fake testimonials)
+│   ├── FreeRescue.tsx          # mailto: lead CTA
 │   ├── Pricing.tsx
 │   ├── FAQ.tsx
-│   ├── Footer.tsx
-│   └── ui/                   # Small primitives (Button, Card, Badge, Field)
+│   ├── CheckoutCard.tsx        # Shared placeholder/redirect card
+│   ├── Footer.tsx              # Disclaimers + non-affiliation note
+│   └── ui/                     # Button, Card, Badge, Field primitives
 ├── lib/
-│   ├── types.ts              # Shared TypeScript types
-│   ├── reviewLogic.ts        # Rule-based reply + risk-score generator
-│   └── utils.ts              # cn() helper
+│   ├── types.ts                # Shared TypeScript types
+│   ├── reviewLogic.ts          # Rule-based reply + risk-score generator
+│   ├── checkout.ts             # Env-var loader for payment URLs
+│   └── utils.ts                # cn() helper
+├── LAUNCH_CHECKLIST.md         # Pre-launch + first-customers todo list
 └── ...config files
 ```
 
@@ -98,19 +105,58 @@ All the logic lives in `lib/reviewLogic.ts`. To improve outputs:
 Because everything is deterministic, the same input always produces the same
 output — useful for testing copy.
 
-## Wiring up payments later
+## Wiring up payments
 
-The two pricing CTAs link to `/checkout/founder` and `/checkout/agency`, which
-are placeholder pages. Replace them with redirects to your Stripe Payment
-Link or Gumroad checkout:
+The two pricing CTAs route through `/checkout/founder` and `/checkout/agency`.
+Each page reads a public environment variable and, if set, shows a
+"Continue to secure checkout" button that links to the external payment
+provider (Stripe Payment Link, Gumroad, Lemon Squeezy, Paddle — anything
+hosted). If the variable is empty, the page shows a friendly placeholder
+explaining how to wire it up.
 
-```ts
-// app/checkout/founder/page.tsx
-import { redirect } from "next/navigation";
-export default function Page() {
-  redirect("https://buy.stripe.com/your-link-here");
-}
+Create `.env.local` (and the same vars in your hosting provider):
+
+```bash
+NEXT_PUBLIC_FOUNDER_CHECKOUT_URL=https://buy.stripe.com/your-founder-link
+NEXT_PUBLIC_AGENCY_CHECKOUT_URL=https://buy.stripe.com/your-agency-link
+NEXT_PUBLIC_SITE_URL=https://angryreviewrescue.com
 ```
+
+Set the **success redirect URL** on both Stripe/Gumroad checkouts to:
+
+```
+https://yourdomain.com/thank-you
+```
+
+That page contains the "founder promise" copy and support email — paying
+customers see it the instant the payment clears. No Stripe API code is
+required from us; the payment provider handles the entire transaction.
+
+If you ever want to redirect from `/checkout/*` straight to the provider
+(skipping the in-app confirmation card), edit `components/CheckoutCard.tsx`
+to call `redirect(url)` from `next/navigation` when `config.url` exists.
+
+## Adding analytics later
+
+We deliberately do not install any analytics in the MVP — every script is
+overhead, every cookie is a banner, and we don't need it to get the first
+10 paying users. When you do want analytics, add one of the following:
+
+- **Vercel Analytics** — `npm install @vercel/analytics`, then drop
+  `<Analytics />` into `app/layout.tsx` inside `<body>`. Zero config on
+  Vercel deployments, no cookie banner required.
+- **Plausible** — privacy-friendly, hosted EU. Add the script tag in
+  `app/layout.tsx` via `<Script src="https://plausible.io/js/script.js"
+  data-domain="yourdomain.com" strategy="afterInteractive" />`.
+- **Google Analytics (GA4)** — use `next/script` to load
+  `https://www.googletagmanager.com/gtag/js?id=G-XXX` in `app/layout.tsx`.
+  You'll need a cookie banner in the EU/UK.
+- **Cloudflare Web Analytics** — paste the beacon script into
+  `app/layout.tsx`. Cookieless, free, lightweight.
+
+Track at minimum: landing → demo run → pricing → checkout click →
+thank-you. The `id` attributes (`#demo`, `#pricing`, `#free-rescue`,
+etc.) are stable anchors you can use for funnel events.
 
 ## Adding Supabase later
 

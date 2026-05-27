@@ -17,7 +17,7 @@ export function Hero() {
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
           <Badge tone="ember" className="mb-6">
             <Sparkles className="h-3 w-3" />
-            For local business owners and agencies
+            A 1-star review emergency kit for local businesses
           </Badge>
 
           <h1 className="text-balance text-4xl font-bold leading-tight tracking-tight text-ink md:text-6xl">
@@ -29,6 +29,11 @@ export function Hero() {
           <p className="mt-5 max-w-2xl text-balance text-base text-ink-soft md:text-lg">
             Paste a 1-star review and get calm, human replies that make future
             customers trust your business — not the angry one in the review.
+          </p>
+
+          <p className="mt-4 max-w-xl text-balance text-sm font-medium text-ink md:text-base">
+            <span className="text-ink-muted">Bad reviews don't always destroy trust.</span>{" "}
+            <span className="text-gradient-ember">Bad owner replies do.</span>
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
@@ -43,7 +48,7 @@ export function Hero() {
 
           <p className="mt-6 inline-flex items-center gap-2 text-xs text-ink-muted">
             <ShieldCheck className="h-3.5 w-3.5 text-success" />
-            No auto-posting. No fake reviews. Just better public replies.
+            No auto-posting. No fake reviews. Writing assistance only.
           </p>
         </div>
 

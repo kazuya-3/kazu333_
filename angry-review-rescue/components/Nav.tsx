@@ -17,11 +17,11 @@ export function Nav() {
           <a href="#demo" className="btn-ghost">
             Demo
           </a>
-          <a href="#before-after" className="btn-ghost">
-            Before / After
-          </a>
           <a href="#why" className="btn-ghost">
             Why it matters
+          </a>
+          <a href="#free-rescue" className="btn-ghost">
+            Free rescue
           </a>
           <a href="#pricing" className="btn-ghost">
             Pricing

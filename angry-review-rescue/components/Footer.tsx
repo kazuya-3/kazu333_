@@ -23,19 +23,40 @@ export function Footer() {
             <a href="#demo" className="hover:text-ink">
               Demo
             </a>
+            <a href="#free-rescue" className="hover:text-ink">
+              Free rescue
+            </a>
             <a href="#pricing" className="hover:text-ink">
               Pricing
             </a>
             <a href="#faq" className="hover:text-ink">
               FAQ
             </a>
+            <a
+              href="mailto:support@example.com"
+              className="hover:text-ink"
+            >
+              Support
+            </a>
           </nav>
         </div>
-        <p className="mt-8 max-w-3xl text-[11px] leading-relaxed text-ink-faint">
+        <ul className="mt-8 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-ink-faint">
+          <li>No auto-posting</li>
+          <li aria-hidden>·</li>
+          <li>No fake reviews</li>
+          <li aria-hidden>·</li>
+          <li>No review manipulation</li>
+          <li aria-hidden>·</li>
+          <li>Writing assistance only</li>
+          <li aria-hidden>·</li>
+          <li>Not legal advice</li>
+        </ul>
+        <p className="mt-3 max-w-3xl text-[11px] leading-relaxed text-ink-faint">
           Angry Review Rescue is not affiliated with Google, Yelp, Tripadvisor,
           or any review platform. This tool provides writing assistance only —
           it does not post replies on your behalf and it does not constitute
-          legal advice.
+          legal advice. For threats, defamation, or any legally serious
+          situation, consult a lawyer in your jurisdiction.
         </p>
         <p className="mt-3 text-[11px] text-ink-faint">
           © {year} Angry Review Rescue.

@@ -78,8 +78,8 @@ export function Pricing() {
             <span className="text-gradient-ember">Lifetime use.</span>
           </h2>
           <p className="mt-3 text-sm text-ink-soft md:text-base">
-            No subscriptions. Pay once, keep using it as long as the product
-            exists.
+            A 1-star review emergency kit you pay for once. No subscriptions,
+            no platform fees, no auto-posting anywhere.
           </p>
         </div>
 
