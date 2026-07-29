@@ -1,0 +1,63 @@
+---
+import { url } from '../lib/url';
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="現在の位置">
+  <ol>
+    <li><a href={url('/')}>ホーム</a></li>
+    {
+      items.map((item) => (
+        <li>
+          {item.href ? <a href={url(item.href)}>{item.label}</a> : <span aria-current="page">{item.label}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+  }
+
+  .breadcrumbs li + li::before {
+    content: "/";
+    margin-right: 0.35rem;
+    color: var(--c-line-strong);
+  }
+
+  .breadcrumbs a {
+    color: var(--c-text-mute);
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--c-blue-ink);
+    text-decoration: underline;
+  }
+
+  .breadcrumbs [aria-current='page'] {
+    color: var(--c-text-sub);
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,111 @@
+---
+/**
+ * スマートフォン画面下部の固定アクションバー。
+ * 画面を圧迫しないよう高さを抑え、タップ領域は 44px 以上を確保しています。
+ */
+import { bottomBarNav } from '../config/nav';
+import { url, isCurrent } from '../lib/url';
+
+interface Props {
+  currentPath: string;
+}
+const { currentPath } = Astro.props;
+
+const icons: Record<string, string> = {
+  estimate:
+    'M5 3h14a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm2.5 4h9M7.5 11h3m3 0h3m-9 4h3m3 0h3',
+  contact: 'M3 6.5h18v11H3zM3 7l9 6 9-6',
+  shop: 'M4 8h16l-1.2 11.2a1 1 0 0 1-1 .8H6.2a1 1 0 0 1-1-.8Zm4 0V6a4 4 0 0 1 8 0v2',
+};
+---
+
+<nav class="action-bar" aria-label="主な操作">
+  <ul>
+    {
+      bottomBarNav.map((item) => {
+        const current = isCurrent(currentPath, item.href);
+        return (
+          <li>
+            <a
+              href={url(item.href)}
+              class:list={['action-bar__link', { 'is-current': current }]}
+              aria-current={current ? 'page' : undefined}
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path
+                  d={icons[item.icon]}
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span>{item.label}</span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+<style>
+  .action-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    border-top: 1px solid var(--c-line);
+    box-shadow: 0 -6px 24px rgba(31, 58, 105, 0.08);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .action-bar ul {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    list-style: none;
+  }
+
+  .action-bar__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: var(--bottombar-h);
+    padding: 0.4rem 0.25rem;
+    text-decoration: none;
+    color: var(--c-text-sub);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+
+  .action-bar__link:active {
+    background: rgba(90, 169, 230, 0.1);
+  }
+
+  .action-bar__link.is-current {
+    color: var(--c-blue-deep);
+  }
+
+  .action-bar__link.is-current svg {
+    filter: drop-shadow(0 2px 6px rgba(47, 125, 225, 0.35));
+  }
+
+  /* 中央（相談する）だけ少し強調する */
+  .action-bar li:nth-child(2) .action-bar__link {
+    color: var(--c-blue-ink);
+  }
+
+  @media (min-width: 768px) {
+    .action-bar {
+      display: none;
+    }
+  }
+</style>

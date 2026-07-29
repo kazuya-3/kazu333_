@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import Concerns from '../components/home/Concerns.astro';
+import Services from '../components/home/Services.astro';
+import WorksSection from '../components/home/WorksSection.astro';
+import EstimateTeaser from '../components/home/EstimateTeaser.astro';
+import ShopSection from '../components/home/ShopSection.astro';
+import FlowSection from '../components/home/FlowSection.astro';
+import AboutSection from '../components/home/AboutSection.astro';
+import FaqSection from '../components/home/FaqSection.astro';
+import ContactCta from '../components/home/ContactCta.astro';
+import SupportTip from '../components/home/SupportTip.astro';
+import { faqs } from '../config/faq';
+import { site } from '../config/site';
+import { absoluteUrl } from '../lib/url';
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+  })),
+};
+
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.name,
+  url: absoluteUrl('/', Astro.site),
+  inLanguage: 'ja',
+  description: site.seo.description,
+};
+---
+
+<BaseLayout jsonLd={[faqLd, websiteLd]}>
+  <Hero />
+  <Concerns />
+  <Services />
+  <WorksSection />
+  <EstimateTeaser />
+  <ShopSection />
+  <FlowSection />
+  <AboutSection />
+  <FaqSection />
+  <ContactCta />
+  <SupportTip />
+</BaseLayout>

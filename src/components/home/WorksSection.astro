@@ -1,0 +1,73 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import WorkCard from '../WorkCard.astro';
+import { publicWorks, featuredWorks } from '../../config/works';
+import { url } from '../../lib/url';
+
+// 注目実績を優先し、足りない分は新しい順で補う
+const picked = [...featuredWorks, ...publicWorks.filter((w) => !w.featured)].slice(0, 5);
+const [lead, ...rest] = picked;
+---
+
+<section class="section works-section" id="works" aria-labelledby="works-title">
+  <div class="container">
+    <div class="works-section__head">
+      <SectionHeading
+        eyebrow="Works"
+        title="制作・開発実績"
+        lead="どんな困りごとを、どう対応して、どうなったか。「課題 → 対応 → 結果」の順にまとめています。"
+        id="works-title"
+      />
+      <a class="btn btn--quiet works-section__all" href={url('/works')}>すべての実績を見る</a>
+    </div>
+
+    <div class="works-section__grid">
+      {lead && <div class="works-section__lead reveal"><WorkCard work={lead} size="large" /></div>}
+      {
+        rest.map((work, i) => (
+          <div class="reveal" style={`--reveal-delay:${(i + 1) * 70}ms`}>
+            <WorkCard work={work} />
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="works-section__note text-mute">
+      掲載しているのは、公開の許可をいただいた内容と、個人制作のものです。内容を伏せている実績には、その旨を記載しています。
+    </p>
+  </div>
+</section>
+
+<style>
+  .works-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-5);
+  }
+
+  .works-section__all {
+    flex: 0 0 auto;
+  }
+
+  .works-section__grid {
+    margin-top: var(--sp-10);
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .works-section__note {
+    margin-top: var(--sp-6);
+  }
+
+  @media (min-width: 780px) {
+    .works-section__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .works-section__lead {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

@@ -1,0 +1,390 @@
+---
+import { site } from '../../config/site';
+import { url } from '../../lib/url';
+
+/**
+ * ファーストビュー。
+ * スマートフォンで最初に表示された時点で「何のサイトか」が分かるよう、
+ * 見出し・説明・条件バッジ・CTA を 1 画面に収まる密度で配置しています。
+ * 浮遊カードは装飾のため aria-hidden とし、reduced-motion では静止します。
+ */
+
+const floatCards = [
+  { label: 'システム修正', accent: 'system', icon: 'code' },
+  { label: '資料づくり', accent: 'document', icon: 'doc' },
+  { label: 'SNS素材', accent: 'creative', icon: 'image' },
+  { label: 'データ整理', accent: 'system', icon: 'table' },
+  { label: 'AI活用', accent: 'ai', icon: 'spark' },
+] as const;
+
+const icons: Record<string, string> = {
+  code: 'M9 8 5 12l4 4m6-8 4 4-4 4',
+  doc: 'M7 4h7l4 4v12H7zM14 4v4h4M9.5 13h5M9.5 16h5',
+  image: 'M4 6h16v12H4zM4 15l4-4 3 3 3-3 6 6',
+  table: 'M4 6h16v12H4zM4 10h16M10 10v8M15 10v8',
+  spark: 'M12 4l1.8 4.6L18.5 10l-4.7 1.4L12 16l-1.8-4.6L5.5 10l4.7-1.4z',
+};
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <p class="hero__eyebrow">
+        <span class="hero__dot" aria-hidden="true"></span>
+        {site.name}
+        <span class="hero__eyebrow-sep" aria-hidden="true">/</span>
+        <span class="hero__eyebrow-sub">個人のオンライン事務所</span>
+      </p>
+
+      <h1 class="hero__title" id="hero-title">
+        <span class="hero__title-line">小さな仕事ほど、</span>
+        <span class="hero__title-line hero__title-line--accent">頼める人が見つからない。</span>
+      </h1>
+
+      <p class="hero__body">{site.hero.body}</p>
+
+      <ul class="hero__points">
+        {site.hero.points.map((point) => <li>{point}</li>)}
+      </ul>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary btn--lg" href={url('/estimate')}>簡単に見積もる</a>
+        <a class="btn btn--ghost btn--lg" href={url('/contact')}>相談してみる</a>
+        <a class="hero__link" href="#services">できることを見る<span aria-hidden="true"> ↓</span></a>
+      </div>
+
+      <p class="hero__support">{site.message.support}</p>
+    </div>
+
+    <div class="hero__visual" aria-hidden="true">
+      <div class="hero__orbit">
+        {
+          floatCards.map((card, i) => (
+            <div class:list={['float-card', `float-card--${card.accent}`]} style={`--i:${i}`}>
+              <span class="float-card__icon">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                  <path
+                    d={icons[card.icon]}
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="float-card__label">{card.label}</span>
+            </div>
+          ))
+        }
+        <div class="hero__core">
+          <span class="hero__core-label">ご相談</span>
+          <span class="hero__core-arrow">→</span>
+          <span class="hero__core-out">形になる</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(3rem, 8vw, 6rem);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--g-hero);
+    z-index: -1;
+  }
+
+  .hero__inner {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4rem);
+    align-items: center;
+  }
+
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    font-family: var(--font-en);
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--c-blue-ink);
+    padding: 0.4em 0.9em 0.4em 0.7em;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(90, 169, 230, 0.3);
+    box-shadow: var(--sh-sm);
+  }
+
+  .hero__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c-mint-deep);
+    box-shadow: 0 0 0 3px rgba(111, 214, 196, 0.28);
+  }
+
+  .hero__eyebrow-sep {
+    color: var(--c-line-strong);
+  }
+
+  .hero__eyebrow-sub {
+    font-family: var(--font-sans);
+    letter-spacing: 0.02em;
+    color: var(--c-text-mute);
+    font-size: 0.6875rem;
+  }
+
+  .hero__title {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-display);
+    line-height: 1.32;
+    letter-spacing: -0.01em;
+  }
+
+  .hero__title-line {
+    display: block;
+  }
+
+  .hero__title-line--accent {
+    background: linear-gradient(100deg, #2f7de1 0%, #6a76e6 45%, #a9a0f0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero__body {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-lead);
+    color: var(--c-text-sub);
+    max-width: 32em;
+  }
+
+  .hero__points {
+    margin-top: var(--sp-5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+  }
+
+  .hero__points li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.35em 0.85em;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--c-line);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-text-sub);
+  }
+
+  .hero__points li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-blue);
+  }
+
+  .hero__actions {
+    margin-top: var(--sp-8);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .hero__actions .btn {
+    flex: 1 1 auto;
+    min-width: 10rem;
+  }
+
+  .hero__link {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--c-blue-ink);
+    text-decoration: none;
+    padding: 0.6em 0.2em;
+  }
+
+  .hero__link:hover {
+    text-decoration: underline;
+  }
+
+  .hero__support {
+    margin-top: var(--sp-6);
+    font-size: var(--fs-sm);
+    color: var(--c-text-mute);
+    max-width: 34em;
+    padding-left: 0.9rem;
+    border-left: 2px solid rgba(90, 169, 230, 0.4);
+  }
+
+  /* --- 浮遊カード --- */
+  .hero__visual {
+    position: relative;
+    min-height: 300px;
+    display: grid;
+    place-items: center;
+  }
+
+  .hero__orbit {
+    position: relative;
+    width: min(100%, 420px);
+    aspect-ratio: 1;
+  }
+
+  .float-card {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.95rem;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--sh-md);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    white-space: nowrap;
+    animation: floatY 7s var(--ease) infinite;
+    animation-delay: calc(var(--i) * -1.3s);
+  }
+
+  .float-card__icon {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+  }
+
+  .float-card--system .float-card__icon {
+    background: var(--c-cat-system-soft);
+    color: var(--c-cat-system);
+  }
+
+  .float-card--document .float-card__icon {
+    background: var(--c-cat-document-soft);
+    color: var(--c-cat-document);
+  }
+
+  .float-card--creative .float-card__icon {
+    background: var(--c-cat-creative-soft);
+    color: var(--c-cat-creative);
+  }
+
+  .float-card--ai .float-card__icon {
+    background: #e7f8f4;
+    color: var(--c-mint-deep);
+  }
+
+  /* 中央のパネルを避けて、放射状に配置する */
+  .float-card {
+    transform-origin: center;
+  }
+
+  .float-card:nth-child(1) { top: 3%; left: 50%; margin-left: -3.5rem; }
+  .float-card:nth-child(2) { top: 26%; right: -2%; }
+  .float-card:nth-child(3) { top: 26%; left: -2%; }
+  .float-card:nth-child(4) { bottom: 4%; right: 4%; }
+  .float-card:nth-child(5) { bottom: 4%; left: 4%; }
+
+  .hero__core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(64%, 250px);
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border-radius: var(--r-xl);
+    background: var(--g-glass);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: var(--sh-lg), var(--sh-inset), 0 0 0 10px rgba(255, 255, 255, 0.35);
+    font-size: var(--fs-sm);
+    font-weight: 800;
+    color: var(--c-text-sub);
+    padding: 1rem 0.9rem;
+    text-align: center;
+  }
+
+  .hero__core-arrow {
+    color: var(--c-blue-deep);
+    font-size: 1rem;
+  }
+
+  .hero__core-out {
+    background: var(--g-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @keyframes floatY {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .float-card {
+      animation: none;
+    }
+  }
+
+  /* 360px 前後でも収まるよう、狭い画面では浮遊カードを控えめにする */
+  @media (max-width: 419px) {
+    .hero__visual {
+      min-height: 260px;
+    }
+
+    .float-card {
+      font-size: 0.6875rem;
+      padding: 0.45rem 0.7rem;
+      gap: 0.35rem;
+    }
+
+    .float-card__icon {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .hero__inner {
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    }
+
+    .hero__actions .btn {
+      flex: 0 0 auto;
+    }
+
+    .hero__visual {
+      min-height: 420px;
+    }
+  }
+</style>

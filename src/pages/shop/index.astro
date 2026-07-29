@@ -1,0 +1,303 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import SupportTip from '../../components/home/SupportTip.astro';
+import {
+  products,
+  productCategoryLabel,
+  shopNotes,
+  hasPurchasableProduct,
+  shopPreparingNotice,
+  type ProductCategory,
+} from '../../config/products';
+import { url, absoluteUrl } from '../../lib/url';
+
+const usedCategories = [...new Set(products.map((p) => p.category))] as ProductCategory[];
+
+const filters = [
+  { key: 'all', label: 'すべて', count: products.length },
+  ...usedCategories.map((key) => ({
+    key,
+    label: productCategoryLabel[key],
+    count: products.filter((p) => p.category === key).length,
+  })),
+];
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: absoluteUrl('/', Astro.site) },
+    { '@type': 'ListItem', position: 2, name: 'ショップ', item: absoluteUrl('/shop', Astro.site) },
+  ],
+};
+---
+
+<BaseLayout
+  title="ショップ"
+  description="アイコンフレーム、SNS投稿カバー、配信素材、AIプロンプト集、Excelツール、テスト項目書や操作マニュアルのテンプレートなど。完成済みのデータをダウンロード販売しています。"
+  jsonLd={breadcrumbLd}
+>
+  <section class="section section--glow shop-page">
+    <div class="container">
+      <Breadcrumbs items={[{ label: 'ショップ' }]} />
+
+      <header class="shop-page__head">
+        <p class="eyebrow">Shop</p>
+        <h1 class="shop-page__title">完成済みの素材とテンプレート</h1>
+        <p class="shop-page__lead">
+          依頼するほどではないとき、そのまま使えるものを用意しています。
+          ダウンロードしてすぐお使いいただけます。使い方に迷ったら、購入前でもご相談ください。
+        </p>
+      </header>
+
+      {
+        !hasPurchasableProduct && (
+          <div class="shop-page__preparing">
+            <p class="shop-page__preparing-title">{shopPreparingNotice.title}</p>
+            <p class="shop-page__preparing-body">{shopPreparingNotice.body}</p>
+          </div>
+        )
+      }
+
+      <div class="shop-page__filter" role="group" aria-label="カテゴリで絞り込む">
+        {
+          filters.map((f, i) => (
+            <button
+              type="button"
+              class:list={['filter-chip', { 'is-active': i === 0 }]}
+              data-filter={f.key}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              {f.label}
+              <span class="filter-chip__count">{f.count}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <p class="visually-hidden" role="status" id="shop-status"></p>
+
+      <h2 class="visually-hidden">商品の一覧</h2>
+      <div class="shop-page__grid" id="shop-grid">
+        {
+          products.map((product, i) => (
+            <div class="shop-page__item reveal" data-category={product.category} style={`--reveal-delay:${(i % 3) * 70}ms`}>
+              <ProductCard product={product} />
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="shop-page__empty" id="shop-empty" hidden>
+        この分類の商品はまだありません。ほかの分類もご覧ください。
+      </p>
+
+      <section class="shop-page__notes" aria-labelledby="shop-notes-title">
+        <h2 class="shop-page__notes-title" id="shop-notes-title">ご購入前にお読みください</h2>
+        <ul>
+          {shopNotes.map((note) => <li>{note}</li>)}
+        </ul>
+        <div class="btn-row shop-page__notes-actions">
+          <a class="btn btn--ghost" href={url('/contact')}>商品について相談する</a>
+          <a class="btn btn--quiet" href={url('/terms')}>利用規約を見る</a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <SupportTip />
+</BaseLayout>
+
+<style>
+  .shop-page__head {
+    margin-top: var(--sp-6);
+    max-width: 46em;
+  }
+
+  .shop-page__title {
+    font-size: var(--fs-h1);
+  }
+
+  .shop-page__lead {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    font-size: var(--fs-lead);
+  }
+
+  .shop-page__preparing {
+    margin-top: var(--sp-8);
+    padding: var(--sp-5);
+    border-radius: var(--r-lg);
+    background: #fff8e6;
+    border: 1px solid #f0dcae;
+  }
+
+  .shop-page__preparing-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-sm);
+    font-weight: 800;
+    color: #7a5d17;
+  }
+
+  .shop-page__preparing-title::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e0b64d;
+  }
+
+  .shop-page__preparing-body {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: #7a5d17;
+    line-height: 1.9;
+  }
+
+  .shop-page__filter {
+    margin-top: var(--sp-6);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.5rem 1.1rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-line-strong);
+    background: rgba(255, 255, 255, 0.8);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--c-text-sub);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+
+  .filter-chip:hover {
+    border-color: rgba(47, 125, 225, 0.45);
+    color: var(--c-blue-ink);
+  }
+
+  .filter-chip.is-active {
+    background: var(--g-accent);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: var(--sh-glow);
+  }
+
+  .filter-chip__count {
+    font-family: var(--font-en);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    padding: 0.1em 0.5em;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-soft);
+    color: var(--c-text-mute);
+  }
+
+  .filter-chip.is-active .filter-chip__count {
+    background: rgba(255, 255, 255, 0.28);
+    color: #fff;
+  }
+
+  .shop-page__grid {
+    margin-top: var(--sp-8);
+    display: grid;
+    gap: var(--sp-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  }
+
+  .shop-page__item[hidden] {
+    display: none;
+  }
+
+  .shop-page__empty {
+    margin-top: var(--sp-8);
+    padding: var(--sp-6);
+    border-radius: var(--r-lg);
+    background: var(--c-surface-soft);
+    border: 1px dashed var(--c-line-strong);
+    text-align: center;
+    color: var(--c-text-sub);
+    font-size: var(--fs-sm);
+  }
+
+  .shop-page__notes {
+    margin-top: var(--sp-12);
+    padding: var(--sp-6);
+    border-radius: var(--r-xl);
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid var(--c-line);
+  }
+
+  .shop-page__notes-title {
+    font-size: var(--fs-h3);
+  }
+
+  .shop-page__notes ul {
+    margin-top: var(--sp-4);
+    display: grid;
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .shop-page__notes li {
+    position: relative;
+    padding-left: 1.2rem;
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.85;
+  }
+
+  .shop-page__notes li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--c-blue);
+  }
+
+  .shop-page__notes-actions {
+    margin-top: var(--sp-5);
+  }
+</style>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const items = document.querySelectorAll<HTMLElement>('.shop-page__item');
+  const empty = document.getElementById('shop-empty');
+  const status = document.getElementById('shop-status');
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.filter ?? 'all';
+
+      chips.forEach((c) => {
+        const active = c === chip;
+        c.classList.toggle('is-active', active);
+        c.setAttribute('aria-pressed', String(active));
+      });
+
+      let shown = 0;
+      items.forEach((item) => {
+        const match = key === 'all' || item.dataset.category === key;
+        item.hidden = !match;
+        if (match) shown += 1;
+      });
+
+      if (empty) empty.hidden = shown !== 0;
+      if (status) status.textContent = `商品を${shown}件表示しています`;
+    });
+  });
+</script>

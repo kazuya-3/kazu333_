@@ -1,0 +1,271 @@
+---
+/**
+ * 写真やスクリーンショットを載せられない実績・商品のためのカバーイラスト。
+ *
+ * カテゴリごとに意味のある図（コード画面 / 資料 / 制作物 / AIの組み立て）を描きます。
+ * 同じ slug なら常に同じ形になるため、更新のたびに見た目が変わることはありません。
+ *
+ * 写真を用意したら、データ側に thumbnail / preview を設定すれば置き換わります。
+ *   - 実績: src/config/works.ts の thumbnail
+ *   - 商品: src/config/products.ts の preview
+ */
+
+interface Props {
+  /** 形を決めるための文字列。slug を渡してください。 */
+  seed: string;
+  accent?: 'system' | 'document' | 'creative' | 'ai' | 'neutral';
+  /** CSS の aspect-ratio。例: '16 / 10' */
+  ratio?: string;
+  /** スクリーンリーダー向けの説明。空文字にすると装飾扱いになります。 */
+  label?: string;
+}
+
+const { seed, accent = 'system', ratio = '16 / 10', label } = Astro.props;
+
+/** [背景の明るい方, 背景の濃い方, 主線, 補助色] */
+const palettes: Record<string, [string, string, string, string]> = {
+  system: ['#eef6ff', '#d7e9fb', '#2f7de1', '#6fd6c4'],
+  document: ['#f2f0fe', '#ded8f8', '#7a6fdc', '#5aa9e6'],
+  creative: ['#fff1ef', '#ffdcd7', '#e8604f', '#ffd166'],
+  ai: ['#e9f9f5', '#c8ece4', '#35a894', '#5aa9e6'],
+  neutral: ['#f1f3f7', '#e0e5ed', '#5a6478', '#8fa2ee'],
+};
+
+const [bgA, bgB, ink, sub] = palettes[accent] ?? palettes.system;
+
+/** slug から決まった数値を取り出す（同じ slug なら常に同じ絵になる） */
+function hash(text: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i += 1) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return Math.abs(h);
+}
+
+const h = hash(seed);
+/** index 番目の擬似乱数を 0〜range-1 で得る */
+const pick = (index: number, range: number) => Math.floor(h / 7 ** index) % range;
+
+const uid = `cv${(h % 100000).toString(36)}`;
+
+/** コード行・本文行の長さをばらつかせる */
+const lineWidths = [0, 1, 2, 3, 4, 5].map((i) => 26 + pick(i + 1, 34));
+const indents = [0, 1, 2, 3, 4, 5].map((i) => (pick(i + 7, 3) === 0 ? 0 : pick(i + 7, 3) * 5));
+const barHeights = [0, 1, 2, 3, 4].map((i) => 8 + pick(i + 2, 22));
+const isAria = label === '' || label === undefined ? false : true;
+---
+
+<div
+  class="cover"
+  style={`--ratio:${ratio}; --bg-a:${bgA}; --bg-b:${bgB};`}
+  role={isAria ? 'img' : 'presentation'}
+  aria-label={isAria ? label : undefined}
+>
+  <svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <defs>
+      <linearGradient id={`${uid}-shape`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color={ink} stop-opacity="0.9"></stop>
+        <stop offset="100%" stop-color={sub} stop-opacity="0.85"></stop>
+      </linearGradient>
+      <filter id={`${uid}-shadow`} x="-20%" y="-20%" width="140%" height="150%">
+        <feDropShadow dx="0" dy="2.5" stdDeviation="3" flood-color={ink} flood-opacity="0.16"
+        ></feDropShadow>
+      </filter>
+    </defs>
+
+    {
+      /* --- システム・データ: コードエディタ風のウィンドウ --- */
+      accent === 'system' && (
+        <g filter={`url(#${uid}-shadow)`}>
+          <rect x="22" y="16" width="116" height="68" rx="7" fill="#fff" />
+          <path d="M22 23a7 7 0 0 1 7-7h102a7 7 0 0 1 7 7v5H22z" fill={ink} opacity="0.1" />
+          <circle cx="31" cy="22" r="2" fill={ink} opacity="0.35" />
+          <circle cx="38" cy="22" r="2" fill={ink} opacity="0.22" />
+          <circle cx="45" cy="22" r="2" fill={ink} opacity="0.22" />
+          {lineWidths.map((w, i) => (
+            <g>
+              <rect
+                x="30"
+                y={36 + i * 7.5}
+                width="4"
+                height="3"
+                rx="1.5"
+                fill={ink}
+                opacity="0.2"
+              />
+              <rect
+                x={38 + indents[i]}
+                y={36 + i * 7.5}
+                width={w}
+                height="3"
+                rx="1.5"
+                fill={i % 3 === 0 ? ink : sub}
+                opacity={i % 3 === 0 ? 0.55 : 0.4}
+              />
+            </g>
+          ))}
+          <rect x="104" y="58" width="26" height="18" rx="4" fill={sub} opacity="0.18" />
+          <path
+            d="M110 67h14M110 63h9M110 71h11"
+            stroke={ink}
+            stroke-width="1.6"
+            stroke-linecap="round"
+            opacity="0.4"
+          />
+        </g>
+      )
+    }
+
+    {
+      /* --- 資料・ドキュメント: 重なった書類と見出し --- */
+      accent === 'document' && (
+        <g filter={`url(#${uid}-shadow)`}>
+          <rect x="34" y="12" width="72" height="76" rx="6" fill="#fff" opacity="0.6" />
+          <rect x="28" y="16" width="76" height="76" rx="6" fill="#fff" opacity="0.8" />
+          <rect x="22" y="20" width="80" height="68" rx="6" fill="#fff" />
+          <rect x="31" y="30" width="34" height="5" rx="2.5" fill={ink} opacity="0.7" />
+          {lineWidths.slice(0, 5).map((w, i) => (
+            <rect
+              x="31"
+              y={42 + i * 8}
+              width={Math.min(w + 18, 62)}
+              height="3"
+              rx="1.5"
+              fill={ink}
+              opacity="0.22"
+            />
+          ))}
+          <g opacity="0.95">
+            <rect x="110" y="34" width="32" height="40" rx="5" fill={sub} opacity="0.16" />
+            <rect x="115" y="40" width="22" height="4" rx="2" fill={ink} opacity="0.45" />
+            <rect x="115" y="48" width="22" height="1.6" rx="0.8" fill={ink} opacity="0.25" />
+            <rect x="115" y="53" width="22" height="1.6" rx="0.8" fill={ink} opacity="0.25" />
+            <rect x="115" y="58" width="14" height="1.6" rx="0.8" fill={ink} opacity="0.25" />
+            <path
+              d="m116 66 3 3 6-6"
+              stroke={ink}
+              stroke-width="1.8"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              opacity="0.6"
+            />
+          </g>
+        </g>
+      )
+    }
+
+    {
+      /* --- デザイン・制作: アートボードと色見本 --- */
+      accent === 'creative' && (
+        <g filter={`url(#${uid}-shadow)`}>
+          <rect x="24" y="14" width="112" height="60" rx="7" fill="#fff" />
+          <circle cx={54 + pick(3, 10)} cy="40" r={13 + pick(4, 5)} fill={`url(#${uid}-shape)`} opacity="0.55" />
+          <path
+            d="M88 56 L104 26 L120 56 Z"
+            fill={sub}
+            opacity="0.5"
+          />
+          <rect x="96" y="34" width="24" height="24" rx="6" fill={ink} opacity="0.18" />
+          <path d="M24 62h112" stroke={ink} stroke-width="1" opacity="0.14" />
+          <g>
+            {[0, 1, 2, 3].map((i) => (
+              <circle
+                cx={38 + i * 12}
+                cy="84"
+                r="5"
+                fill={[ink, sub, '#a9a0f0', '#5aa9e6'][i]}
+                opacity="0.75"
+              />
+            ))}
+            <rect x="92" y="80" width="44" height="8" rx="4" fill={ink} opacity="0.14" />
+          </g>
+        </g>
+      )
+    }
+
+    {
+      /* --- AI活用: ばらばらの入力が1つにまとまる図 --- */
+      accent === 'ai' && (
+        <g>
+          <g stroke={ink} stroke-width="1.4" opacity="0.35" fill="none">
+            <path d="M36 26 C 64 26, 66 50, 92 50" />
+            <path d="M30 50 C 58 50, 62 50, 92 50" />
+            <path d="M36 74 C 64 74, 66 50, 92 50" />
+          </g>
+          {[26, 50, 74].map((cy, i) => (
+            <g filter={`url(#${uid}-shadow)`}>
+              <rect
+                x={i === 1 ? 16 : 22}
+                y={cy - 7}
+                width={i === 1 ? 20 : 20}
+                height="14"
+                rx="5"
+                fill="#fff"
+              />
+              <rect
+                x={i === 1 ? 21 : 27}
+                y={cy - 2.5}
+                width={barHeights[i] > 18 ? 10 : 7}
+                height="2.6"
+                rx="1.3"
+                fill={ink}
+                opacity="0.45"
+              />
+            </g>
+          ))}
+          <g filter={`url(#${uid}-shadow)`}>
+            <rect x="92" y="30" width="46" height="40" rx="9" fill="#fff" />
+            <path
+              d="M115 40.5l2.6 6.4 6.4 2.6-6.4 2.6-2.6 6.4-2.6-6.4-6.4-2.6 6.4-2.6z"
+              fill={`url(#${uid}-shape)`}
+            />
+            <rect x="101" y="61" width="28" height="3" rx="1.5" fill={ink} opacity="0.2" />
+          </g>
+        </g>
+      )
+    }
+
+    {
+      /* --- その他: 集計・整理をあらわす図 --- */
+      accent === 'neutral' && (
+        <g filter={`url(#${uid}-shadow)`}>
+          <rect x="24" y="16" width="112" height="68" rx="7" fill="#fff" />
+          <rect x="24" y="16" width="112" height="12" rx="7" fill={ink} opacity="0.1" />
+          <rect x="24" y="24" width="112" height="4" fill={ink} opacity="0.1" />
+          {barHeights.map((bh, i) => (
+            <rect
+              x={38 + i * 17}
+              y={72 - bh}
+              width="10"
+              height={bh}
+              rx="3"
+              fill={i % 2 === 0 ? ink : sub}
+              opacity={i % 2 === 0 ? 0.5 : 0.35}
+            />
+          ))}
+          <path d="M32 72h96" stroke={ink} stroke-width="1.2" opacity="0.25" />
+        </g>
+      )
+    }
+  </svg>
+</div>
+
+<style>
+  .cover {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    background: linear-gradient(145deg, var(--bg-a), var(--bg-b));
+    display: grid;
+    place-items: center;
+  }
+
+  .cover svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    padding: 6%;
+  }
+</style>

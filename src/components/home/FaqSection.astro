@@ -1,0 +1,135 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import { faqs } from '../../config/faq';
+import { url } from '../../lib/url';
+
+/**
+ * FAQ。details/summary を使い、JS なしでも開閉できます。
+ */
+---
+
+<section class="section faq-section" id="faq" aria-labelledby="faq-title">
+  <div class="container container--narrow">
+    <SectionHeading
+      eyebrow="FAQ"
+      title="よくあるご質問"
+      lead="ご相談前に気になりやすいことをまとめました。ここにない疑問も、遠慮なく聞いてください。"
+      id="faq-title"
+    />
+
+    <div class="faq-list">
+      {
+        faqs.map((faq, i) => (
+          <details class="faq-item reveal" style={`--reveal-delay:${i * 40}ms`}>
+            <summary>
+              <span class="faq-item__q" aria-hidden="true">Q</span>
+              <span class="faq-item__question">{faq.question}</span>
+              <span class="faq-item__mark" aria-hidden="true" />
+            </summary>
+            <div class="faq-item__answer">
+              <p>{faq.answer}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+
+    <p class="faq-section__note">
+      ほかに気になることがあれば、<a href={url('/contact')}>ご相談フォーム</a>からお気軽にどうぞ。
+    </p>
+  </div>
+</section>
+
+<style>
+  .faq-list {
+    margin-top: var(--sp-8);
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .faq-item {
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+    overflow: hidden;
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+
+  .faq-item[open] {
+    border-color: rgba(90, 169, 230, 0.42);
+    box-shadow: var(--sh-md);
+  }
+
+  .faq-item summary {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr) 1.25rem;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-5);
+    min-height: 56px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: var(--fs-sm);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary:hover {
+    background: rgba(90, 169, 230, 0.05);
+  }
+
+  .faq-item__q {
+    font-family: var(--font-en);
+    font-weight: 800;
+    color: var(--c-blue-deep);
+  }
+
+  .faq-item__question {
+    line-height: 1.65;
+  }
+
+  .faq-item__mark {
+    position: relative;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .faq-item__mark::before,
+  .faq-item__mark::after {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--c-text-mute);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .faq-item__mark::after {
+    transform: rotate(90deg);
+  }
+
+  .faq-item[open] .faq-item__mark::after {
+    transform: rotate(0deg);
+  }
+
+  .faq-item__answer {
+    padding: 0 var(--sp-5) var(--sp-5) calc(var(--sp-5) + 1.5rem + var(--sp-3));
+  }
+
+  .faq-item__answer p {
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.9;
+  }
+
+  .faq-section__note {
+    margin-top: var(--sp-6);
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+  }
+</style>

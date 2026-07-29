@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../lib/url';
+
+const links = [
+  { label: 'トップページ', href: '/', desc: 'できること・実績・料金の目安をまとめています' },
+  { label: '制作実績', href: '/works', desc: 'これまでの対応内容を見る' },
+  { label: '簡易見積もり', href: '/estimate', desc: '費用の目安を1分で確認する' },
+  { label: 'ショップ', href: '/shop', desc: '完成済みの素材とテンプレート' },
+  { label: 'ご相談フォーム', href: '/contact', desc: '内容が決まっていなくても大丈夫です' },
+];
+---
+
+<BaseLayout
+  title="ページが見つかりませんでした"
+  description="お探しのページは見つかりませんでした。トップページや実績一覧からお探しください。"
+  noindex
+>
+  <section class="section notfound">
+    <div class="container container--narrow">
+      <p class="notfound__code" aria-hidden="true">404</p>
+      <h1 class="notfound__title">ページが見つかりませんでした</h1>
+      <p class="notfound__lead">
+        アドレスが変更されたか、削除された可能性があります。
+        お手数ですが、下のいずれかからお探しください。
+      </p>
+
+      <ul class="notfound__links">
+        {
+          links.map((link) => (
+            <li>
+              <a href={url(link.href)}>
+                <span class="notfound__link-label">{link.label}</span>
+                <span class="notfound__link-desc">{link.desc}</span>
+                <span class="notfound__link-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="notfound__note">
+        探していた内容が見つからない場合は、ご相談フォームからお知らせください。
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    text-align: center;
+  }
+
+  .notfound__code {
+    font-family: var(--font-en);
+    font-size: clamp(4rem, 18vw, 8rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    background: var(--g-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: 0.85;
+  }
+
+  .notfound__title {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-h2);
+  }
+
+  .notfound__lead {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    max-width: 32em;
+    margin-inline: auto;
+  }
+
+  .notfound__links {
+    margin-top: var(--sp-8);
+    display: grid;
+    gap: var(--sp-2);
+    list-style: none;
+    text-align: left;
+  }
+
+  .notfound__links a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.25rem var(--sp-4);
+    min-height: 64px;
+    padding: var(--sp-4) var(--sp-5);
+    border-radius: var(--r-lg);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .notfound__links a:hover {
+    transform: translateY(-2px);
+    border-color: rgba(47, 125, 225, 0.4);
+    box-shadow: var(--sh-md);
+  }
+
+  .notfound__link-label {
+    font-weight: 700;
+    font-size: var(--fs-sm);
+  }
+
+  .notfound__link-desc {
+    grid-column: 1;
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  .notfound__link-arrow {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    color: var(--c-blue-deep);
+    font-weight: 700;
+  }
+
+  .notfound__note {
+    margin-top: var(--sp-8);
+    font-size: var(--fs-sm);
+    color: var(--c-text-mute);
+  }
+</style>

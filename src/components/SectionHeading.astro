@@ -1,0 +1,34 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  /** h2 が既定。ページの見出し構造に合わせて変更できます。 */
+  as?: 'h2' | 'h3';
+  align?: 'start' | 'center';
+  id?: string;
+}
+
+const { eyebrow, title, lead, as: Tag = 'h2', align = 'start', id } = Astro.props;
+---
+
+<div class:list={['section-heading', `is-${align}`]}>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <Tag class="section-title" id={id}>{title}</Tag>
+  {lead && <p class="section-lead">{lead}</p>}
+  <slot />
+</div>
+
+<style>
+  .section-heading.is-center {
+    text-align: center;
+  }
+
+  .section-heading.is-center :global(.eyebrow) {
+    justify-content: center;
+  }
+
+  .section-heading.is-center :global(.section-lead) {
+    margin-inline: auto;
+  }
+</style>
