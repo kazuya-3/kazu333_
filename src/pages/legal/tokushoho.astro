@@ -1,0 +1,89 @@
+---
+import LegalLayout from '../../components/LegalLayout.astro';
+import { tokushoho, hasUnfilledEntries } from '../../config/legal';
+
+const unfilled = hasUnfilledEntries(tokushoho);
+---
+
+<LegalLayout
+  title="特定商取引法に基づく表記"
+  description="販売事業者、所在地、連絡先、販売価格、支払い方法と時期、引渡時期、返品・キャンセルについての表記です。"
+  lead="特定商取引に関する法律に基づき、次のとおり表示します。"
+  hasPlaceholders={unfilled}
+>
+  <table class="tokusho">
+    <tbody>
+      {
+        tokushoho.map((entry) => (
+          <tr>
+            <th scope="row">{entry.label}</th>
+            <td>
+              {entry.value.trim() ? (
+                <span>{entry.value}</span>
+              ) : (
+                <span class="placeholder-note">要入力</span>
+              )}
+              {entry.note && <span class="tokusho__note">{entry.note}</span>}
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</LegalLayout>
+
+<style>
+  .tokusho {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+
+  .tokusho th,
+  .tokusho td {
+    text-align: left;
+    vertical-align: top;
+    padding: var(--sp-4) 0;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .tokusho th {
+    width: 100%;
+    display: block;
+    padding-bottom: var(--sp-2);
+    border-bottom: 0;
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    color: var(--c-text-mute);
+  }
+
+  .tokusho td {
+    display: block;
+    padding-top: 0;
+    color: var(--c-text-sub);
+    line-height: 1.85;
+  }
+
+  .tokusho__note {
+    display: block;
+    margin-top: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+    line-height: 1.75;
+  }
+
+  @media (min-width: 640px) {
+    .tokusho th {
+      display: table-cell;
+      width: 12rem;
+      padding: var(--sp-4) var(--sp-4) var(--sp-4) 0;
+      border-bottom: 1px solid var(--c-line);
+    }
+
+    .tokusho td {
+      display: table-cell;
+      padding-top: var(--sp-4);
+    }
+  }
+</style>

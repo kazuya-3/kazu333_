@@ -1,0 +1,61 @@
+/**
+ * 自己紹介・スキル・使用ツール・対応時間。
+ */
+
+export interface SkillGroup {
+  label: string;
+  accent: 'system' | 'document' | 'creative';
+  items: string[];
+}
+
+export const about = {
+  heading: 'つくる人のこと',
+  /** 自己紹介文。段落ごとに配列の要素として書きます。 */
+  paragraphs: [
+    '業務アプリの開発・設計に携わるシステムエンジニアです。技術だけでなく、情報を整理したり、アイデアを見える形へ変えたりすることが好きです。',
+    'C#、SQL、ExcelなどのIT分野から、仕様書・マニュアル、SNS画像、配信素材、AIを活用した制作まで、小さな相談に柔軟に対応します。',
+    '本業との両立のため、平日夜間・土日を中心に、完全オンライン・固定報酬・納品型でお受けしています。',
+  ],
+  /** 大切にしていること */
+  values: [
+    {
+      title: 'まず、話を聞くところから',
+      body: '依頼内容が固まっていない段階のご相談が、むしろ多いです。何に困っているかを一緒に言葉にするところから始めます。',
+    },
+    {
+      title: 'できないことは、正直に',
+      body: '対応が難しい内容や、他の方に頼んだほうが早い場合は、その理由を添えて事前にお伝えします。',
+    },
+    {
+      title: '料金は、着手前に決める',
+      body: '作業範囲と金額を確認してから始めます。あとから無断で追加することはありません。',
+    },
+  ],
+} as const;
+
+/** 経歴。本番公開前にご自身の内容へ差し替えてください。 */
+export const career = [
+  { period: '本業', body: '業務システムの開発・設計・保守（Windowsアプリ / 業務データ）' },
+  { period: '個人制作', body: 'SNS・配信向けの素材制作、AIを活用した画像・企画づくり' },
+  { period: '受注形態', body: '完全オンライン・固定報酬・納品型（平日夜間・土日中心）' },
+];
+
+export const skillGroups: SkillGroup[] = [
+  {
+    label: '開発・データ',
+    accent: 'system',
+    items: ['C#', '.NET / Windows Forms', 'SQL（SQL Server）', 'Excel / VBA', 'CSV・データ整形', 'HTML / CSS / TypeScript'],
+  },
+  {
+    label: '資料・設計',
+    accent: 'document',
+    items: ['仕様書・設計書', '操作マニュアル', 'テスト項目書', '業務フロー図', '調査・情報整理'],
+  },
+  {
+    label: '制作・AI',
+    accent: 'creative',
+    items: ['Photoshop', '画像生成AI', 'プロンプト設計', '配信素材（OBS想定）', '企画・構成案'],
+  },
+];
+
+export const tools = ['Visual Studio', 'VS Code', 'SQL Server Management Studio', 'Excel', 'Photoshop', 'Figma', 'Notion', 'OBS Studio'];

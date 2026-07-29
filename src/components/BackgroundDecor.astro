@@ -1,0 +1,128 @@
+---
+/**
+ * 背景の柔らかい光と粒子。
+ * ポインタの位置にごく穏やかに反応します（reduced-motion では停止）。
+ * 装飾のみのため aria-hidden。
+ */
+---
+
+<div class="bg-decor" aria-hidden="true">
+  <span class="bg-blob bg-blob--a"></span>
+  <span class="bg-blob bg-blob--b"></span>
+  <span class="bg-blob bg-blob--c"></span>
+  <span class="bg-grain"></span>
+</div>
+
+<style>
+  .bg-decor {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+    background: var(--c-base);
+  }
+
+  .bg-blob {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.5;
+    will-change: transform;
+    transform: translate3d(
+      calc(var(--px, 0) * var(--depth, 10px)),
+      calc(var(--py, 0) * var(--depth, 10px)),
+      0
+    );
+    transition: transform 900ms var(--ease);
+  }
+
+  .bg-blob--a {
+    --depth: 16px;
+    top: -12vh;
+    left: -8vw;
+    width: 58vw;
+    height: 58vw;
+    max-width: 620px;
+    max-height: 620px;
+    background: radial-gradient(circle at 35% 35%, #d9ebff, rgba(217, 235, 255, 0) 68%);
+  }
+
+  .bg-blob--b {
+    --depth: -22px;
+    top: 8vh;
+    right: -14vw;
+    width: 52vw;
+    height: 52vw;
+    max-width: 560px;
+    max-height: 560px;
+    background: radial-gradient(circle at 55% 45%, #e9e3ff, rgba(233, 227, 255, 0) 68%);
+  }
+
+  .bg-blob--c {
+    --depth: 12px;
+    top: 62vh;
+    left: 18vw;
+    width: 46vw;
+    height: 46vw;
+    max-width: 520px;
+    max-height: 520px;
+    background: radial-gradient(circle at 45% 55%, #ddf7f0, rgba(221, 247, 240, 0) 70%);
+    opacity: 0.42;
+  }
+
+  /* ごく薄い粒子。テクスチャとしてだけ効かせる */
+  .bg-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    background-image: radial-gradient(rgba(47, 125, 225, 0.09) 1px, transparent 1px),
+      radial-gradient(rgba(169, 160, 240, 0.08) 1px, transparent 1px);
+    background-size: 46px 46px, 78px 78px;
+    background-position: 0 0, 22px 30px;
+    mask-image: radial-gradient(120% 90% at 50% 10%, #000 0%, transparent 72%);
+    -webkit-mask-image: radial-gradient(120% 90% at 50% 10%, #000 0%, transparent 72%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-blob {
+      transform: none !important;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // ポインタに合わせて背景をわずかに動かす。負荷を抑えるため rAF で間引く。
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const fine = window.matchMedia('(pointer: fine)');
+
+  if (!reduce.matches && fine.matches) {
+    const root = document.querySelector<HTMLElement>('.bg-decor');
+    if (root) {
+      let pending = false;
+      let x = 0;
+      let y = 0;
+
+      const apply = () => {
+        pending = false;
+        root.style.setProperty('--px', x.toFixed(3));
+        root.style.setProperty('--py', y.toFixed(3));
+      };
+
+      window.addEventListener(
+        'pointermove',
+        (event) => {
+          x = (event.clientX / window.innerWidth - 0.5) * 2;
+          y = (event.clientY / window.innerHeight - 0.5) * 2;
+          if (!pending) {
+            pending = true;
+            requestAnimationFrame(apply);
+          }
+        },
+        { passive: true },
+      );
+    }
+  }
+</script>

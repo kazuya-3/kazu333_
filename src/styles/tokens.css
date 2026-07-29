@@ -1,0 +1,130 @@
+/* ==================================================================
+   デザイントークン
+   色・余白・角丸・影・モーションはすべてここで定義しています。
+   サイトの見た目を調整したいときは、まずこのファイルを編集してください。
+   説明: docs/design-tokens.md
+   ================================================================== */
+
+:root {
+  /* --- ベース（背景） --- */
+  --c-base: #fbfaf8;
+  --c-base-tint: #f7f9fc;
+  --c-surface: #ffffff;
+  --c-surface-soft: #f4f6fa;
+  --c-line: #e6e8ef;
+  --c-line-strong: #d5d9e4;
+
+  /* --- メインカラー --- */
+  --c-blue: #5aa9e6;
+  --c-blue-deep: #2f7de1;
+  --c-blue-ink: #1f5bab;
+  --c-lavender: #a9a0f0;
+  --c-lavender-deep: #7a6fdc;
+  --c-mint: #6fd6c4;
+  --c-mint-deep: #35a894;
+
+  /* --- アクセント --- */
+  --c-coral: #ff8a80;
+  --c-coral-deep: #e8604f;
+  --c-citrus: #ffd166;
+
+  /* --- 文字 --- */
+  --c-text: #1d2430;
+  --c-text-sub: #5a6478;
+  --c-text-mute: #7c8698;
+  --c-text-on: #ffffff;
+
+  /* --- 状態 --- */
+  --c-ok: #35a894;
+  --c-warn: #d9822b;
+  --c-error: #d2544a;
+  --c-error-soft: #fdf1f0;
+
+  /* --- カテゴリ色（3 系統に固定） --- */
+  --c-cat-system: var(--c-blue-deep);
+  --c-cat-system-soft: #e8f2fd;
+  --c-cat-document: var(--c-lavender-deep);
+  --c-cat-document-soft: #efedfd;
+  --c-cat-creative: var(--c-coral-deep);
+  --c-cat-creative-soft: #ffeeec;
+
+  /* --- グラデーション --- */
+  --g-hero: radial-gradient(120% 90% at 12% 8%, #eaf4ff 0%, rgba(234, 244, 255, 0) 58%),
+    radial-gradient(90% 80% at 88% 4%, #f1edff 0%, rgba(241, 237, 255, 0) 55%),
+    radial-gradient(80% 70% at 60% 100%, #e6faf5 0%, rgba(230, 250, 245, 0) 62%);
+  --g-accent: linear-gradient(120deg, #5aa9e6 0%, #8fa2ee 55%, #a9a0f0 100%);
+  --g-mint: linear-gradient(130deg, #6fd6c4 0%, #74c2ea 100%);
+  --g-warm: linear-gradient(130deg, #b3a8f2 0%, #ffb3ab 100%);
+  --g-line: linear-gradient(90deg, #5aa9e6, #a9a0f0, #6fd6c4);
+  --g-glass: linear-gradient(150deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.6));
+
+  /* --- タイポグラフィ --- */
+  --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "BIZ UDPGothic",
+    Meiryo, system-ui, -apple-system, sans-serif;
+  --font-en: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+
+  /* 日本語見出しが単語の途中で折り返さない幅に収まるよう調整しています */
+  --fs-display: clamp(1.625rem, 5.4vw, 2.75rem);
+  --fs-h1: clamp(1.75rem, 4.6vw, 2.75rem);
+  --fs-h2: clamp(1.5rem, 3.6vw, 2.25rem);
+  --fs-h3: clamp(1.125rem, 2.2vw, 1.375rem);
+  --fs-lead: clamp(1rem, 2.2vw, 1.1875rem);
+  --fs-body: 1.0625rem;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.8125rem;
+  --fs-label: 0.75rem;
+
+  --lh-tight: 1.35;
+  --lh-body: 1.9;
+
+  /* --- 余白（8px グリッド） --- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.25rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --section-gap: clamp(4rem, 9vw, 7.5rem);
+
+  /* --- 角丸 --- */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  /* --- 影（青みを含む柔らかい影） --- */
+  --sh-sm: 0 1px 2px rgba(31, 58, 105, 0.04), 0 6px 18px rgba(31, 58, 105, 0.06);
+  --sh-md: 0 2px 6px rgba(31, 58, 105, 0.06), 0 16px 36px rgba(31, 58, 105, 0.1);
+  --sh-lg: 0 4px 12px rgba(31, 58, 105, 0.07), 0 28px 60px rgba(31, 58, 105, 0.13);
+  --sh-glow: 0 10px 26px rgba(47, 125, 225, 0.28);
+  --sh-inset: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  /* --- モーション --- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --dur-fast: 140ms;
+  --dur: 260ms;
+  --dur-slow: 520ms;
+
+  /* --- レイアウト --- */
+  --w-page: 1120px;
+  --w-narrow: 760px;
+  --pad-x: clamp(1.125rem, 5vw, 2.5rem);
+  --header-h: 64px;
+  --bottombar-h: 62px;
+
+  /* --- フォーカスリング --- */
+  --focus-ring: 0 0 0 3px rgba(47, 125, 225, 0.35);
+}
+
+/* 端末の文字サイズ設定を尊重しつつ、モバイルで本文が小さくなりすぎないように */
+@media (min-width: 768px) {
+  :root {
+    --fs-body: 1rem;
+  }
+}

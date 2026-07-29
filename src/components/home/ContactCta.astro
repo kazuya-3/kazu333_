@@ -1,0 +1,127 @@
+---
+import { site } from '../../config/site';
+import { url } from '../../lib/url';
+
+interface Props {
+  /** 見出しを変えたいページ用 */
+  title?: string;
+  lead?: string;
+}
+
+const {
+  title = 'まずは、困っていることだけ教えてください。',
+  lead = site.message.support,
+} = Astro.props;
+---
+
+<section class="section contact-cta" aria-labelledby="contact-cta-title">
+  <div class="container">
+    <div class="contact-cta__panel reveal">
+      <p class="eyebrow">Contact</p>
+      <h2 class="contact-cta__title" id="contact-cta-title">{title}</h2>
+      <p class="contact-cta__lead">{lead}</p>
+
+      <div class="btn-row contact-cta__actions">
+        <a class="btn btn--primary btn--lg" href={url('/contact')}>相談してみる</a>
+        <a class="btn btn--ghost btn--lg" href={url('/estimate')}>先に費用感を知る</a>
+      </div>
+
+      <ul class="contact-cta__points">
+        <li>相談だけでも大丈夫です</li>
+        <li>お返事の目安は2〜3日以内</li>
+        <li>料金は着手前に確認します</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-cta__panel {
+    position: relative;
+    padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 5vw, 3.5rem);
+    border-radius: var(--r-xl);
+    text-align: center;
+    overflow: hidden;
+    background: linear-gradient(140deg, #eef5ff 0%, #f4f0ff 52%, #eafaf6 100%);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--sh-lg), var(--sh-inset);
+  }
+
+  .contact-cta__panel::before,
+  .contact-cta__panel::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(30px);
+    pointer-events: none;
+  }
+
+  .contact-cta__panel::before {
+    width: 46%;
+    aspect-ratio: 1;
+    top: -26%;
+    left: -12%;
+    background: radial-gradient(circle, rgba(90, 169, 230, 0.3), transparent 70%);
+  }
+
+  .contact-cta__panel::after {
+    width: 42%;
+    aspect-ratio: 1;
+    bottom: -26%;
+    right: -10%;
+    background: radial-gradient(circle, rgba(255, 138, 128, 0.24), transparent 70%);
+  }
+
+  .contact-cta__panel :global(.eyebrow) {
+    justify-content: center;
+  }
+
+  .contact-cta__title {
+    position: relative;
+    font-size: var(--fs-h2);
+    line-height: 1.45;
+    max-width: 20em;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
+
+  .contact-cta__lead {
+    position: relative;
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    max-width: 34em;
+    margin-inline: auto;
+  }
+
+  .contact-cta__actions {
+    position: relative;
+    margin-top: var(--sp-8);
+    justify-content: center;
+  }
+
+  .contact-cta__points {
+    position: relative;
+    margin-top: var(--sp-6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-2) var(--sp-4);
+    list-style: none;
+    font-size: var(--fs-xs);
+    color: var(--c-text-sub);
+  }
+
+  .contact-cta__points li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .contact-cta__points li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-mint-deep);
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+import LegalLayout from '../components/LegalLayout.astro';
+import { privacySections } from '../config/legal';
+import { site } from '../config/site';
+---
+
+<LegalLayout
+  title="プライバシーポリシー"
+  description="お問い合わせフォームからお預かりする情報の取り扱い、利用目的、第三者提供、保存期間、Cookieの利用についてまとめています。"
+  lead={`${site.name}（以下「当サイト」）における、個人情報の取り扱いについて定めます。`}
+>
+  {
+    privacySections.map((section) => (
+      <section>
+        <h2>{section.heading}</h2>
+        {section.body.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </section>
+    ))
+  }
+
+  <section>
+    <h2>お問い合わせ窓口</h2>
+    <p>
+      個人情報の取り扱いに関するお問い合わせは、当サイトのご相談フォームよりご連絡ください。
+      {
+        !site.contact.emailConfigured && (
+          <>
+            {' '}
+            <span class="placeholder-note">要入力</span>
+            {' '}公開前に、連絡先メールアドレスを src/config/site.ts の contact.email に設定し、
+            emailConfigured を true にしてください。
+          </>
+        )
+      }
+    </p>
+  </section>
+</LegalLayout>

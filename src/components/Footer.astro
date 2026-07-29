@@ -1,0 +1,227 @@
+---
+import { site } from '../config/site';
+import { footerNav } from '../config/nav';
+import { url } from '../lib/url';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <p class="site-footer__name">{site.nameEn}</p>
+      <p class="site-footer__tagline">{site.message.world}</p>
+      <dl class="site-footer__meta">
+        <div>
+          <dt>対応時間</dt>
+          <dd>{site.availability.hours}</dd>
+        </div>
+        <div>
+          <dt>受注形態</dt>
+          <dd>{site.availability.style}</dd>
+        </div>
+        <div>
+          <dt>ご連絡</dt>
+          <dd>
+            {
+              site.contact.emailConfigured ? (
+                <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+              ) : (
+                <a href={url('/contact')}>ご相談フォームから</a>
+              )
+            }
+          </dd>
+        </div>
+      </dl>
+      {
+        site.social.length > 0 && (
+          <ul class="site-footer__social">
+            {site.social.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener noreferrer">
+                  {s.label}
+                  {s.handle && <span class="site-footer__handle">{s.handle}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <div class="site-footer__nav">
+      {
+        footerNav.map((group) => (
+          <nav aria-label={group.heading}>
+            <h2 class="site-footer__heading">{group.heading}</h2>
+            <ul>
+              {group.items.map((item) => (
+                <li>
+                  <a href={url(item.href)}>{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p class="site-footer__copy">© {year} {site.name}</p>
+    <p class="site-footer__note">
+      掲載している実績・商品は、現時点でのサンプルを含みます。
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--section-gap);
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+    background: linear-gradient(180deg, rgba(244, 246, 250, 0) 0%, #f2f5fa 42%, #eef2f9 100%);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--sp-10);
+  }
+
+  .site-footer__name {
+    font-family: var(--font-en);
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: 0.08em;
+  }
+
+  .site-footer__tagline {
+    margin-top: var(--sp-2);
+    color: var(--c-text-sub);
+    font-size: var(--fs-sm);
+    max-width: 30em;
+  }
+
+  .site-footer__meta {
+    margin-top: var(--sp-6);
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .site-footer__meta div {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: var(--sp-3);
+    align-items: baseline;
+  }
+
+  .site-footer__meta dt {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-text-mute);
+  }
+
+  .site-footer__meta dd {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+  }
+
+  .site-footer__social {
+    margin-top: var(--sp-5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .site-footer__social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 40px;
+    padding: 0.35rem 0.9rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-line-strong);
+    background: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--c-text-sub);
+  }
+
+  .site-footer__social a:hover {
+    border-color: rgba(47, 125, 225, 0.4);
+    color: var(--c-blue-ink);
+  }
+
+  .site-footer__handle {
+    font-family: var(--font-en);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    color: var(--c-text-mute);
+  }
+
+  .site-footer__nav {
+    display: grid;
+    gap: var(--sp-8);
+  }
+
+  .site-footer__heading {
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--c-text-mute);
+    margin-bottom: var(--sp-3);
+  }
+
+  .site-footer__nav ul {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-1);
+  }
+
+  .site-footer__nav a {
+    display: inline-block;
+    padding-block: 0.4rem;
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    text-decoration: none;
+  }
+
+  .site-footer__nav a:hover {
+    color: var(--c-blue-ink);
+    text-decoration: underline;
+  }
+
+  .site-footer__bottom {
+    margin-top: var(--sp-10);
+    padding-block: var(--sp-5);
+    border-top: 1px solid var(--c-line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-5);
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site-footer__copy,
+  .site-footer__note {
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  @media (min-width: 640px) {
+    .site-footer__nav {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--sp-5);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .site-footer__inner {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+      gap: var(--sp-12);
+    }
+  }
+</style>

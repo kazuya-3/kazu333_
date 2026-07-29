@@ -1,0 +1,528 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import {
+  products,
+  isPurchasable,
+  productCategoryLabel,
+  productStatusLabel,
+  type Product,
+} from '../../config/products';
+import { url, absoluteUrl } from '../../lib/url';
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+
+const accent: Record<Product['category'], 'system' | 'document' | 'creative' | 'ai' | 'neutral'> = {
+  design: 'creative',
+  stream: 'creative',
+  ai: 'ai',
+  tool: 'system',
+  template: 'document',
+};
+
+const purchasable = isPurchasable(product);
+const hasSale = typeof product.salePrice === 'number' && product.salePrice < product.price;
+const displayPrice = hasSale ? product.salePrice! : product.price;
+
+const others = products.filter((p) => p.slug !== product.slug).slice(0, 3);
+
+const licenseRows = [
+  { label: '利用範囲', value: product.license.scope },
+  { label: '商用利用', value: product.license.commercial ? '可能' : '不可' },
+  { label: '加工・改変', value: product.license.modify ? '可能' : '不可' },
+  { label: '再配布・再販売', value: '不可（素材そのものの配布はご遠慮ください）' },
+  { label: 'クレジット表記', value: product.license.credit },
+];
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: absoluteUrl('/', Astro.site) },
+    { '@type': 'ListItem', position: 2, name: 'ショップ', item: absoluteUrl('/shop', Astro.site) },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: product.name,
+      item: absoluteUrl(`/shop/${product.slug}`, Astro.site),
+    },
+  ],
+};
+
+const productLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.name,
+  description: product.description,
+  category: productCategoryLabel[product.category],
+  offers: {
+    '@type': 'Offer',
+    price: displayPrice,
+    priceCurrency: 'JPY',
+    availability: purchasable
+      ? 'https://schema.org/InStock'
+      : product.status === 'soldOut'
+        ? 'https://schema.org/Discontinued'
+        : 'https://schema.org/PreOrder',
+    url: absoluteUrl(`/shop/${product.slug}`, Astro.site),
+  },
+};
+---
+
+<BaseLayout
+  title={product.name}
+  description={`${product.catch} ${product.description.slice(0, 90)}`}
+  jsonLd={[breadcrumbLd, productLd]}
+>
+  <section class="section section--tight product-detail">
+    <div class="container">
+      <Breadcrumbs items={[{ label: 'ショップ', href: '/shop' }, { label: product.name }]} />
+
+      <div class="product-detail__top">
+        <div class="product-detail__media">
+          {
+            product.preview ? (
+              <Image
+                src={product.preview.src}
+                alt={product.preview.alt}
+                widths={[480, 960]}
+                sizes="(min-width: 900px) 520px, 100vw"
+                loading="eager"
+                fetchpriority="high"
+              />
+            ) : (
+              <CoverArt
+                seed={product.slug}
+                accent={accent[product.category]}
+                ratio="4 / 3"
+                label={`${product.name}のイメージ`}
+              />
+            )
+          }
+          {
+            product.gallery && product.gallery.length > 0 && (
+              <ul class="product-detail__thumbs">
+                {product.gallery.map((item) => (
+                  <li>
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      widths={[160, 320]}
+                      sizes="120px"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+
+        <div class="product-detail__info">
+          <p class="product-detail__cat">{productCategoryLabel[product.category]}</p>
+          <h1 class="product-detail__title">{product.name}</h1>
+          <p class="product-detail__catch">{product.catch}</p>
+
+          <ul class="tag-row product-detail__tags">
+            {product.tags.map((tag) => <li class="badge">{tag}</li>)}
+          </ul>
+
+          <div class="product-detail__buy">
+            <div class="product-detail__price">
+              {
+                hasSale && (
+                  <span class="product-detail__price-old">
+                    <span class="visually-hidden">通常価格</span>
+                    {product.price.toLocaleString('ja-JP')}円
+                  </span>
+                )
+              }
+              <span class="product-detail__price-now">
+                {displayPrice.toLocaleString('ja-JP')}<span>円</span>
+              </span>
+              <span class="product-detail__tax">税込</span>
+            </div>
+
+            {
+              purchasable ? (
+                <>
+                  <a
+                    class="btn btn--primary btn--lg btn--full"
+                    href={product.purchaseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    購入ページへ進む
+                    <span class="visually-hidden">（外部サイトが開きます）</span>
+                  </a>
+                  <p class="product-detail__buy-note">
+                    決済と配布は外部の販売サービス上で行います。このサイトではクレジットカード情報をお預かりしません。
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p class="product-detail__preparing">
+                    <span class="product-detail__preparing-label">
+                      {productStatusLabel[product.status]}
+                    </span>
+                    {product.status === 'preparing'
+                      ? '販売の準備を進めています。開始のお知らせをご希望の方は、フォームからお知らせください。'
+                      : '現在この商品は販売していません。似た内容のご相談は受け付けています。'}
+                  </p>
+                  <a class="btn btn--ghost btn--lg btn--full" href={url('/contact')}>
+                    {product.status === 'preparing' ? '販売開始を知らせてもらう' : 'この商品について問い合わせる'}
+                  </a>
+                </>
+              )
+            }
+          </div>
+
+          <dl class="product-detail__spec">
+            <div>
+              <dt>ファイル形式</dt>
+              <dd>{product.formats.join(' / ')}</dd>
+            </div>
+            <div>
+              <dt>対応環境</dt>
+              <dd>{product.environment}</dd>
+            </div>
+            <div>
+              <dt>更新日</dt>
+              <dd>{product.updatedAt}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="product-detail__body">
+        <section class="product-detail__section" aria-labelledby="desc-title">
+          <h2 class="product-detail__section-title" id="desc-title">この商品について</h2>
+          <p class="product-detail__desc">{product.description}</p>
+        </section>
+
+        <section class="product-detail__section" aria-labelledby="contents-title">
+          <h2 class="product-detail__section-title" id="contents-title">内容物</h2>
+          <ul class="product-detail__contents">
+            {product.contents.map((item) => <li>{item}</li>)}
+          </ul>
+        </section>
+
+        <section class="product-detail__section" aria-labelledby="license-title">
+          <h2 class="product-detail__section-title" id="license-title">利用範囲</h2>
+          <dl class="license-table">
+            {
+              licenseRows.map((row) => (
+                <div>
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          <p class="product-detail__license-note">
+            利用範囲について迷ったときは、購入前にお気軽にご相談ください。
+            広告や再販など、範囲が広い使い方をご希望の場合は個別にご案内します。
+          </p>
+        </section>
+      </div>
+
+      {
+        others.length > 0 && (
+          <section class="product-detail__others" aria-labelledby="others-title">
+            <h2 class="section-title" id="others-title">ほかの商品</h2>
+            <div class="product-detail__others-grid">
+              {others.map((item) => (
+                <ProductCard product={item} />
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .product-detail__top {
+    margin-top: var(--sp-6);
+    display: grid;
+    gap: var(--sp-8);
+  }
+
+  .product-detail__media :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--r-xl);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-md);
+    background: var(--c-surface);
+  }
+
+  .product-detail__media :global(.cover) {
+    border-radius: var(--r-xl);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-md);
+  }
+
+  .product-detail__thumbs {
+    margin-top: var(--sp-3);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .product-detail__thumbs li {
+    border-radius: var(--r-md);
+    overflow: hidden;
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+  }
+
+  .product-detail__thumbs :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .product-detail__cat {
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--c-text-mute);
+  }
+
+  .product-detail__title {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-h1);
+    line-height: 1.35;
+  }
+
+  .product-detail__catch {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-lead);
+    color: var(--c-text-sub);
+  }
+
+  .product-detail__tags {
+    margin-top: var(--sp-4);
+  }
+
+  .product-detail__buy {
+    margin-top: var(--sp-6);
+    padding: var(--sp-5);
+    border-radius: var(--r-xl);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.95), rgba(240, 247, 255, 0.85));
+    border: 1px solid rgba(90, 169, 230, 0.28);
+    box-shadow: var(--sh-sm);
+  }
+
+  .product-detail__price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--sp-4);
+  }
+
+  .product-detail__price-old {
+    font-size: var(--fs-sm);
+    color: var(--c-text-mute);
+    text-decoration: line-through;
+  }
+
+  .product-detail__price-now {
+    font-family: var(--font-en);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .product-detail__price-now span {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    margin-left: 2px;
+  }
+
+  .product-detail__tax {
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  .product-detail__buy-note {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+    line-height: 1.8;
+  }
+
+  .product-detail__preparing {
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.85;
+    margin-bottom: var(--sp-4);
+  }
+
+  .product-detail__preparing-label {
+    display: inline-block;
+    margin-right: 0.6rem;
+    padding: 0.2em 0.75em;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-soft);
+    border: 1px dashed var(--c-line-strong);
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    color: var(--c-text-mute);
+  }
+
+  .product-detail__spec {
+    margin-top: var(--sp-5);
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .product-detail__spec > div {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: var(--sp-3);
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .product-detail__spec dt {
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    color: var(--c-text-mute);
+  }
+
+  .product-detail__spec dd {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+  }
+
+  .product-detail__body {
+    margin-top: var(--sp-12);
+    display: grid;
+    gap: var(--sp-8);
+    max-width: var(--w-narrow);
+  }
+
+  .product-detail__section-title {
+    font-size: var(--fs-h3);
+    padding-bottom: var(--sp-3);
+    border-bottom: 2px solid var(--c-line);
+  }
+
+  .product-detail__desc {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    line-height: 1.95;
+  }
+
+  .product-detail__contents {
+    margin-top: var(--sp-4);
+    display: grid;
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .product-detail__contents li {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--c-text-sub);
+    line-height: 1.85;
+  }
+
+  .product-detail__contents li::before {
+    content: "";
+    position: absolute;
+    left: 0.2rem;
+    top: 0.68em;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--c-mint);
+  }
+
+  .license-table {
+    margin-top: var(--sp-4);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .license-table > div {
+    display: grid;
+    gap: 0.2rem;
+    padding-block: var(--sp-3);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .license-table dt {
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    color: var(--c-text-mute);
+  }
+
+  .license-table dd {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.8;
+  }
+
+  .product-detail__license-note {
+    margin-top: var(--sp-4);
+    padding: var(--sp-4);
+    border-radius: var(--r-md);
+    background: var(--c-surface-soft);
+    font-size: var(--fs-xs);
+    color: var(--c-text-sub);
+    line-height: 1.85;
+  }
+
+  .product-detail__others {
+    margin-top: var(--sp-16);
+  }
+
+  .product-detail__others-grid {
+    margin-top: var(--sp-6);
+    display: grid;
+    gap: var(--sp-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  }
+
+  @media (min-width: 700px) {
+    .license-table > div {
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: var(--sp-4);
+      align-items: baseline;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .product-detail__top {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--sp-10);
+      align-items: start;
+    }
+  }
+</style>

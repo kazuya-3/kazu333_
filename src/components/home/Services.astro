@@ -1,0 +1,287 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import { serviceCategories, serviceFallbackNote } from '../../config/services';
+import { url } from '../../lib/url';
+
+const icons: Record<string, string> = {
+  system: 'M9 8 5 12l4 4m6-8 4 4-4 4M13.5 6l-3 12',
+  document: 'M7 4h7l4 4v12H7zM14 4v4h4M9.5 13h5M9.5 16h5M9.5 10h2',
+  creative: 'M4 6h16v12H4zM4 15l4-4 3 3 3-3 6 6M9 10.5a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4Z',
+};
+---
+
+<section class="section services" id="services" aria-labelledby="services-title">
+  <div class="container">
+    <SectionHeading
+      eyebrow="Services"
+      title="対応できること"
+      lead="3つの分野を横断してお受けしています。分野をまたぐご相談（「資料もほしいし、素材も要る」など）もまとめて対応できます。"
+      id="services-title"
+    />
+
+    <div class="services__grid">
+      {
+        serviceCategories.map((category, index) => (
+          <article
+            class:list={['service-card', 'reveal', `service-card--${category.key}`]}
+            style={`--reveal-delay:${index * 90}ms`}
+          >
+            <div class="service-card__head">
+              <span class="service-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22">
+                  <path
+                    d={icons[category.icon]}
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <p class="service-card__label">{category.label}</p>
+              <h3 class="service-card__title">{category.title}</h3>
+            </div>
+
+            <p class="service-card__desc">{category.description}</p>
+
+            <ul class="service-card__items">
+              {category.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+
+            <div class="service-card__foot">
+              <span class="service-card__price">
+                <span class="service-card__price-label">目安</span>
+                {category.priceHint}
+              </span>
+              <a class="service-card__cta" href={url(`/estimate?field=${category.key}`)}>
+                この分野で見積もる<span aria-hidden="true"> →</span>
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="services__note notice reveal">
+      <p>{serviceFallbackNote}</p>
+      <div class="btn-row services__note-actions">
+        <a class="btn btn--ghost" href={url('/contact')}>できるか聞いてみる</a>
+        <a class="btn btn--quiet" href={url('/works')}>実績を見る</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .services__grid {
+    margin-top: var(--sp-10);
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    padding: var(--sp-6);
+    border-radius: var(--r-xl);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+
+  .service-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: var(--card-accent, var(--g-accent));
+  }
+
+  .service-card::after {
+    content: "";
+    position: absolute;
+    right: -30%;
+    top: -40%;
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--card-glow, rgba(90, 169, 230, 0.12));
+    filter: blur(28px);
+    pointer-events: none;
+  }
+
+  .service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--sh-md);
+  }
+
+  .service-card--system {
+    --card-accent: linear-gradient(90deg, #5aa9e6, #2f7de1);
+    --card-glow: rgba(90, 169, 230, 0.16);
+  }
+
+  .service-card--document {
+    --card-accent: linear-gradient(90deg, #a9a0f0, #7a6fdc);
+    --card-glow: rgba(169, 160, 240, 0.18);
+  }
+
+  .service-card--creative {
+    --card-accent: linear-gradient(90deg, #ffb3ab, #ff8a80);
+    --card-glow: rgba(255, 138, 128, 0.16);
+  }
+
+  .service-card__head {
+    position: relative;
+  }
+
+  .service-card__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    margin-bottom: var(--sp-4);
+  }
+
+  .service-card--system .service-card__icon {
+    background: var(--c-cat-system-soft);
+    color: var(--c-cat-system);
+  }
+
+  .service-card--document .service-card__icon {
+    background: var(--c-cat-document-soft);
+    color: var(--c-cat-document);
+  }
+
+  .service-card--creative .service-card__icon {
+    background: var(--c-cat-creative-soft);
+    color: var(--c-cat-creative);
+  }
+
+  .service-card__label {
+    font-family: var(--font-en);
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--c-text-mute);
+  }
+
+  .service-card__title {
+    margin-top: 0.25rem;
+    font-size: var(--fs-h3);
+  }
+
+  .service-card__desc {
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.85;
+  }
+
+  .service-card__items {
+    display: grid;
+    gap: 0.4rem;
+    list-style: none;
+    padding-top: var(--sp-2);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .service-card__items li {
+    position: relative;
+    padding-left: 1.15rem;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--c-text);
+  }
+
+  .service-card__items li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 6px;
+    height: 6px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.35;
+  }
+
+  .service-card__foot {
+    margin-top: auto;
+    padding-top: var(--sp-4);
+    border-top: 1px solid var(--c-line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+  }
+
+  .service-card__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--font-en);
+    font-weight: 800;
+    font-size: 1.0625rem;
+  }
+
+  .service-card__price-label {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--c-text-mute);
+  }
+
+  .service-card__cta {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-blue-ink);
+    text-decoration: none;
+    padding: 0.5em 0;
+  }
+
+  .service-card__cta:hover {
+    text-decoration: underline;
+  }
+
+  .services__note {
+    margin-top: var(--sp-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+    background: linear-gradient(120deg, rgba(90, 169, 230, 0.08), rgba(169, 160, 240, 0.08));
+    border-color: rgba(90, 169, 230, 0.24);
+    color: var(--c-text-sub);
+  }
+
+  .services__note-actions {
+    margin-top: 0;
+  }
+
+  /* すべて同じ形にせず、中央のカードを少し持ち上げて変化をつける */
+  @media (min-width: 860px) {
+    .services__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .service-card--document {
+      margin-top: -1.25rem;
+      padding-block: calc(var(--sp-6) + 0.6rem);
+    }
+
+    .services__note {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-6);
+    }
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import ProductCard from '../ProductCard.astro';
+import { products, featuredProducts } from '../../config/products';
+import { url } from '../../lib/url';
+
+const picked = [...featuredProducts, ...products.filter((p) => !p.featured)].slice(0, 3);
+---
+
+<section class="section section--glow shop-section" id="shop" aria-labelledby="shop-title">
+  <div class="container">
+    <div class="shop-section__head">
+      <SectionHeading
+        eyebrow="Shop"
+        title="完成済みの素材とテンプレート"
+        lead="依頼するほどではないとき、そのまま使えるものを用意しています。ダウンロードしてすぐお使いいただけます。"
+        id="shop-title"
+      />
+      <a class="btn btn--quiet shop-section__all" href={url('/shop')}>ショップをすべて見る</a>
+    </div>
+
+    <div class="shop-section__grid">
+      {
+        picked.map((product, i) => (
+          <div class="reveal" style={`--reveal-delay:${i * 80}ms`}>
+            <ProductCard product={product} />
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="shop-section__note text-mute">
+      決済と配布は外部の販売サービス上で行います。このサイトではクレジットカード情報をお預かりしません。
+    </p>
+  </div>
+</section>
+
+<style>
+  .shop-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--sp-5);
+  }
+
+  .shop-section__grid {
+    margin-top: var(--sp-10);
+    display: grid;
+    gap: var(--sp-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  }
+
+  .shop-section__note {
+    margin-top: var(--sp-6);
+  }
+</style>

@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { priceGuide, tax, rules } from '../config/pricing';
+import EstimateWizard from '../components/islands/EstimateWizard';
+import { url, absoluteUrl } from '../lib/url';
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: absoluteUrl('/', Astro.site) },
+    { '@type': 'ListItem', position: 2, name: '簡易見積もり', item: absoluteUrl('/estimate', Astro.site) },
+  ],
+};
+---
+
+<BaseLayout
+  title="簡易見積もり"
+  description="分野・依頼内容・規模・条件を選ぶだけで、費用の概算と想定納期が分かります。システム修正、データ整理、資料作成、SNS素材、AI活用まで。そのままご相談へ引き継げます。"
+  jsonLd={breadcrumbLd}
+>
+  <section class="section section--glow estimate-page">
+    <div class="container container--narrow">
+      <Breadcrumbs items={[{ label: '簡易見積もり' }]} />
+
+      <header class="estimate-page__head">
+        <p class="eyebrow">Estimate</p>
+        <h1 class="estimate-page__title">簡易見積もり</h1>
+        <p class="estimate-page__lead">
+          4つの質問にお答えいただくと、費用の概算と想定納期の目安が分かります。
+          正確な金額ではなく、価格帯としてお出しします。
+        </p>
+        <ul class="estimate-page__points">
+          <li>1分ほどで終わります</li>
+          <li>途中で戻れます</li>
+          <li>そのまま相談へ進めます</li>
+        </ul>
+      </header>
+
+      <div class="estimate-page__wizard">
+        <EstimateWizard client:load contactUrl={url('/contact')} />
+      </div>
+
+      <section class="estimate-page__guide" aria-labelledby="guide-title">
+        <h2 class="estimate-page__guide-title" id="guide-title">料金の目安</h2>
+        <p class="estimate-page__guide-lead">
+          見積もりを使わない場合の、おおまかな基準です。{tax.note}
+        </p>
+        <dl class="guide-list">
+          {
+            priceGuide.map((row) => (
+              <div>
+                <dt>
+                  {row.label}
+                  <span>{row.example}</span>
+                </dt>
+                <dd>{row.price}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <ul class="estimate-page__rules">
+          <li>最低のご依頼金額は{rules.minimumFee.toLocaleString('ja-JP')}円です。</li>
+          <li>短納期・複数案・複数点・元データ納品・仕様整理は、加算の対象になります。</li>
+          <li>商用利用の範囲が広い場合は、金額を出さず個別にご相談させてください。</li>
+          <li>予算が決まっている場合は、その範囲でできることをご提案します。</li>
+        </ul>
+      </section>
+
+      <section class="estimate-page__next" aria-labelledby="next-title">
+        <h2 id="next-title">見積もりを使わずに相談することもできます</h2>
+        <p>
+          選択肢に当てはまらない、そもそも何を頼めばよいか分からない、という場合は、
+          そのままご相談ください。状況を伺うところから一緒に整理します。
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--ghost" href={url('/contact')}>そのまま相談する</a>
+          <a class="btn btn--quiet" href={url('/works')}>実績から探す</a>
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .estimate-page__head {
+    margin-top: var(--sp-6);
+    margin-bottom: var(--sp-8);
+  }
+
+  .estimate-page__title {
+    font-size: var(--fs-h1);
+  }
+
+  .estimate-page__lead {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    font-size: var(--fs-lead);
+  }
+
+  .estimate-page__points {
+    margin-top: var(--sp-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .estimate-page__points li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.3em 0.8em;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--c-line);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-text-sub);
+  }
+
+  .estimate-page__points li::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-mint-deep);
+  }
+
+  .estimate-page__guide {
+    margin-top: var(--sp-16);
+    padding: var(--sp-6);
+    border-radius: var(--r-xl);
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--c-line);
+  }
+
+  .estimate-page__guide-title {
+    font-size: var(--fs-h3);
+  }
+
+  .estimate-page__guide-lead {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+  }
+
+  .guide-list {
+    margin-top: var(--sp-5);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .guide-list > div {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-3);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .guide-list dt {
+    display: grid;
+    gap: 2px;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+  }
+
+  .guide-list dt span {
+    font-size: var(--fs-xs);
+    font-weight: 400;
+    color: var(--c-text-mute);
+  }
+
+  .guide-list dd {
+    margin: 0;
+    flex: 0 0 auto;
+    font-family: var(--font-en);
+    font-weight: 800;
+    color: var(--c-blue-ink);
+    white-space: nowrap;
+  }
+
+  .estimate-page__rules {
+    margin-top: var(--sp-5);
+    display: grid;
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .estimate-page__rules li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: var(--fs-xs);
+    color: var(--c-text-sub);
+    line-height: 1.8;
+  }
+
+  .estimate-page__rules li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--c-blue);
+  }
+
+  .estimate-page__next {
+    margin-top: var(--sp-10);
+    padding: var(--sp-6);
+    border-radius: var(--r-xl);
+    background: linear-gradient(140deg, rgba(240, 247, 255, 0.9), rgba(244, 240, 255, 0.85));
+    border: 1px solid rgba(90, 169, 230, 0.24);
+  }
+
+  .estimate-page__next h2 {
+    font-size: var(--fs-h3);
+  }
+
+  .estimate-page__next p {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.9;
+  }
+
+  .estimate-page__next .btn-row {
+    margin-top: var(--sp-5);
+  }
+</style>

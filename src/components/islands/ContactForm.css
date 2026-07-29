@@ -1,0 +1,505 @@
+/* 問い合わせフォームのスタイル。クラス名は .cf 配下に閉じています。 */
+
+.cf {
+  display: grid;
+  gap: var(--sp-5);
+}
+
+/* --- 開発用の注意書き --- */
+
+.cf__mock {
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: #fff8e6;
+  border: 1px dashed #e0b64d;
+  color: #7a5d17;
+  font-size: var(--fs-xs);
+  line-height: 1.8;
+}
+
+/* --- 見積もりの引き継ぎ --- */
+
+.cf__estimate {
+  padding: var(--sp-5);
+  border-radius: var(--r-lg);
+  background: linear-gradient(140deg, rgba(232, 242, 253, 0.9), rgba(239, 237, 253, 0.8));
+  border: 1px solid rgba(90, 169, 230, 0.32);
+}
+
+.cf__estimate-title {
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  color: var(--c-blue-ink);
+  margin-bottom: var(--sp-3);
+}
+
+.cf__estimate-body {
+  margin: 0;
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.86);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--c-text-sub);
+}
+
+.cf__estimate-actions {
+  margin-top: var(--sp-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+}
+
+.cf__estimate-link {
+  background: none;
+  border: 0;
+  padding: 0.4em 0;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--c-blue-ink);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* --- エラーの要約 --- */
+
+.cf__errors {
+  padding: var(--sp-5);
+  border-radius: var(--r-lg);
+  background: var(--c-error-soft);
+  border: 1px solid rgba(210, 84, 74, 0.32);
+  color: #8f342c;
+}
+
+.cf__errors:focus {
+  outline: 2px solid var(--c-error);
+  outline-offset: 2px;
+}
+
+.cf__errors-title {
+  font-weight: 800;
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-2);
+}
+
+.cf__errors ul {
+  display: grid;
+  gap: var(--sp-1);
+  padding-left: 1.2em;
+}
+
+.cf__errors li {
+  list-style: disc;
+  font-size: var(--fs-sm);
+  line-height: 1.75;
+}
+
+.cf__errors a {
+  color: inherit;
+}
+
+.cf__errors--send {
+  background: #fdf1f0;
+}
+
+/* --- フォーム本体 --- */
+
+.cf__form {
+  display: grid;
+  gap: var(--sp-6);
+}
+
+.cf__field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.cf__label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.cf__required-mark {
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.15em 0.55em;
+  border-radius: var(--r-pill);
+  background: #fdeceb;
+  color: #b4443b;
+  border: 1px solid rgba(210, 84, 74, 0.22);
+}
+
+.cf__required-mark.is-optional {
+  background: var(--c-surface-soft);
+  color: var(--c-text-mute);
+  border-color: var(--c-line);
+}
+
+.cf__hint {
+  font-size: var(--fs-xs);
+  color: var(--c-text-mute);
+  line-height: 1.75;
+}
+
+.cf__field input[type="text"],
+.cf__field input[type="email"],
+.cf__field input[type="url"],
+.cf__field select,
+.cf__field textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 0.7rem 0.95rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-line-strong);
+  background: var(--c-surface);
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.cf__field textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.cf__field input[type="file"] {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: var(--r-md);
+  border: 1px dashed var(--c-line-strong);
+  background: var(--c-surface-soft);
+  font-size: var(--fs-sm);
+}
+
+.cf__field input:focus,
+.cf__field select:focus,
+.cf__field textarea:focus {
+  outline: none;
+  border-color: var(--c-blue-deep);
+  box-shadow: var(--focus-ring);
+}
+
+.cf__field.is-error input,
+.cf__field.is-error select,
+.cf__field.is-error textarea {
+  border-color: var(--c-error);
+  background: #fffafa;
+}
+
+.cf__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: var(--fs-xs);
+  color: #b4443b;
+  line-height: 1.7;
+}
+
+.cf__error::before {
+  content: "!";
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin-top: 0.2em;
+  border-radius: 50%;
+  background: #fdeceb;
+  font-size: 0.625rem;
+  font-weight: 800;
+}
+
+.cf__row {
+  display: grid;
+  gap: var(--sp-5);
+}
+
+/* --- 任意項目の折りたたみ（入力項目を多く見せない） --- */
+
+.cf__more {
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-line);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.cf__more summary {
+  padding: var(--sp-4) var(--sp-5);
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--c-blue-ink);
+  list-style: none;
+}
+
+.cf__more summary::-webkit-details-marker {
+  display: none;
+}
+
+.cf__more summary::before {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--c-cat-system-soft);
+  font-weight: 800;
+}
+
+.cf__more[open] summary::before {
+  content: "−";
+}
+
+.cf__more-body {
+  display: grid;
+  gap: var(--sp-5);
+  padding: 0 var(--sp-5) var(--sp-5);
+}
+
+/* --- 同意 --- */
+
+.cf__agree {
+  padding: var(--sp-4) var(--sp-5);
+  border-radius: var(--r-lg);
+  background: var(--c-surface-soft);
+  border: 1px solid var(--c-line);
+}
+
+.cf__agree.is-error {
+  border-color: var(--c-error);
+  background: var(--c-error-soft);
+}
+
+.cf__agree label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  cursor: pointer;
+  min-height: 44px;
+  align-items: center;
+}
+
+.cf__agree input {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  accent-color: var(--c-blue-deep);
+}
+
+.cf__agree .cf__required-mark {
+  margin-left: 0.5rem;
+}
+
+.cf__submit {
+  margin-top: var(--sp-2);
+}
+
+.cf__submit-note {
+  font-size: var(--fs-xs);
+  color: var(--c-text-mute);
+  text-align: center;
+}
+
+/* ボット対策用の隠しフィールド */
+.cf__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* --- 確認画面 --- */
+
+.cf__confirm {
+  padding: var(--sp-6) clamp(1rem, 4vw, 2rem);
+  border-radius: var(--r-xl);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--c-line);
+  box-shadow: var(--sh-md);
+}
+
+.cf__confirm:focus {
+  outline: none;
+}
+
+.cf__confirm-title {
+  font-size: var(--fs-h3);
+}
+
+.cf__confirm-lead {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--c-text-sub);
+}
+
+.cf__confirm-list {
+  margin-top: var(--sp-5);
+  border-top: 1px solid var(--c-line);
+}
+
+.cf__confirm-row {
+  display: grid;
+  gap: 0.25rem;
+  padding-block: var(--sp-3);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.cf__confirm-row dt {
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  color: var(--c-text-mute);
+}
+
+.cf__confirm-row dd {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  word-break: break-word;
+}
+
+.cf__confirm-row dd.is-multiline {
+  white-space: pre-wrap;
+}
+
+.cf__confirm-actions {
+  margin-top: var(--sp-6);
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.cf__sending {
+  margin-top: var(--sp-5);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--fs-sm);
+  color: var(--c-blue-ink);
+  font-weight: 700;
+}
+
+.cf__spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(47, 125, 225, 0.25);
+  border-top-color: var(--c-blue-deep);
+  animation: cfSpin 700ms linear infinite;
+}
+
+@keyframes cfSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- 送信完了 --- */
+
+.cf__result {
+  padding: clamp(1.75rem, 5vw, 3rem);
+  border-radius: var(--r-xl);
+  text-align: center;
+  background: linear-gradient(140deg, rgba(231, 248, 244, 0.95), rgba(240, 247, 255, 0.9));
+  border: 1px solid rgba(111, 214, 196, 0.4);
+  box-shadow: var(--sh-md);
+}
+
+.cf__result:focus {
+  outline: none;
+}
+
+.cf__result-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--sp-4);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--c-mint-deep);
+  box-shadow: var(--sh-sm);
+  animation: cfPop var(--dur-slow) var(--ease-out-back) both;
+}
+
+.cf__result-title {
+  font-size: var(--fs-h3);
+}
+
+.cf__result-body {
+  margin-top: var(--sp-3);
+  color: var(--c-text-sub);
+  font-size: var(--fs-sm);
+  line-height: 1.9;
+  max-width: 34em;
+  margin-inline: auto;
+}
+
+.cf__result-note {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-xs);
+  color: var(--c-text-mute);
+}
+
+.cf__result .cf__mock {
+  margin-top: var(--sp-4);
+  text-align: left;
+}
+
+.cf__result-actions {
+  margin-top: var(--sp-6);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+}
+
+@keyframes cfPop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (min-width: 600px) {
+  .cf__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cf__confirm-row {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: var(--sp-4);
+    align-items: baseline;
+  }
+
+  .cf__confirm-actions {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf__spinner {
+    animation-duration: 1.6s;
+  }
+
+  .cf__result-icon {
+    animation: none;
+  }
+}

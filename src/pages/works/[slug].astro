@@ -1,0 +1,475 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CoverArt from '../../components/CoverArt.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import ContactCta from '../../components/home/ContactCta.astro';
+import { publicWorks, visibilityLabel, type Work } from '../../config/works';
+import { url, absoluteUrl } from '../../lib/url';
+
+export function getStaticPaths() {
+  return publicWorks.map((work) => ({
+    params: { slug: work.slug },
+    props: { work },
+  }));
+}
+
+interface Props {
+  work: Work;
+}
+
+const { work } = Astro.props;
+
+const categoryLabel: Record<Work['category'], string> = {
+  system: 'システム・データ',
+  document: '資料・ドキュメント',
+  creative: 'デザイン・制作',
+};
+
+const accentMap: Record<Work['category'], 'system' | 'document' | 'creative'> = {
+  system: 'system',
+  document: 'document',
+  creative: 'creative',
+};
+
+const related = publicWorks
+  .filter((w) => w.slug !== work.slug && w.category === work.category)
+  .slice(0, 3);
+const fallbackRelated = publicWorks.filter((w) => w.slug !== work.slug).slice(0, 3);
+const relatedWorks = related.length > 0 ? related : fallbackRelated;
+
+const notice = visibilityLabel[work.visibility];
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: absoluteUrl('/', Astro.site) },
+    { '@type': 'ListItem', position: 2, name: '制作実績', item: absoluteUrl('/works', Astro.site) },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: work.title,
+      item: absoluteUrl(`/works/${work.slug}`, Astro.site),
+    },
+  ],
+};
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: work.title,
+  description: work.summary,
+  datePublished: work.publishedAt,
+  keywords: work.tech.join(', '),
+  inLanguage: 'ja',
+};
+---
+
+<BaseLayout
+  title={work.title}
+  description={`${work.summary} 課題・対応内容・結果をまとめています。使用技術: ${work.tech.join('、')}。制作期間: ${work.duration}。`}
+  type="article"
+  jsonLd={[breadcrumbLd, articleLd]}
+>
+  <article class="work-detail">
+    <div class="section section--tight">
+      <div class="container container--narrow">
+        <Breadcrumbs items={[{ label: '制作実績', href: '/works' }, { label: work.title }]} />
+
+        <header class="work-detail__head">
+          <div class="work-detail__badges">
+            <span class:list={['badge', `badge--${accentMap[work.category]}`]}>
+              {categoryLabel[work.category]}
+            </span>
+            <span class="badge">{work.duration}</span>
+          </div>
+          <h1 class="work-detail__title">{work.title}</h1>
+          <p class="work-detail__summary">{work.summary}</p>
+          {notice && <p class="work-detail__notice">{notice}</p>}
+        </header>
+      </div>
+
+      <div class="container">
+        <div class="work-detail__hero">
+          {
+            work.thumbnail ? (
+              <Image
+                src={work.thumbnail.src}
+                alt={work.thumbnail.alt}
+                widths={[480, 960, 1440]}
+                sizes="(min-width: 1120px) 1040px, 100vw"
+                loading="eager"
+                fetchpriority="high"
+              />
+            ) : (
+              <CoverArt
+                seed={work.slug}
+                accent={accentMap[work.category]}
+                ratio="21 / 9"
+                label={`${work.title}のイメージ`}
+              />
+            )
+          }
+        </div>
+      </div>
+
+      <div class="container container--narrow">
+        <div class="work-detail__body">
+          <section class="detail-block detail-block--challenge" aria-labelledby="challenge-title">
+            <h2 class="detail-block__title" id="challenge-title">
+              <span class="detail-block__step">課題</span>
+              どんな困りごとだったか
+            </h2>
+            <p class="detail-block__text">{work.challenge}</p>
+          </section>
+
+          <section class="detail-block detail-block--solution" aria-labelledby="solution-title">
+            <h2 class="detail-block__title" id="solution-title">
+              <span class="detail-block__step">対応</span>
+              実際にやったこと
+            </h2>
+            <ul class="detail-list">
+              {work.solution.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+
+          <section class="detail-block detail-block--result" aria-labelledby="result-title">
+            <h2 class="detail-block__title" id="result-title">
+              <span class="detail-block__step">結果</span>
+              どうなったか
+            </h2>
+            <ul class="detail-list detail-list--result">
+              {work.result.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+        </div>
+
+        <dl class="work-detail__meta">
+          <div>
+            <dt>使用技術・ツール</dt>
+            <dd>
+              <ul class="tag-row">
+                {work.tech.map((t) => <li class="badge">{t}</li>)}
+              </ul>
+            </dd>
+          </div>
+          <div>
+            <dt>制作期間</dt>
+            <dd>{work.duration}</dd>
+          </div>
+          {
+            work.links && work.links.length > 0 && (
+              <div>
+                <dt>関連リンク</dt>
+                <dd>
+                  <ul class="work-detail__links">
+                    {work.links.map((link) => (
+                      <li>
+                        <a href={link.url} target="_blank" rel="noopener noreferrer">
+                          {link.label}
+                          <span class="visually-hidden">（外部サイトが開きます）</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+
+        {
+          work.gallery && work.gallery.length > 0 && (
+            <section class="work-detail__gallery" aria-labelledby="gallery-title">
+              <h2 class="work-detail__gallery-title" id="gallery-title">制作物のようす</h2>
+              <ul class="gallery-grid">
+                {work.gallery.map((item) => (
+                  <li>
+                    <Image
+                      src={item.src}
+                      alt={item.alt}
+                      widths={[280, 560]}
+                      sizes="(min-width: 760px) 340px, 45vw"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <div class="work-detail__actions">
+          <a class="btn btn--primary btn--lg" href={url('/contact')}>似た内容を相談する</a>
+          <a class="btn btn--ghost" href={url('/estimate')}>費用の目安を見る</a>
+          <a class="btn btn--quiet" href={url('/works')}>実績一覧へ戻る</a>
+        </div>
+      </div>
+    </div>
+
+    {
+      relatedWorks.length > 0 && (
+        <section class="section section--tight work-detail__related" aria-labelledby="related-title">
+          <div class="container">
+            <h2 class="section-title" id="related-title">ほかの実績</h2>
+            <div class="work-detail__related-grid">
+              {relatedWorks.map((item) => (
+                <WorkCard work={item} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+  </article>
+
+  <ContactCta />
+</BaseLayout>
+
+<style>
+  .work-detail__head {
+    margin-top: var(--sp-6);
+  }
+
+  .work-detail__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-4);
+  }
+
+  .work-detail__title {
+    font-size: var(--fs-h1);
+    line-height: 1.35;
+  }
+
+  .work-detail__summary {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-lead);
+    color: var(--c-text-sub);
+  }
+
+  .work-detail__notice {
+    margin-top: var(--sp-4);
+    display: inline-block;
+    padding: 0.4em 0.9em;
+    border-radius: var(--r-pill);
+    background: #fff8e6;
+    border: 1px solid #f0dcae;
+    color: #7a5d17;
+    font-size: var(--fs-xs);
+    font-weight: 700;
+  }
+
+  .work-detail__hero {
+    margin-top: var(--sp-8);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-md);
+    background: var(--c-surface-soft);
+  }
+
+  .work-detail__hero :global(img) {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+  }
+
+  .work-detail__body {
+    margin-top: var(--sp-12);
+    display: grid;
+    gap: var(--sp-6);
+  }
+
+  .detail-block {
+    padding: var(--sp-6);
+    border-radius: var(--r-xl);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+    position: relative;
+  }
+
+  .detail-block::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: var(--sp-6);
+    bottom: var(--sp-6);
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .detail-block--challenge::before {
+    background: var(--c-coral);
+  }
+  .detail-block--solution::before {
+    background: var(--c-blue);
+  }
+  .detail-block--result::before {
+    background: var(--c-mint);
+  }
+
+  .detail-block__title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    font-size: var(--fs-h3);
+  }
+
+  .detail-block__step {
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 0.25em 0.75em;
+    border-radius: var(--r-pill);
+  }
+
+  .detail-block--challenge .detail-block__step {
+    background: var(--c-cat-creative-soft);
+    color: var(--c-cat-creative);
+  }
+  .detail-block--solution .detail-block__step {
+    background: var(--c-cat-system-soft);
+    color: var(--c-cat-system);
+  }
+  .detail-block--result .detail-block__step {
+    background: #e7f8f4;
+    color: var(--c-mint-deep);
+  }
+
+  .detail-block__text {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    line-height: 1.95;
+  }
+
+  .detail-list {
+    margin-top: var(--sp-4);
+    display: grid;
+    gap: var(--sp-3);
+    list-style: none;
+  }
+
+  .detail-list li {
+    position: relative;
+    padding-left: 1.6rem;
+    color: var(--c-text-sub);
+    line-height: 1.9;
+  }
+
+  .detail-list li::before {
+    content: "";
+    position: absolute;
+    left: 0.25rem;
+    top: 0.72em;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--c-blue);
+  }
+
+  .detail-list--result li::before {
+    background: var(--c-mint-deep);
+    border-radius: 50%;
+  }
+
+  .work-detail__meta {
+    margin-top: var(--sp-8);
+    padding: var(--sp-5);
+    border-radius: var(--r-lg);
+    background: var(--c-surface-soft);
+    border: 1px solid var(--c-line);
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  .work-detail__meta > div {
+    display: grid;
+    gap: var(--sp-2);
+  }
+
+  .work-detail__meta dt {
+    font-size: var(--fs-xs);
+    font-weight: 800;
+    color: var(--c-text-mute);
+  }
+
+  .work-detail__meta dd {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+  }
+
+  .work-detail__links {
+    display: grid;
+    gap: var(--sp-1);
+    list-style: none;
+  }
+
+  .work-detail__gallery {
+    margin-top: var(--sp-10);
+  }
+
+  .work-detail__gallery-title {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--sp-5);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+    gap: var(--sp-3);
+    list-style: none;
+  }
+
+  .gallery-grid li {
+    border-radius: var(--r-md);
+    overflow: hidden;
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    box-shadow: var(--sh-sm);
+  }
+
+  .gallery-grid :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .work-detail__actions {
+    margin-top: var(--sp-10);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+
+  .work-detail__related {
+    background: linear-gradient(180deg, rgba(244, 246, 250, 0) 0%, rgba(244, 246, 250, 0.7) 100%);
+  }
+
+  .work-detail__related-grid {
+    margin-top: var(--sp-6);
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  @media (min-width: 700px) {
+    .work-detail__related-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    }
+
+    .work-detail__meta {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .work-detail__meta > div:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

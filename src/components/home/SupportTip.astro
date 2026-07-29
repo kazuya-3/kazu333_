@@ -1,0 +1,118 @@
+---
+import { support, availableTips, hasTipLinks } from '../../config/support';
+
+/**
+ * 応援チップ。
+ * 押しつけがましくならないよう、フッター手前に控えめなサイズで置いています。
+ * 外部決済リンクが未設定のときは、ボタンを出さず「準備中」と表示します。
+ */
+---
+
+<section class="section section--tight tip" aria-labelledby="tip-title">
+  <div class="container container--narrow">
+    <div class="tip__box">
+      <div class="tip__text">
+        <h2 class="tip__title" id="tip-title">{support.heading}</h2>
+        <p class="tip__lead">{support.lead}</p>
+      </div>
+
+      {
+        hasTipLinks ? (
+          <ul class="tip__options">
+            {availableTips.map((tip) => (
+              <li>
+                <a class="tip__btn" href={tip.url} target="_blank" rel="noopener noreferrer">
+                  {tip.label}
+                  <span class="visually-hidden">で応援する（外部サイトが開きます）</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="tip__preparing">{support.preparingText}</p>
+        )
+      }
+    </div>
+
+    <p class="tip__note">{support.note}</p>
+  </div>
+</section>
+
+<style>
+  .tip__box {
+    display: grid;
+    gap: var(--sp-5);
+    padding: var(--sp-6);
+    border-radius: var(--r-xl);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+  }
+
+  .tip__title {
+    font-size: var(--fs-h3);
+  }
+
+  .tip__lead {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.85;
+  }
+
+  .tip__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .tip__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 1.15rem;
+    border-radius: var(--r-pill);
+    border: 1px solid rgba(255, 138, 128, 0.4);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--c-coral-deep);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color var(--dur) var(--ease), transform var(--dur-fast) var(--ease);
+  }
+
+  .tip__btn:hover {
+    background: #fff3f1;
+    color: var(--c-coral-deep);
+  }
+
+  .tip__btn:active {
+    transform: translateY(1px);
+  }
+
+  .tip__preparing {
+    font-size: var(--fs-sm);
+    color: var(--c-text-mute);
+    padding: 0.75rem 1rem;
+    border-radius: var(--r-md);
+    border: 1px dashed var(--c-line-strong);
+    background: var(--c-surface-soft);
+  }
+
+  .tip__note {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+    text-align: center;
+  }
+
+  @media (min-width: 700px) {
+    .tip__box {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--sp-8);
+    }
+  }
+</style>

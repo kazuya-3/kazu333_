@@ -1,0 +1,232 @@
+---
+import { Image } from 'astro:assets';
+import CoverArt from './CoverArt.astro';
+import { url } from '../lib/url';
+import {
+  isPurchasable,
+  productCategoryLabel,
+  productStatusLabel,
+  type Product,
+} from '../config/products';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+
+const accent: Record<Product['category'], 'system' | 'document' | 'creative' | 'ai' | 'neutral'> = {
+  design: 'creative',
+  stream: 'creative',
+  ai: 'ai',
+  tool: 'system',
+  template: 'document',
+};
+
+const purchasable = isPurchasable(product);
+const hasSale = typeof product.salePrice === 'number' && product.salePrice < product.price;
+const displayPrice = hasSale ? product.salePrice! : product.price;
+---
+
+<article class="product-card card card--link">
+  <a class="product-card__media" href={url(`/shop/${product.slug}`)} tabindex="-1" aria-hidden="true">
+    {
+      product.preview ? (
+        <Image
+          src={product.preview.src}
+          alt=""
+          widths={[280, 560]}
+          sizes="(min-width: 900px) 340px, 50vw"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <CoverArt seed={product.slug} accent={accent[product.category]} ratio="4 / 3" label="" />
+      )
+    }
+    {hasSale && <span class="product-card__sale">セール中</span>}
+  </a>
+
+  <div class="product-card__body">
+    <p class="product-card__cat">{productCategoryLabel[product.category]}</p>
+    <h3 class="product-card__title">
+      <a href={url(`/shop/${product.slug}`)}>{product.name}</a>
+    </h3>
+    <p class="product-card__catch">{product.catch}</p>
+
+    <ul class="tag-row product-card__tags">
+      {product.tags.slice(0, 3).map((tag) => <li class="badge">{tag}</li>)}
+    </ul>
+
+    <div class="product-card__price">
+      {
+        hasSale && (
+          <span class="product-card__price-old">
+            <span class="visually-hidden">通常価格</span>
+            {product.price.toLocaleString('ja-JP')}円
+          </span>
+        )
+      }
+      <span class="product-card__price-now">
+        {displayPrice.toLocaleString('ja-JP')}<span class="product-card__yen">円</span>
+      </span>
+      <span class="product-card__tax">税込</span>
+    </div>
+
+    <div class="product-card__actions">
+      <a class="btn btn--quiet" href={url(`/shop/${product.slug}`)}>詳細を見る</a>
+      {
+        purchasable ? (
+          <a
+            class="btn btn--primary"
+            href={product.purchaseUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            購入する
+            <span class="visually-hidden">（外部サイトが開きます）</span>
+          </a>
+        ) : (
+          <span class="product-card__status">{productStatusLabel[product.status]}</span>
+        )
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .product-card__media {
+    position: relative;
+    display: block;
+    background: var(--c-surface-soft);
+    overflow: hidden;
+  }
+
+  .product-card__media :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform var(--dur-slow) var(--ease);
+  }
+
+  .product-card:hover .product-card__media :global(img) {
+    transform: scale(1.04);
+  }
+
+  .product-card__sale {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    padding: 0.2em 0.7em;
+    border-radius: var(--r-pill);
+    background: var(--c-citrus);
+    color: #6b4c00;
+    font-size: 0.6875rem;
+    font-weight: 800;
+  }
+
+  .product-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-5);
+    flex: 1;
+  }
+
+  .product-card__cat {
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--c-text-mute);
+  }
+
+  .product-card__title {
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+
+  .product-card__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .product-card__title a:hover {
+    color: var(--c-blue-ink);
+  }
+
+  .product-card__catch {
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.75;
+  }
+
+  .product-card__tags {
+    margin-top: var(--sp-1);
+  }
+
+  .product-card__price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: var(--sp-3);
+  }
+
+  .product-card__price-old {
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+    text-decoration: line-through;
+  }
+
+  .product-card__price-now {
+    font-family: var(--font-en);
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--c-text);
+  }
+
+  .product-card__yen {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    margin-left: 1px;
+  }
+
+  .product-card__tax {
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  .product-card__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-2);
+    margin-top: var(--sp-3);
+  }
+
+  .product-card__actions .btn {
+    min-height: 44px;
+    padding-inline: 0.75em;
+    font-size: var(--fs-xs);
+  }
+
+  .product-card__status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-soft);
+    border: 1px dashed var(--c-line-strong);
+    color: var(--c-text-mute);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,170 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import { flowSteps, assurances } from '../../config/flow';
+---
+
+<section class="section flow-section" id="flow" aria-labelledby="flow-title">
+  <div class="container">
+    <SectionHeading
+      eyebrow="How it works"
+      title="依頼の流れ"
+      lead="ご相談から納品まで、次のように進みます。料金と対応範囲は、着手前に必ず確認します。"
+      id="flow-title"
+    />
+
+    <div class="flow-section__body">
+      <ol class="flow-steps">
+        {
+          flowSteps.map((step, i) => (
+            <li class="flow-step reveal" style={`--reveal-delay:${i * 60}ms`}>
+              <span class="flow-step__num" aria-hidden="true">{i + 1}</span>
+              <div class="flow-step__text">
+                <h3 class="flow-step__title">{step.title}</h3>
+                <p class="flow-step__body">{step.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <aside class="assurance reveal" aria-labelledby="assurance-title">
+        <h3 class="assurance__title" id="assurance-title">お約束していること</h3>
+        <ul class="assurance__list">
+          {
+            assurances.map((item) => (
+              <li>
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <path
+                    d="m5 12.5 4.5 4.5L19 7.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span>{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .flow-section__body {
+    margin-top: var(--sp-10);
+    display: grid;
+    gap: var(--sp-8);
+  }
+
+  .flow-steps {
+    list-style: none;
+    display: grid;
+    gap: 0;
+    position: relative;
+  }
+
+  .flow-step {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: var(--sp-4);
+    padding-bottom: var(--sp-6);
+    position: relative;
+  }
+
+  .flow-step:last-child {
+    padding-bottom: 0;
+  }
+
+  /* 縦線でつなぐ（最後の項目は線を出さない） */
+  .flow-step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 1.25rem;
+    top: 2.5rem;
+    bottom: 0.25rem;
+    width: 2px;
+    transform: translateX(-1px);
+    background: linear-gradient(180deg, rgba(90, 169, 230, 0.5), rgba(169, 160, 240, 0.22));
+  }
+
+  .flow-step__num {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--c-surface);
+    border: 1px solid rgba(90, 169, 230, 0.4);
+    box-shadow: var(--sh-sm);
+    font-family: var(--font-en);
+    font-weight: 800;
+    font-size: 0.9375rem;
+    color: var(--c-blue-ink);
+    position: relative;
+    z-index: 1;
+  }
+
+  .flow-step__title {
+    font-size: 1.0625rem;
+    padding-top: 0.4rem;
+  }
+
+  .flow-step__body {
+    margin-top: 0.35rem;
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.85;
+  }
+
+  .assurance {
+    align-self: start;
+    padding: var(--sp-6);
+    border-radius: var(--r-xl);
+    background: linear-gradient(150deg, rgba(231, 248, 244, 0.9), rgba(240, 247, 255, 0.9));
+    border: 1px solid rgba(111, 214, 196, 0.35);
+    box-shadow: var(--sh-sm);
+  }
+
+  .assurance__title {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--sp-4);
+  }
+
+  .assurance__list {
+    display: grid;
+    gap: var(--sp-3);
+    list-style: none;
+  }
+
+  .assurance__list li {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 0.6rem;
+    align-items: start;
+    font-size: var(--fs-sm);
+    line-height: 1.75;
+    color: var(--c-text-sub);
+  }
+
+  .assurance__list svg {
+    color: var(--c-mint-deep);
+    margin-top: 0.35em;
+  }
+
+  @media (min-width: 900px) {
+    .flow-section__body {
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.9fr);
+      gap: var(--sp-12);
+      align-items: start;
+    }
+
+    .assurance {
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+    }
+  }
+</style>

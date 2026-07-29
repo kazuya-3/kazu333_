@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import { legalUpdatedAt } from '../config/legal';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+  lead?: string;
+  /** 運営者が本番前に埋める項目が残っているとき true */
+  hasPlaceholders?: boolean;
+}
+
+const { title, description, lead, hasPlaceholders = false } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="section legal">
+    <div class="container container--narrow">
+      <Breadcrumbs items={[{ label: title }]} />
+
+      <header class="legal__head">
+        <h1 class="legal__title">{title}</h1>
+        {lead && <p class="legal__lead">{lead}</p>}
+        <p class="legal__updated">最終更新日：{legalUpdatedAt}</p>
+      </header>
+
+      <div class="notice notice--warm legal__template-note">
+        <p>
+          <strong>この文章は雛形です。</strong>
+          サイト運営者が、実際の運営内容に合わせて内容を確認・修正したうえで公開してください。
+          法律上の判断が必要な部分は、専門家へのご確認をおすすめします。
+        </p>
+        {
+          hasPlaceholders && (
+            <p class="legal__template-note-sub">
+              <span class="placeholder-note">要入力</span>
+              と表示されている項目は、公開前に必ずご記入ください（<code>src/config/legal.ts</code>）。
+            </p>
+          )
+        }
+      </div>
+
+      <div class="prose legal__body">
+        <slot />
+      </div>
+
+      <div class="legal__foot">
+        <p class="text-mute">内容についてご不明な点があれば、お気軽にお問い合わせください。</p>
+        <div class="btn-row">
+          <a class="btn btn--quiet" href={url('/contact')}>問い合わせる</a>
+          <a class="btn btn--quiet" href={url('/')}>トップへ戻る</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal__head {
+    margin-top: var(--sp-6);
+  }
+
+  .legal__title {
+    font-size: var(--fs-h1);
+  }
+
+  .legal__lead {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+  }
+
+  .legal__updated {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  .legal__template-note {
+    margin-top: var(--sp-6);
+    line-height: 1.85;
+  }
+
+  .legal__template-note-sub {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-xs);
+  }
+
+  .legal__template-note code {
+    font-size: 0.9em;
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  .legal__body {
+    margin-top: var(--sp-8);
+  }
+
+  .legal__foot {
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--c-line);
+    display: grid;
+    gap: var(--sp-4);
+  }
+</style>

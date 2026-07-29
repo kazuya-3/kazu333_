@@ -1,0 +1,228 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import ContactCta from '../../components/home/ContactCta.astro';
+import { publicWorks } from '../../config/works';
+import { absoluteUrl } from '../../lib/url';
+
+const categories = [
+  { key: 'all', label: 'すべて' },
+  { key: 'system', label: 'システム・データ' },
+  { key: 'document', label: '資料・ドキュメント' },
+  { key: 'creative', label: 'デザイン・制作' },
+];
+
+const counts = {
+  all: publicWorks.length,
+  system: publicWorks.filter((w) => w.category === 'system').length,
+  document: publicWorks.filter((w) => w.category === 'document').length,
+  creative: publicWorks.filter((w) => w.category === 'creative').length,
+} as Record<string, number>;
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: absoluteUrl('/', Astro.site) },
+    { '@type': 'ListItem', position: 2, name: '制作実績', item: absoluteUrl('/works', Astro.site) },
+  ],
+};
+---
+
+<BaseLayout
+  title="制作・開発実績"
+  description="C#業務アプリの修正、SQL・データ処理、操作マニュアルや仕様書の作成、アイコンフレームや配信素材の制作まで。課題・対応内容・結果をまとめた実績の一覧です。"
+  jsonLd={breadcrumbLd}
+>
+  <section class="section works-page">
+    <div class="container">
+      <Breadcrumbs items={[{ label: '制作実績' }]} />
+
+      <header class="works-page__head">
+        <p class="eyebrow">Works</p>
+        <h1 class="works-page__title">制作・開発実績</h1>
+        <p class="works-page__lead">
+          どんな困りごとに、どう対応して、どうなったか。「課題 → 対応 → 結果」の順にまとめています。
+          公開の許可をいただいた内容と、個人制作のものを掲載しています。
+        </p>
+      </header>
+
+      <div class="works-page__filter" role="group" aria-label="カテゴリで絞り込む">
+        {
+          categories.map((cat, i) => (
+            <button
+              type="button"
+              class:list={['filter-chip', { 'is-active': i === 0 }]}
+              data-filter={cat.key}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              {cat.label}
+              <span class="filter-chip__count">{counts[cat.key]}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <p class="works-page__status visually-hidden" role="status" id="works-status"></p>
+
+      <h2 class="visually-hidden">実績の一覧</h2>
+      <div class="works-page__grid" id="works-grid">
+        {
+          publicWorks.map((work, i) => (
+            <div class="works-page__item reveal" data-category={work.category} style={`--reveal-delay:${(i % 3) * 70}ms`}>
+              <WorkCard work={work} />
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="works-page__empty" id="works-empty" hidden>
+        この分類の実績はまだありません。ほかの分類もご覧ください。
+      </p>
+
+      <p class="works-page__note text-mute">
+        ここに載っていない内容でも、近いことであれば対応できる場合があります。まずはご相談ください。
+      </p>
+    </div>
+  </section>
+
+  <ContactCta
+    title="近い内容がありましたか？"
+    lead="「これと似たことをお願いしたい」だけでも大丈夫です。詳しくはこちらで一緒に整理します。"
+  />
+</BaseLayout>
+
+<style>
+  .works-page__head {
+    margin-top: var(--sp-6);
+    max-width: 46em;
+  }
+
+  .works-page__title {
+    font-size: var(--fs-h1);
+  }
+
+  .works-page__lead {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    font-size: var(--fs-lead);
+  }
+
+  .works-page__filter {
+    margin-top: var(--sp-8);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.5rem 1.1rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-line-strong);
+    background: rgba(255, 255, 255, 0.8);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--c-text-sub);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+
+  .filter-chip:hover {
+    border-color: rgba(47, 125, 225, 0.45);
+    color: var(--c-blue-ink);
+  }
+
+  .filter-chip.is-active {
+    background: var(--g-accent);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: var(--sh-glow);
+  }
+
+  .filter-chip__count {
+    font-family: var(--font-en);
+    font-size: 0.6875rem;
+    font-weight: 800;
+    padding: 0.1em 0.5em;
+    border-radius: var(--r-pill);
+    background: var(--c-surface-soft);
+    color: var(--c-text-mute);
+  }
+
+  .filter-chip.is-active .filter-chip__count {
+    background: rgba(255, 255, 255, 0.28);
+    color: #fff;
+  }
+
+  .works-page__grid {
+    margin-top: var(--sp-8);
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .works-page__item[hidden] {
+    display: none;
+  }
+
+  .works-page__empty {
+    margin-top: var(--sp-8);
+    padding: var(--sp-6);
+    border-radius: var(--r-lg);
+    background: var(--c-surface-soft);
+    border: 1px dashed var(--c-line-strong);
+    text-align: center;
+    color: var(--c-text-sub);
+    font-size: var(--fs-sm);
+  }
+
+  .works-page__note {
+    margin-top: var(--sp-8);
+  }
+
+  @media (min-width: 700px) {
+    .works-page__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .works-page__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<script>
+  // カテゴリ絞り込み。JS が無い場合はすべて表示されたままになります。
+  const chips = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const items = document.querySelectorAll<HTMLElement>('.works-page__item');
+  const empty = document.getElementById('works-empty');
+  const status = document.getElementById('works-status');
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.filter ?? 'all';
+
+      chips.forEach((c) => {
+        const active = c === chip;
+        c.classList.toggle('is-active', active);
+        c.setAttribute('aria-pressed', String(active));
+      });
+
+      let shown = 0;
+      items.forEach((item) => {
+        const match = key === 'all' || item.dataset.category === key;
+        item.hidden = !match;
+        if (match) shown += 1;
+      });
+
+      if (empty) empty.hidden = shown !== 0;
+      if (status) status.textContent = `${chip.textContent?.trim().replace(/\s+\d+$/, '')}の実績を${shown}件表示しています`;
+    });
+  });
+</script>

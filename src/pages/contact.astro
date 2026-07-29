@@ -1,0 +1,170 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ContactForm from '../components/islands/ContactForm';
+import { contactIntro } from '../config/contact';
+import { site } from '../config/site';
+import { assurances } from '../config/flow';
+import { url, absoluteUrl } from '../lib/url';
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: absoluteUrl('/', Astro.site) },
+    { '@type': 'ListItem', position: 2, name: 'ご相談フォーム', item: absoluteUrl('/contact', Astro.site) },
+  ],
+};
+---
+
+<BaseLayout
+  title="ご相談フォーム"
+  description="まだ内容がまとまっていなくても大丈夫です。システム修正、データ整理、資料作成、SNS素材、AI活用のご相談を受け付けています。簡易見積もりの内容もそのまま引き継げます。"
+  jsonLd={breadcrumbLd}
+>
+  <section class="section contact-page">
+    <div class="container contact-page__inner">
+      <div class="contact-page__main">
+        <Breadcrumbs items={[{ label: 'ご相談フォーム' }]} />
+
+        <header class="contact-page__head">
+          <p class="eyebrow">Contact</p>
+          <h1 class="contact-page__title">{contactIntro.heading}</h1>
+          <p class="contact-page__lead">{contactIntro.lead}</p>
+        </header>
+
+        <ContactForm
+          client:load
+          privacyUrl={url('/privacy')}
+          estimateUrl={url('/estimate')}
+        />
+      </div>
+
+      <aside class="contact-page__side">
+        <div class="side-card">
+          <h2 class="side-card__title">お返事について</h2>
+          <p class="side-card__body">{contactIntro.replyNote}</p>
+          <p class="side-card__body">{site.availability.note}</p>
+        </div>
+
+        <div class="side-card side-card--assure">
+          <h2 class="side-card__title">安心してご相談いただくために</h2>
+          <ul class="side-card__list">
+            {assurances.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+
+        <div class="side-card">
+          <h2 class="side-card__title">費用が気になる場合</h2>
+          <p class="side-card__body">
+            先に概算を知りたいときは、簡易見積もりをお使いください。結果はこのフォームへ引き継がれます。
+          </p>
+          <a class="btn btn--ghost btn--full" href={url('/estimate')}>簡易見積もりへ</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-page__inner {
+    display: grid;
+    gap: var(--sp-10);
+    align-items: start;
+  }
+
+  .contact-page__head {
+    margin-top: var(--sp-6);
+    margin-bottom: var(--sp-8);
+  }
+
+  .contact-page__title {
+    font-size: var(--fs-h1);
+  }
+
+  .contact-page__lead {
+    margin-top: var(--sp-4);
+    font-size: var(--fs-lead);
+    color: var(--c-text-sub);
+    padding: var(--sp-4) var(--sp-5);
+    border-radius: var(--r-lg);
+    background: linear-gradient(130deg, rgba(232, 242, 253, 0.8), rgba(231, 248, 244, 0.7));
+    border: 1px solid rgba(90, 169, 230, 0.24);
+  }
+
+  .contact-page__side {
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  .side-card {
+    padding: var(--sp-5);
+    border-radius: var(--r-lg);
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+  }
+
+  .side-card__title {
+    font-size: var(--fs-sm);
+    font-weight: 800;
+    color: var(--c-text);
+    margin-bottom: var(--sp-3);
+  }
+
+  .side-card__body {
+    font-size: var(--fs-xs);
+    color: var(--c-text-sub);
+    line-height: 1.9;
+  }
+
+  .side-card__body + .side-card__body {
+    margin-top: var(--sp-2);
+  }
+
+  .side-card .btn {
+    margin-top: var(--sp-4);
+  }
+
+  .side-card--assure {
+    background: linear-gradient(150deg, rgba(231, 248, 244, 0.9), rgba(240, 247, 255, 0.85));
+    border-color: rgba(111, 214, 196, 0.35);
+  }
+
+  .side-card__list {
+    display: grid;
+    gap: var(--sp-2);
+    list-style: none;
+  }
+
+  .side-card__list li {
+    position: relative;
+    padding-left: 1.2rem;
+    font-size: var(--fs-xs);
+    color: var(--c-text-sub);
+    line-height: 1.8;
+  }
+
+  .side-card__list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--c-mint);
+  }
+
+  @media (min-width: 940px) {
+    .contact-page__inner {
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.85fr);
+      gap: var(--sp-12);
+    }
+
+    .contact-page__side {
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+    }
+  }
+</style>

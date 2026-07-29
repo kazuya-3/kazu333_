@@ -1,0 +1,26 @@
+{
+  "name": "kazu-works",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KAZU WORKS - 個人のオンライン事務所兼ポートフォリオ兼ショップ",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "build:only": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/preact": "^4.1.0",
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.14.1",
+    "preact": "^10.27.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.9.2"
+  }
+}

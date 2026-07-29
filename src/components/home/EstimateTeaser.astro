@@ -1,0 +1,225 @@
+---
+import { priceGuide, tax, estimateNote } from '../../config/pricing';
+import { url } from '../../lib/url';
+
+/**
+ * 簡易見積もりへの案内。
+ * ここは「大胆に余白を使う」場所のひとつです。
+ */
+---
+
+<section class="section estimate-teaser" id="estimate" aria-labelledby="estimate-title">
+  <div class="container">
+    <div class="estimate-teaser__panel reveal">
+      <div class="estimate-teaser__body">
+        <p class="eyebrow">Estimate</p>
+        <h2 class="estimate-teaser__title" id="estimate-title">
+          費用の目安は、<br class="br-sp" />4つの質問で分かります。
+        </h2>
+        <p class="estimate-teaser__lead">
+          分野・依頼内容・規模・条件を選ぶだけ。1分ほどで概算の価格帯と想定納期が出ます。
+          そのまま相談へ進めば、選んだ内容が引き継がれます。
+        </p>
+
+        <ol class="estimate-teaser__steps">
+          <li><span>1</span>分野を選ぶ</li>
+          <li><span>2</span>依頼内容を選ぶ</li>
+          <li><span>3</span>規模を選ぶ</li>
+          <li><span>4</span>条件を選ぶ</li>
+        </ol>
+
+        <div class="btn-row estimate-teaser__actions">
+          <a class="btn btn--primary btn--lg" href={url('/estimate')}>簡易見積もりを始める</a>
+          <a class="btn btn--quiet btn--lg" href={url('/contact')}>先に相談したい</a>
+        </div>
+
+        <p class="estimate-teaser__note">{estimateNote}</p>
+      </div>
+
+      <div class="estimate-teaser__aside">
+        <h3 class="estimate-teaser__aside-title">料金の目安</h3>
+        <dl class="price-guide">
+          {
+            priceGuide.map((row) => (
+              <div class="price-guide__row">
+                <dt>
+                  {row.label}
+                  <span class="price-guide__example">{row.example}</span>
+                </dt>
+                <dd>{row.price}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="estimate-teaser__tax">{tax.note}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .estimate-teaser__panel {
+    display: grid;
+    gap: var(--sp-8);
+    padding: clamp(1.75rem, 5vw, 3.5rem);
+    border-radius: var(--r-xl);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.92), rgba(240, 247, 255, 0.85));
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--sh-lg), var(--sh-inset);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .estimate-teaser__panel::before {
+    content: "";
+    position: absolute;
+    width: 60%;
+    aspect-ratio: 1;
+    right: -18%;
+    bottom: -32%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(169, 160, 240, 0.28), transparent 68%);
+    filter: blur(20px);
+    pointer-events: none;
+  }
+
+  .estimate-teaser__title {
+    margin-top: var(--sp-3);
+    font-size: var(--fs-h2);
+    line-height: 1.4;
+  }
+
+  .estimate-teaser__lead {
+    margin-top: var(--sp-4);
+    color: var(--c-text-sub);
+    max-width: 34em;
+  }
+
+  .estimate-teaser__steps {
+    margin-top: var(--sp-6);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    list-style: none;
+    counter-reset: step;
+  }
+
+  .estimate-teaser__steps li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem 0.4rem 0.45rem;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--c-line);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--c-text-sub);
+  }
+
+  .estimate-teaser__steps span {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--g-accent);
+    color: #fff;
+    font-family: var(--font-en);
+    font-size: 0.6875rem;
+    font-weight: 800;
+  }
+
+  .estimate-teaser__actions {
+    margin-top: var(--sp-8);
+  }
+
+  .estimate-teaser__note {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+    max-width: 40em;
+    line-height: 1.8;
+  }
+
+  .estimate-teaser__aside {
+    position: relative;
+    padding: var(--sp-5);
+    border-radius: var(--r-lg);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+  }
+
+  .estimate-teaser__aside-title {
+    font-size: var(--fs-sm);
+    letter-spacing: 0.04em;
+    color: var(--c-text-mute);
+    margin-bottom: var(--sp-3);
+  }
+
+  .price-guide__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-3);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .price-guide__row:first-child {
+    border-top: 0;
+  }
+
+  .price-guide dt {
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    display: grid;
+    gap: 2px;
+  }
+
+  .price-guide__example {
+    font-size: var(--fs-xs);
+    font-weight: 400;
+    color: var(--c-text-mute);
+  }
+
+  .price-guide dd {
+    margin: 0;
+    flex: 0 0 auto;
+    font-family: var(--font-en);
+    font-weight: 800;
+    font-size: 0.9375rem;
+    color: var(--c-blue-ink);
+    white-space: nowrap;
+    padding-top: 0.1em;
+  }
+
+  .estimate-teaser__tax {
+    margin-top: var(--sp-4);
+    padding-top: var(--sp-3);
+    border-top: 1px dashed var(--c-line-strong);
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  .br-sp {
+    display: none;
+  }
+
+  @media (max-width: 520px) {
+    .br-sp {
+      display: inline;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .estimate-teaser__panel {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--sp-12);
+      align-items: start;
+    }
+  }
+</style>

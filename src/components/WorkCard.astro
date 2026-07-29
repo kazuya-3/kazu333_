@@ -1,0 +1,187 @@
+---
+import { Image } from 'astro:assets';
+import CoverArt from './CoverArt.astro';
+import { url } from '../lib/url';
+import type { Work } from '../config/works';
+
+interface Props {
+  work: Work;
+  /** large にすると 1 枚だけ大きく見せます（グリッドを単調にしないため） */
+  size?: 'default' | 'large';
+}
+
+const { work, size = 'default' } = Astro.props;
+
+const categoryLabel: Record<Work['category'], string> = {
+  system: 'システム・データ',
+  document: '資料・ドキュメント',
+  creative: 'デザイン・制作',
+};
+
+const accentMap: Record<Work['category'], 'system' | 'document' | 'creative'> = {
+  system: 'system',
+  document: 'document',
+  creative: 'creative',
+};
+---
+
+<article class:list={['work-card', 'card', 'card--link', `is-${size}`]}>
+  <a class="work-card__link" href={url(`/works/${work.slug}`)}>
+    <div class="work-card__media">
+      {
+        work.thumbnail ? (
+          <Image
+            src={work.thumbnail.src}
+            alt={work.thumbnail.alt}
+            widths={[320, 640, 960]}
+            sizes="(min-width: 900px) 480px, 100vw"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <CoverArt seed={work.slug} accent={accentMap[work.category]} label={`${work.title}のイメージ`} />
+        )
+      }
+      <span class:list={['badge', `badge--${accentMap[work.category]}`, 'work-card__cat']}>
+        {categoryLabel[work.category]}
+      </span>
+    </div>
+
+    <div class="work-card__body">
+      <h3 class="work-card__title">{work.title}</h3>
+      <p class="work-card__summary">{work.summary}</p>
+      <dl class="work-card__result">
+        <dt>結果</dt>
+        <dd>{work.result[0]}</dd>
+      </dl>
+      <div class="work-card__meta">
+        <span>{work.duration}</span>
+        <span class="work-card__more">詳しく見る →</span>
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .work-card {
+    overflow: hidden;
+    background: var(--c-surface);
+  }
+
+  .work-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .work-card__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--c-surface-soft);
+  }
+
+  .work-card__media :global(img) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    transition: transform var(--dur-slow) var(--ease);
+  }
+
+  .work-card:hover .work-card__media :global(img) {
+    transform: scale(1.035);
+  }
+
+  .work-card__cat {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+  }
+
+  .work-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding: var(--sp-5);
+    flex: 1;
+  }
+
+  .work-card__title {
+    font-size: var(--fs-h3);
+  }
+
+  .work-card__summary {
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+    line-height: 1.8;
+  }
+
+  .work-card__result {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: start;
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--r-md);
+    background: linear-gradient(120deg, rgba(111, 214, 196, 0.12), rgba(90, 169, 230, 0.1));
+    margin-top: auto;
+  }
+
+  .work-card__result dt {
+    font-size: 0.6875rem;
+    font-weight: 800;
+    color: var(--c-mint-deep);
+    padding-top: 0.15em;
+  }
+
+  .work-card__result dd {
+    margin: 0;
+    font-size: var(--fs-xs);
+    color: var(--c-text-sub);
+    line-height: 1.7;
+  }
+
+  .work-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-3);
+    font-size: var(--fs-xs);
+    color: var(--c-text-mute);
+  }
+
+  .work-card__more {
+    font-weight: 700;
+    color: var(--c-blue-deep);
+  }
+
+  /* 大きいカードは横並びにして、並びに変化をつける */
+  @media (min-width: 780px) {
+    .work-card.is-large .work-card__link {
+      flex-direction: row;
+    }
+
+    .work-card.is-large .work-card__media {
+      flex: 0 0 46%;
+    }
+
+    .work-card.is-large .work-card__media :global(img),
+    .work-card.is-large .work-card__media :global(.cover) {
+      height: 100%;
+      aspect-ratio: auto;
+      min-height: 260px;
+    }
+
+    .work-card.is-large .work-card__body {
+      padding: var(--sp-6) var(--sp-6);
+      justify-content: center;
+    }
+
+    .work-card.is-large .work-card__title {
+      font-size: 1.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,101 @@
+/**
+ * 「よくある相談」と「対応できること」。
+ * 技術名ではなく、利用者の困りごとの言葉で書いています。
+ */
+
+export type CategoryKey = 'system' | 'document' | 'creative';
+
+export interface ServiceCategory {
+  key: CategoryKey;
+  /** 英字ラベル（カードの上に小さく出ます） */
+  label: string;
+  /** 日本語見出し */
+  title: string;
+  /** 1〜2 文の説明 */
+  description: string;
+  /** 対応できることの一覧 */
+  items: string[];
+  /** 目安の価格帯（見積もりページへの案内に使用） */
+  priceHint: string;
+  icon: 'system' | 'document' | 'creative';
+}
+
+/** よくある相談。困りごとの言葉のまま並べます。 */
+export const commonConcerns: { text: string; category: CategoryKey }[] = [
+  { text: '前任者が作ったツールが動かなくなった', category: 'system' },
+  { text: 'ExcelやCSVの手作業を減らしたい', category: 'system' },
+  { text: 'SQLやデータ抽出を手伝ってほしい', category: 'system' },
+  { text: 'システムの仕様を資料にまとめたい', category: 'document' },
+  { text: '動作確認やテストを手伝ってほしい', category: 'system' },
+  { text: '操作マニュアルを作ってほしい', category: 'document' },
+  { text: 'SNS投稿用の画像を作りたい', category: 'creative' },
+  { text: '配信イベントの世界観を形にしたい', category: 'creative' },
+  { text: 'AIを使いたいが、指示の作り方が分からない', category: 'creative' },
+  { text: '頭の中にあるアイデアを整理してほしい', category: 'document' },
+];
+
+export const serviceCategories: ServiceCategory[] = [
+  {
+    key: 'system',
+    label: 'SYSTEM & DATA',
+    title: 'システムとデータの手当て',
+    description:
+      '動かなくなったツールの調査から、日々の手作業を減らす小さな自動化まで。まず現状を確認してから、できる範囲を正直にお伝えします。',
+    items: [
+      'C#・業務アプリの軽微な修正',
+      '既存コードの調査',
+      '不具合・バグ調査',
+      'SQL作成・データ抽出',
+      'Excel・CSVの整理',
+      '小規模な業務自動化',
+      'Webページの軽微な修正',
+      '動作確認・QA・テスト',
+    ],
+    priceHint: '5,000円〜',
+    icon: 'system',
+  },
+  {
+    key: 'document',
+    label: 'DOCUMENT & ORGANIZE',
+    title: '資料づくりと情報の整理',
+    description:
+      '頭の中にあることや、散らばった資料を、読み手に伝わる形へ整えます。まとまっていない状態からのご相談も歓迎です。',
+    items: [
+      '仕様書・設計書',
+      '操作マニュアル',
+      '手順書',
+      'テスト項目書',
+      '業務フロー整理',
+      '既存資料の再構成',
+      '調査・リサーチ',
+      'AI生成文章の確認・修正',
+      '情報やアイデアの構造化',
+    ],
+    priceHint: '8,000円〜',
+    icon: 'document',
+  },
+  {
+    key: 'creative',
+    label: 'CREATIVE & AI',
+    title: '見た目づくりとAI活用',
+    description:
+      'SNSや配信で使う素材、イベントの世界観づくり、AIを使った制作の組み立てまで。イメージが言葉だけの段階からご相談いただけます。',
+    items: [
+      'アイコンフレーム',
+      'SNS投稿画像',
+      'イベント告知画像',
+      '配信素材',
+      'サムネイル・バナー',
+      'AI画像生成',
+      'プロンプト設計',
+      'コンセプト・企画・構成案',
+      '簡単なモーション素材',
+    ],
+    priceHint: '3,000円〜',
+    icon: 'creative',
+  },
+];
+
+/** 一覧にない依頼への案内文 */
+export const serviceFallbackNote =
+  '一覧にない内容もご相談ください。「これはお願いできますか？」という確認だけでも大丈夫です。難しい場合は、理由を添えて事前に正直にお伝えします。';

@@ -1,0 +1,30 @@
+---
+import LegalLayout from '../components/LegalLayout.astro';
+import { termsSections } from '../config/legal';
+import { site } from '../config/site';
+---
+
+<LegalLayout
+  title="利用規約"
+  description="ご依頼の進め方、料金と支払い、納品と修正、商品の利用範囲、権利の帰属、秘密保持、免責事項についてまとめています。"
+  lead={`${site.name}（以下「当サイト」）のご利用にあたり、次の内容にご同意いただいたものとして取り扱います。`}
+>
+  {
+    termsSections.map((section) => (
+      <section>
+        <h2>{section.heading}</h2>
+        {section.body.map((paragraph) => (
+          <p>{paragraph}</p>
+        ))}
+      </section>
+    ))
+  }
+
+  <section>
+    <h2>準拠法と管轄</h2>
+    <p>
+      本規約は日本法に準拠します。当サイトに関して紛争が生じた場合、
+      運営者の所在地を管轄する裁判所を第一審の専属的合意管轄裁判所とします。
+    </p>
+  </section>
+</LegalLayout>

@@ -1,0 +1,121 @@
+---
+import SectionHeading from '../SectionHeading.astro';
+import { commonConcerns } from '../../config/services';
+import { url } from '../../lib/url';
+
+/**
+ * よくある相談。
+ * 技術名ではなく困りごとの言葉で並べ、「自分の相談も対象かも」と思える入口にします。
+ */
+const accentOf = { system: 'system', document: 'document', creative: 'creative' } as const;
+---
+
+<section class="section section--tight concerns" id="concerns" aria-labelledby="concerns-title">
+  <div class="container">
+    <SectionHeading
+      eyebrow="Common requests"
+      title="こんな相談が届いています"
+      lead="どれも実際にご相談の多い内容です。近いものがあれば、そのままの言葉でお送りください。"
+      id="concerns-title"
+    />
+
+    <ul class="concerns__list reveal">
+      {
+        commonConcerns.map((concern, i) => (
+          <li class:list={['concern', `concern--${accentOf[concern.category]}`]} style={`--reveal-delay:${i * 30}ms`}>
+            <span class="concern__quote" aria-hidden="true">“</span>
+            <span class="concern__text">{concern.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="concerns__note">
+      当てはまるものがなくても大丈夫です。「これはお願いできますか？」という確認だけでも受け付けています。
+    </p>
+
+    <div class="btn-row concerns__actions">
+      <a class="btn btn--ghost" href={url('/contact')}>この内容で相談してみる</a>
+      <a class="btn btn--quiet" href="#services">対応できることを見る</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .concerns__list {
+    margin-top: var(--sp-8);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    list-style: none;
+  }
+
+  .concern {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.75rem 1.1rem;
+    border-radius: var(--r-pill);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    box-shadow: var(--sh-sm);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--c-text);
+    line-height: 1.6;
+    transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .concern:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sh-md);
+  }
+
+  .concern__quote {
+    font-family: var(--font-en);
+    font-size: 1.1rem;
+    line-height: 1;
+    opacity: 0.55;
+  }
+
+  .concern--system {
+    border-color: rgba(47, 125, 225, 0.24);
+  }
+  .concern--system .concern__quote {
+    color: var(--c-cat-system);
+  }
+  .concern--system:hover {
+    border-color: rgba(47, 125, 225, 0.55);
+  }
+
+  .concern--document {
+    border-color: rgba(122, 111, 220, 0.24);
+  }
+  .concern--document .concern__quote {
+    color: var(--c-cat-document);
+  }
+  .concern--document:hover {
+    border-color: rgba(122, 111, 220, 0.55);
+  }
+
+  .concern--creative {
+    border-color: rgba(232, 96, 79, 0.24);
+  }
+  .concern--creative .concern__quote {
+    color: var(--c-cat-creative);
+  }
+  .concern--creative:hover {
+    border-color: rgba(232, 96, 79, 0.55);
+  }
+
+  .concerns__note {
+    margin-top: var(--sp-6);
+    font-size: var(--fs-sm);
+    color: var(--c-text-sub);
+  }
+
+  .concerns__actions {
+    margin-top: var(--sp-5);
+  }
+</style>
