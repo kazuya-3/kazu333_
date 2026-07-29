@@ -87,9 +87,9 @@ BASE_PATH=/
 
 `.github/workflows/deploy.yml` を同梱しています。
 
-1. GitHub のリポジトリ設定 → **Settings → Pages → Build and deployment → Source** を
-   **GitHub Actions** に変更する
-2. `main` ブランチへ push する
+1. `main` ブランチへ push する（ワークフローが Pages の有効化も試みます）
+2. 有効化に失敗した場合のみ、**Settings → Pages → Build and deployment → Source** を
+   **GitHub Actions** に変更して、ワークフローを再実行する
 
 以降、push のたびに自動でビルド・公開されます。
 `.env` の値が必要な場合は、リポジトリの **Settings → Secrets and variables → Actions → Variables**

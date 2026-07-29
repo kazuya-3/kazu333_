@@ -46,7 +46,12 @@ jobs:
           PUBLIC_ANALYTICS_ID: ${{ vars.PUBLIC_ANALYTICS_ID }}
         run: npm run build
 
+      # enablement: true で、Pages が未設定でもワークフローから有効化を試みます。
+      # （権限の都合で有効化できない場合は、Settings → Pages → Source を
+      #   「GitHub Actions」に変更してから再実行してください）
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
