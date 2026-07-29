@@ -107,7 +107,7 @@ const productLd = {
             ) : (
               <CoverArt
                 seed={product.slug}
-                accent={accent[product.category]}
+                accent={product.coverStyle ?? accent[product.category]}
                 ratio="4 / 3"
                 label={`${product.name}のイメージ`}
               />
@@ -184,7 +184,12 @@ const productLd = {
                       ? '販売の準備を進めています。開始のお知らせをご希望の方は、フォームからお知らせください。'
                       : '現在この商品は販売していません。似た内容のご相談は受け付けています。'}
                   </p>
-                  <a class="btn btn--ghost btn--lg btn--full" href={url('/contact')}>
+                  <a
+                    class="btn btn--ghost btn--lg btn--full"
+                    href={url(
+                      `/contact?product=${product.slug}&topic=${product.status === 'preparing' ? 'notify' : 'ask'}`,
+                    )}
+                  >
                     {product.status === 'preparing' ? '販売開始を知らせてもらう' : 'この商品について問い合わせる'}
                   </a>
                 </>

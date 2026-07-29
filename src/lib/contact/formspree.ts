@@ -14,7 +14,8 @@ import type { ContactAdapter, ContactPayload, SendResult } from './types';
 export function createFormspreeAdapter(endpoint: string): ContactAdapter {
   return {
     name: 'formspree',
-    isMock: false,
+    kind: 'remote',
+    supportsAttachment: true,
     async send(payload: ContactPayload): Promise<SendResult> {
       if (!endpoint) {
         return { ok: false, reason: 'unconfigured' };

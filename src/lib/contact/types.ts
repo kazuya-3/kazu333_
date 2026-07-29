@@ -22,12 +22,22 @@ export interface ContactPayload {
 }
 
 export type SendResult =
-  | { ok: true; mock?: boolean }
+  | { ok: true }
   | { ok: false; reason: 'network' | 'server' | 'validation' | 'unconfigured'; detail?: string };
+
+/**
+ * mock   : 実際には送らない（開発用）
+ * mailto : 利用者のメールソフトを開いて、本人に送信してもらう
+ * remote : 外部サービスや自前APIへ送信する
+ *
+ * kind によって、画面の案内文と完了画面の文言が変わります。
+ */
+export type AdapterKind = 'mock' | 'mailto' | 'remote';
 
 export interface ContactAdapter {
   readonly name: string;
-  /** 開発用のモック送信かどうか（画面に注意書きを出すために使用） */
-  readonly isMock: boolean;
+  readonly kind: AdapterKind;
+  /** 添付ファイルを送れるか（mailto は送れないため、画面で案内します） */
+  readonly supportsAttachment: boolean;
   send(payload: ContactPayload): Promise<SendResult>;
 }

@@ -106,7 +106,7 @@ const articleLd = {
             ) : (
               <CoverArt
                 seed={work.slug}
-                accent={accentMap[work.category]}
+                accent={work.coverStyle ?? accentMap[work.category]}
                 ratio="21 / 9"
                 label={`${work.title}のイメージ`}
               />
@@ -203,7 +203,9 @@ const articleLd = {
         }
 
         <div class="work-detail__actions">
-          <a class="btn btn--primary btn--lg" href={url('/contact')}>似た内容を相談する</a>
+          <a class="btn btn--primary btn--lg" href={url(`/contact?work=${work.slug}`)}>
+            似た内容を相談する
+          </a>
           <a class="btn btn--ghost" href={url('/estimate')}>費用の目安を見る</a>
           <a class="btn btn--quiet" href={url('/works')}>実績一覧へ戻る</a>
         </div>

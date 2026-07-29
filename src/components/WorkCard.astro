@@ -39,7 +39,11 @@ const accentMap: Record<Work['category'], 'system' | 'document' | 'creative'> = 
             decoding="async"
           />
         ) : (
-          <CoverArt seed={work.slug} accent={accentMap[work.category]} label={`${work.title}のイメージ`} />
+          <CoverArt
+            seed={work.slug}
+            accent={work.coverStyle ?? accentMap[work.category]}
+            label={`${work.title}のイメージ`}
+          />
         )
       }
       <span class:list={['badge', `badge--${accentMap[work.category]}`, 'work-card__cat']}>

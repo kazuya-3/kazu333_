@@ -17,6 +17,27 @@
   line-height: 1.8;
 }
 
+/* 送信方式の案内（mailto のとき） */
+.cf__mode {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--c-cat-system-soft);
+  border: 1px solid rgba(47, 125, 225, 0.22);
+  color: var(--c-blue-ink);
+  font-size: var(--fs-xs);
+  line-height: 1.85;
+}
+
+.cf__mode::before {
+  content: "✉";
+  flex: 0 0 auto;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
 /* --- 見積もりの引き継ぎ --- */
 
 .cf__estimate {

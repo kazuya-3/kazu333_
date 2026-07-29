@@ -15,6 +15,18 @@ import './ContactForm.css';
 interface Props {
   privacyUrl: string;
   estimateUrl: string;
+  homeUrl: string;
+  /** mailto 方式のとき、開けなかった人向けに表示する連絡先（未設定なら空文字） */
+  contactEmail: string;
+  /**
+   * 商品・実績ページから来たときに、内容を自動で書き込むための対応表。
+   *   /contact?product=<slug>&topic=notify
+   *   /contact?work=<slug>
+   */
+  contextItems: {
+    products: Record<string, string>;
+    works: Record<string, { title: string; field: string }>;
+  };
 }
 
 type Phase = 'input' | 'confirm' | 'sending' | 'success' | 'error';
@@ -54,7 +66,13 @@ const FIELD_MAP: Record<string, string> = {
   unknown: 'unknown',
 };
 
-export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
+export default function ContactForm({
+  privacyUrl,
+  estimateUrl,
+  homeUrl,
+  contactEmail,
+  contextItems,
+}: Props) {
   const [values, setValues] = useState<FormState>(initialState);
   const [file, setFile] = useState<File | null>(null);
   const [honeypot, setHoneypot] = useState('');
@@ -68,8 +86,30 @@ export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
 
   const adapter = useMemo(() => getContactAdapter(), []);
 
-  // --- 見積もりからの引き継ぎ ---
+  // --- 見積もり、および商品・実績ページからの引き継ぎ ---
   useEffect(() => {
+    // 1. 商品・実績ページから来た場合は、何についての相談かを先に書き込む
+    const params = new URLSearchParams(window.location.search);
+    const productSlug = params.get('product');
+    const workSlug = params.get('work');
+
+    if (productSlug && contextItems.products[productSlug]) {
+      const name = contextItems.products[productSlug];
+      const message =
+        params.get('topic') === 'notify'
+          ? `商品「${name}」の販売開始のお知らせを希望します。`
+          : `商品「${name}」について伺いたいことがあります。`;
+      setValues((prev) => ({ ...prev, field: 'shop', message }));
+    } else if (workSlug && contextItems.works[workSlug]) {
+      const work = contextItems.works[workSlug];
+      setValues((prev) => ({
+        ...prev,
+        field: work.field,
+        message: `実績「${work.title}」と近い内容を相談したいです。\n`,
+      }));
+    }
+
+    // 2. 簡易見積もりの結果を引き継ぐ
     try {
       const raw = window.sessionStorage.getItem(ESTIMATE_STORAGE_KEY);
       if (!raw) return;
@@ -83,7 +123,7 @@ export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
     } catch {
       // 読み取れなくてもフォームは通常どおり使える
     }
-  }, []);
+  }, [contextItems]);
 
   // 状態が変わったら、その領域へフォーカスを移して読み上げる
   useEffect(() => {
@@ -167,26 +207,47 @@ export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
 
   // --- 送信完了 ---
   if (phase === 'success') {
+    const isMailto = adapter.kind === 'mailto';
+    const text = isMailto ? contactMessages.successMailto : contactMessages.success;
     return (
       <div class="cf__result cf__result--ok" tabIndex={-1} ref={statusRef} role="status">
         <span class="cf__result-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="28" height="28">
-            <path
-              d="m5 12.5 4.5 4.5L19 7.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+            {isMailto ? (
+              <path
+                d="M3.5 7h17v10h-17zM4 7.5l8 5.5 8-5.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            ) : (
+              <path
+                d="m5 12.5 4.5 4.5L19 7.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            )}
           </svg>
         </span>
-        <h2 class="cf__result-title">{contactMessages.success.title}</h2>
-        <p class="cf__result-body">{contactMessages.success.body}</p>
-        {adapter.isMock && <p class="cf__mock">{contactMessages.mockNotice}</p>}
-        <p class="cf__result-note">{contactMessages.success.note}</p>
+        <h2 class="cf__result-title">{text.title}</h2>
+        <p class="cf__result-body">{text.body}</p>
+        {adapter.kind === 'mock' && <p class="cf__mock">{contactMessages.mockNotice}</p>}
+        <p class="cf__result-note">
+          {text.note}
+          {isMailto && contactEmail && (
+            <>
+              {' '}
+              <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+            </>
+          )}
+        </p>
         <div class="cf__result-actions">
-          <a class="btn btn--ghost" href="/">
+          <a class="btn btn--ghost" href={homeUrl}>
             トップへ戻る
           </a>
           <a class="btn btn--quiet" href={estimateUrl}>
@@ -201,8 +262,11 @@ export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
 
   return (
     <div class="cf">
-      {adapter.isMock && (
+      {adapter.kind === 'mock' && (
         <p class="cf__mock cf__mock--top">{contactMessages.mockNotice}</p>
+      )}
+      {adapter.kind === 'mailto' && (
+        <p class="cf__mode">{contactMessages.mailtoNotice}</p>
       )}
 
       {estimate && (
@@ -245,8 +309,14 @@ export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
       {/* --- 確認画面 --- */}
       {phase === 'confirm' || phase === 'sending' ? (
         <div class="cf__confirm" tabIndex={-1} ref={statusRef}>
-          <h2 class="cf__confirm-title">この内容で送信します</h2>
-          <p class="cf__confirm-lead">内容をご確認のうえ、送信してください。</p>
+          <h2 class="cf__confirm-title">
+            {adapter.kind === 'mailto' ? 'この内容でメールを作成します' : 'この内容で送信します'}
+          </h2>
+          <p class="cf__confirm-lead">
+            {adapter.kind === 'mailto'
+              ? '内容をご確認のうえ、メールの作成へお進みください。'
+              : '内容をご確認のうえ、送信してください。'}
+          </p>
 
           <dl class="cf__confirm-list">
             <Row label="お名前・活動名" value={values.name} />
@@ -277,7 +347,11 @@ export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
               disabled={disabled}
               aria-disabled={disabled}
             >
-              {disabled ? '送信中…' : 'この内容で送信する'}
+              {disabled
+                ? '送信中…'
+                : adapter.kind === 'mailto'
+                  ? 'メールを作成する'
+                  : 'この内容で送信する'}
             </button>
             <button
               type="button"
@@ -437,7 +511,11 @@ export default function ContactForm({ privacyUrl, estimateUrl }: Props) {
               <Field
                 id="cf-file"
                 label="ファイル添付"
-                hint={`${contactConfig.upload.maxMb}MBまで／${contactConfig.upload.accept}`}
+                hint={
+                  adapter.supportsAttachment
+                    ? `${contactConfig.upload.maxMb}MBまで／${contactConfig.upload.accept}`
+                    : contactMessages.mailtoAttachmentNotice
+                }
                 error={errorFor(errors, 'file')}
               >
                 <input

@@ -50,8 +50,14 @@ export interface Work {
   category: CategoryKey;
   /** カード用の一覧向け一言 */
   summary: string;
-  /** サムネイル。省略すると抽象カバーを自動生成します。 */
+  /** サムネイル。省略するとカバーイラストを自動生成します。 */
   thumbnail?: WorkImage;
+  /**
+   * thumbnail が無いときに描くイラストの種類。
+   * 省略するとカテゴリから決まります（system→コード画面 / document→資料 / creative→制作物）。
+   * 'neutral' は集計・一覧をあらわす図、'ai' はAI活用の図です。
+   */
+  coverStyle?: 'system' | 'document' | 'creative' | 'ai' | 'neutral';
   /** 課題 → 対応 → 結果 */
   challenge: string;
   solution: string[];
@@ -105,6 +111,7 @@ export const works: Work[] = [
     title: 'DataGridViewの表示改善',
     category: 'system',
     summary: '一覧画面が見づらいという声に対して、表示のルールを整理し直しました。',
+    coverStyle: 'neutral',
     challenge:
       '業務アプリの一覧画面で、行数が増えると目的の情報を探しにくいという相談でした。「見づらい」以上の具体的な要望はまだ言葉になっていない状態からのスタートでした。',
     solution: [
@@ -128,6 +135,7 @@ export const works: Work[] = [
     title: 'SQL・データ処理のサンプル整備',
     category: 'system',
     summary: '毎月の集計作業を、手作業からSQL1本にまとめました。',
+    coverStyle: 'neutral',
     challenge:
       '毎月、複数のCSVをExcelで開いて手作業で集計しており、時間がかかるうえに数字が合わないことがある、という相談でした。',
     solution: [

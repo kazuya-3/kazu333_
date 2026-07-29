@@ -41,7 +41,11 @@ const displayPrice = hasSale ? product.salePrice! : product.price;
           decoding="async"
         />
       ) : (
-        <CoverArt seed={product.slug} accent={accent[product.category]} ratio="4 / 3" label="" />
+        <CoverArt
+          seed={product.slug}
+          accent={product.coverStyle ?? accent[product.category]}
+          ratio="4 / 3"
+        />
       )
     }
     {hasSale && <span class="product-card__sale">セール中</span>}

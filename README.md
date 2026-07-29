@@ -166,8 +166,17 @@ export const site = {
 2. `works.ts` の先頭で `import myImage from '../assets/works/my-image.png';`
 3. `thumbnail: { src: myImage, alt: '説明' }` を追加（`gallery` も同じ形式）
 
-**`thumbnail` を省略すると**、カテゴリ色の抽象カバーが自動生成されます。
-「画像は準備中」と表示され、壊れた画像は出ません。
+**`thumbnail` を省略すると**、カテゴリに合わせたカバーイラストが自動生成されます
+（システム→コード画面、資料→書類、制作→アートボード）。壊れた画像は出ません。
+
+イラストの種類を指定したいときは `coverStyle` を足してください。
+
+```ts
+coverStyle: 'neutral',   // 'system' | 'document' | 'creative' | 'ai' | 'neutral'
+```
+
+`neutral` は集計・一覧をあらわすグラフ図、`ai` は AI 活用をあらわす図です。
+同じ slug なら常に同じ絵になるため、更新のたびに見た目が変わることはありません。
 
 画像は `astro:assets` によりビルド時に webp へ変換され、複数幅が出力されます。
 元画像は大きいままで構いません。
@@ -214,7 +223,17 @@ export const site = {
 ```
 
 プレビュー画像は実績と同じ方法（`src/assets/` に置いて import → `preview: { src, alt }`）です。
-省略すると抽象カバーが自動生成されます。
+省略するとカバーイラストが自動生成されます（`coverStyle` で種類を指定できます）。
+
+### 販売準備中のあいだ
+
+`purchaseUrl` が空、または `status` が `onSale` 以外のとき、購入ボタンの代わりに
+「販売開始を知らせてもらう」「この商品について問い合わせる」が表示されます。
+このボタンからご相談フォームへ進むと、**商品名が自動で本文に入ります**
+（`/contact?product=<slug>&topic=notify`）。
+
+実績の詳細ページの「似た内容を相談する」も同じ仕組みで、
+実績名と相談分野がフォームへ引き継がれます（`/contact?work=<slug>`）。
 
 ---
 
@@ -261,11 +280,38 @@ export const site = {
 
 | `PUBLIC_CONTACT_PROVIDER` | 動作 | 必要な設定 |
 | --- | --- | --- |
-| `mock`（既定） | 送信せず成功扱い。画面に注意書きが出る | なし |
+| `mailto` | 利用者のメールソフトを開き、入力内容が入ったメールを作成する | `site.ts` の `contact.email` |
 | `formspree` | Formspree 互換サービスへ multipart で POST | `PUBLIC_FORMSPREE_ENDPOINT` |
 | `endpoint` | 自前の API へ POST | `PUBLIC_CONTACT_ENDPOINT` |
+| `mock` | 送信せず成功扱い。画面に注意書きが出る | なし（開発用） |
 
-### Formspree を使う場合（いちばん手軽）
+**未設定のときの動作**: `src/config/site.ts` の `contact.emailConfigured` が
+`true` なら `mailto`、`false` なら `mock` になります。
+
+### いちばん早く動かす方法（外部サービス不要）
+
+`src/config/site.ts` を 2 行変えるだけです。
+
+```ts
+contact: {
+  email: 'あなたのアドレス@example.com',
+  emailConfigured: true,   // ← true にする
+},
+```
+
+これだけで、フォームの送信ボタンが利用者のメールソフトを開き、
+氏名・分野・相談内容・見積もり結果が本文に入った状態でメールが作成されます。
+最後に利用者自身が送信します。画面にもその旨を案内します。
+
+| 長所 | 短所 |
+| --- | --- |
+| 契約も設定も不要。すぐ動く | ファイルを直接添付できない（ファイル名だけ伝え、メールに添付してもらう） |
+| 迷惑メールに埋もれにくい | 利用者の環境にメールソフトが必要 |
+| 個人情報が第三者を経由しない | 送信されたかを運営側で確認できない |
+
+本格的にフォームで受け取りたくなったら、下記の Formspree などへ切り替えてください。
+
+### Formspree を使う場合（フォームで受け取る）
 
 1. <https://formspree.io/> でフォームを作成し、エンドポイント URL を取得する
 2. `.env` に次を設定する
@@ -398,7 +444,8 @@ node scripts/generate-og.mjs
 - [ ] `pricing.ts` — 金額と加算率を自分の相場に合わせる
 - [ ] `legal.ts` — 「要入力」の項目をすべて埋め、内容を確認する
 - [ ] `.env` — `SITE_URL` / `BASE_PATH` を公開先に合わせる
-- [ ] `.env` — `PUBLIC_CONTACT_PROVIDER` を `mock` 以外にし、送信テストを行う
+- [ ] 問い合わせが届く状態にする（`site.ts` にメールを書いて `emailConfigured: true` にするか、
+      `.env` で `formspree` / `endpoint` を設定する）。**必ず一度送信テストをする**
 - [ ] `.env` — 応援チップのリンクを設定する（使う場合）
 - [ ] `public/og-image.png` を必要なら差し替える
 - [ ] `npm run build` が通ることを確認する

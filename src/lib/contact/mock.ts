@@ -8,11 +8,12 @@ import type { ContactAdapter, ContactPayload, SendResult } from './types';
 
 export const mockAdapter: ContactAdapter = {
   name: 'mock',
-  isMock: true,
+  kind: 'mock',
+  supportsAttachment: true,
   async send(payload: ContactPayload): Promise<SendResult> {
     if (payload.honeypot) {
       // ボットの可能性が高い。成功を返して静かに握りつぶす。
-      return { ok: true, mock: true };
+      return { ok: true };
     }
     await new Promise((resolve) => setTimeout(resolve, 700));
     if (import.meta.env.DEV) {
@@ -23,6 +24,6 @@ export const mockAdapter: ContactAdapter = {
         hasEstimate: payload.estimate.length > 0,
       });
     }
-    return { ok: true, mock: true };
+    return { ok: true };
   },
 };

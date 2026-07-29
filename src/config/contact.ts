@@ -2,24 +2,41 @@
  * 問い合わせフォームの設定。
  *
  * 送信方法は .env の PUBLIC_CONTACT_PROVIDER で切り替えます。
- *   mock     : 送信せず成功扱い（開発用・既定値）
+ *   mailto   : 利用者のメールソフトを開いて送ってもらう（外部サービス不要）
  *   formspree: Formspree などの外部フォームサービスへ POST
- *   endpoint : 自前の API エンドポイントへ JSON を POST
+ *   endpoint : 自前の API エンドポイントへ POST
+ *   mock     : 送信せず成功扱い（開発用）
  *
- * いずれも未設定でサイトは正常に動きます（mock として扱われます）。
+ * ▼ 既定の動作
+ *   PUBLIC_CONTACT_PROVIDER を設定していない場合:
+ *     - src/config/site.ts の contact.emailConfigured が true なら → mailto
+ *     - まだ false なら                                        → mock
+ *
+ *   つまり「site.ts に自分のメールアドレスを書いて emailConfigured を true にする」だけで、
+ *   外部サービスの契約なしに問い合わせが届くようになります。
+ *   きちんとしたフォーム受信にしたくなったら、.env で formspree / endpoint へ切り替えてください。
+ *
+ * 設定が不完全なときは必ず安全な方へ落とすため、サイトが壊れることはありません。
  * 実装は src/lib/contact/ を参照してください。
  */
 
+import { site } from './site';
+
 const env = import.meta.env;
 
-export type ContactProvider = 'mock' | 'formspree' | 'endpoint';
+export type ContactProvider = 'mock' | 'mailto' | 'formspree' | 'endpoint';
 
 function resolveProvider(): ContactProvider {
-  const raw = (env.PUBLIC_CONTACT_PROVIDER ?? 'mock').toLowerCase();
+  const raw = (env.PUBLIC_CONTACT_PROVIDER ?? '').toLowerCase();
+
   if (raw === 'formspree' && env.PUBLIC_FORMSPREE_ENDPOINT) return 'formspree';
   if (raw === 'endpoint' && env.PUBLIC_CONTACT_ENDPOINT) return 'endpoint';
-  // 指定はあるが URL 未設定、あるいは未知の値のときは mock に落として画面を壊さない
-  return 'mock';
+  if (raw === 'mailto' && site.contact.emailConfigured) return 'mailto';
+  if (raw === 'mock') return 'mock';
+
+  // 未指定、または指定はあるが設定が足りないとき。
+  // メールアドレスが用意できていれば mailto、まだなら mock。
+  return site.contact.emailConfigured ? 'mailto' : 'mock';
 }
 
 export const contactConfig = {
@@ -82,10 +99,20 @@ export const contactMessages = {
     body: 'ありがとうございます。内容を確認のうえ、2〜3日以内にご連絡します。しばらくお待ちください。',
     note: '自動返信メールは送信していません。お手元に控えが必要な場合は、この画面をスクリーンショットで残してください。',
   },
+  /** mailto 方式のときの完了画面 */
+  successMailto: {
+    title: 'メールの作成画面を開きました',
+    body: 'ご入力いただいた内容が本文に入った状態で、メールが作成されます。最後にご自身で送信してください。',
+    note: 'メールソフトが開かない場合は、お手数ですが下記のアドレス宛に直接お送りください。',
+  },
   error: {
     title: '送信できませんでした',
     body: '通信の状態を確認して、もう一度お試しください。何度か試しても送れない場合は、お手数ですがメールでご連絡ください。',
   },
   mockNotice:
     '現在このフォームは開発用の設定（モック送信）です。実際には送信されません。送信先の設定方法は README をご覧ください。',
+  mailtoNotice:
+    '送信ボタンを押すと、お使いのメールソフトが起動し、入力内容が入ったメールが作成されます。最後にご自身で送信してください。',
+  mailtoAttachmentNotice:
+    'この方式ではファイルを直接添付できません。ファイル名だけをお伝えしますので、作成されたメールにそのまま添付してください。',
 };

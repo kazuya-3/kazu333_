@@ -44,6 +44,11 @@ export interface Product {
   /** セール価格（円）。設定すると通常価格に取り消し線が付きます。 */
   salePrice?: number;
   preview?: ProductImage;
+  /**
+   * preview が無いときに描くイラストの種類。
+   * 省略するとカテゴリから決まります。
+   */
+  coverStyle?: 'system' | 'document' | 'creative' | 'ai' | 'neutral';
   gallery?: ProductImage[];
   /** 内容物 */
   contents: string[];
@@ -257,6 +262,7 @@ export const products: Product[] = [
     description:
       'CSVの読み込みと整形、重複行の確認、列の並べ替えといった、よく発生する小さな作業をまとめたツールです。使い方は手順書に沿って進められる形にしています。ご自身の環境に合わせた調整が必要な場合は、別途ご相談ください。',
     price: 2500,
+    coverStyle: 'neutral',
     contents: ['ツール本体（マクロ有効ブック）', '操作手順書（PDF）', '設定シートの説明'],
     formats: ['XLSM', 'PDF'],
     environment: 'Microsoft Excel 2019 以降（Windows）',

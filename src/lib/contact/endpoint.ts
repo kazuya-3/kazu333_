@@ -15,7 +15,8 @@ import type { ContactAdapter, ContactPayload, SendResult } from './types';
 export function createEndpointAdapter(endpoint: string): ContactAdapter {
   return {
     name: 'endpoint',
-    isMock: false,
+    kind: 'remote',
+    supportsAttachment: true,
     async send(payload: ContactPayload): Promise<SendResult> {
       if (!endpoint) {
         return { ok: false, reason: 'unconfigured' };

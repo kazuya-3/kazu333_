@@ -5,7 +5,22 @@ import ContactForm from '../components/islands/ContactForm';
 import { contactIntro } from '../config/contact';
 import { site } from '../config/site';
 import { assurances } from '../config/flow';
+import { products } from '../config/products';
+import { publicWorks } from '../config/works';
 import { url, absoluteUrl } from '../lib/url';
+
+/**
+ * 商品・実績ページから「相談する」で来たとき、
+ * 何についての相談かをフォームへ自動で書き込むための対応表。
+ */
+const workFieldMap = { system: 'system', document: 'document', creative: 'design' } as const;
+
+const contextItems = {
+  products: Object.fromEntries(products.map((p) => [p.slug, p.name])),
+  works: Object.fromEntries(
+    publicWorks.map((w) => [w.slug, { title: w.title, field: workFieldMap[w.category] }]),
+  ),
+};
 
 const breadcrumbLd = {
   '@context': 'https://schema.org',
@@ -37,6 +52,9 @@ const breadcrumbLd = {
           client:load
           privacyUrl={url('/privacy')}
           estimateUrl={url('/estimate')}
+          homeUrl={url('/')}
+          contactEmail={site.contact.emailConfigured ? site.contact.email : ''}
+          contextItems={contextItems}
         />
       </div>
 
