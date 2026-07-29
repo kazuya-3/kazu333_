@@ -285,8 +285,14 @@ coverStyle: 'neutral',   // 'system' | 'document' | 'creative' | 'ai' | 'neutral
 | `endpoint` | 自前の API へ POST | `PUBLIC_CONTACT_ENDPOINT` |
 | `mock` | 送信せず成功扱い。画面に注意書きが出る | なし（開発用） |
 
-**未設定のときの動作**: `src/config/site.ts` の `contact.emailConfigured` が
-`true` なら `mailto`、`false` なら `mock` になります。
+**`PUBLIC_CONTACT_PROVIDER` を書かなくても切り替わります。** 次の順で判定します。
+
+1. `PUBLIC_FORMSPREE_ENDPOINT` があれば → `formspree`
+2. `PUBLIC_CONTACT_ENDPOINT` があれば → `endpoint`
+3. `site.ts` の `contact.emailConfigured` が `true` なら → `mailto`
+4. どれも無ければ → `mock`
+
+つまり **Formspree を使う場合、設定する変数は URL 1 つだけ** です。
 
 ### いちばん早く動かす方法（外部サービス不要）
 
@@ -311,17 +317,47 @@ contact: {
 
 本格的にフォームで受け取りたくなったら、下記の Formspree などへ切り替えてください。
 
-### Formspree を使う場合（フォームで受け取る）
+### Formspree を使う場合（フォームで受け取る／推奨）
 
-1. <https://formspree.io/> でフォームを作成し、エンドポイント URL を取得する
-2. `.env` に次を設定する
+メールアドレスをサイト上に出さずに受け取れます。無料枠は月 50 件です。
 
-```bash
-PUBLIC_CONTACT_PROVIDER=formspree
-PUBLIC_FORMSPREE_ENDPOINT=https://formspree.io/f/xxxxxxx
-```
+**手順（5 分ほど）**
 
-API キーは不要です。エンドポイント URL のみで動きます。
+1. <https://formspree.io/> に登録し、**New Form** を作成する
+   （受信先には、通知を受け取りたいメールアドレスを指定します）
+2. 表示される **エンドポイント URL** をコピーする
+   （`https://formspree.io/f/xxxxxxxx` の形です）
+3. その URL を設定する
+
+   **ローカルで確認する場合** — `.env` に 1 行:
+
+   ```bash
+   PUBLIC_FORMSPREE_ENDPOINT=https://formspree.io/f/xxxxxxxx
+   ```
+
+   **GitHub Pages で公開する場合** — リポジトリの
+   **Settings → Secrets and variables → Actions → Variables → New repository variable** で
+
+   | Name | Value |
+   | --- | --- |
+   | `PUBLIC_FORMSPREE_ENDPOINT` | `https://formspree.io/f/xxxxxxxx` |
+
+   を追加し、`main` へ push（またはワークフローを手動実行）します。
+   ワークフロー側はすでに対応済みなので、他に変更は要りません。
+
+4. 公開後、実際にフォームから 1 件送ってみて、受信を確認する
+   （Formspree は初回送信時に確認メールを送ります）
+
+API キーやシークレットは不要です。エンドポイント URL のみで動きます。
+
+> `PUBLIC_` 変数はブラウザから見える値です。Formspree のエンドポイント URL は
+> 公開前提の値なので問題ありませんが、秘密鍵は絶対に入れないでください。
+
+**送信される項目**: お名前 / email / 相談分野 / 依頼内容 / 希望納期 / ご予算 /
+参考URL / 希望する連絡方法 / 補足 / 簡易見積もり / 添付ファイル
+
+送信に失敗した場合は、確認画面を保ったままエラーを表示し、
+**「もう一度送信する」で入力し直さずに再送**できます。
 
 ### 自前 API を使う場合
 
@@ -444,8 +480,8 @@ node scripts/generate-og.mjs
 - [ ] `pricing.ts` — 金額と加算率を自分の相場に合わせる
 - [ ] `legal.ts` — 「要入力」の項目をすべて埋め、内容を確認する
 - [ ] `.env` — `SITE_URL` / `BASE_PATH` を公開先に合わせる
-- [ ] 問い合わせが届く状態にする（`site.ts` にメールを書いて `emailConfigured: true` にするか、
-      `.env` で `formspree` / `endpoint` を設定する）。**必ず一度送信テストをする**
+- [ ] 問い合わせが届く状態にする（Formspree のエンドポイント URL を設定するか、
+      `site.ts` にメールを書いて `emailConfigured: true` にする）。**必ず一度送信テストをする**
 - [ ] `.env` — 応援チップのリンクを設定する（使う場合）
 - [ ] `public/og-image.png` を必要なら差し替える
 - [ ] `npm run build` が通ることを確認する

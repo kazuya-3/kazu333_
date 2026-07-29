@@ -7,14 +7,14 @@
  *   endpoint : 自前の API エンドポイントへ POST
  *   mock     : 送信せず成功扱い（開発用）
  *
- * ▼ 既定の動作
- *   PUBLIC_CONTACT_PROVIDER を設定していない場合:
- *     - src/config/site.ts の contact.emailConfigured が true なら → mailto
- *     - まだ false なら                                        → mock
+ * ▼ 既定の動作（PUBLIC_CONTACT_PROVIDER を書かなくても切り替わります）
+ *   1. PUBLIC_FORMSPREE_ENDPOINT が設定されていれば → formspree
+ *   2. PUBLIC_CONTACT_ENDPOINT が設定されていれば   → endpoint
+ *   3. site.ts の contact.emailConfigured が true なら → mailto
+ *   4. どれも無ければ                                → mock
  *
- *   つまり「site.ts に自分のメールアドレスを書いて emailConfigured を true にする」だけで、
- *   外部サービスの契約なしに問い合わせが届くようになります。
- *   きちんとしたフォーム受信にしたくなったら、.env で formspree / endpoint へ切り替えてください。
+ *   つまり Formspree を使う場合は、エンドポイント URL を 1 つ設定するだけで有効になります。
+ *   PUBLIC_CONTACT_PROVIDER を明示した場合は、そちらが優先されます。
  *
  * 設定が不完全なときは必ず安全な方へ落とすため、サイトが壊れることはありません。
  * 実装は src/lib/contact/ を参照してください。
@@ -27,15 +27,20 @@ const env = import.meta.env;
 export type ContactProvider = 'mock' | 'mailto' | 'formspree' | 'endpoint';
 
 function resolveProvider(): ContactProvider {
-  const raw = (env.PUBLIC_CONTACT_PROVIDER ?? '').toLowerCase();
+  const raw = (env.PUBLIC_CONTACT_PROVIDER ?? '').trim().toLowerCase();
+  const hasFormspree = Boolean(env.PUBLIC_FORMSPREE_ENDPOINT?.trim());
+  const hasEndpoint = Boolean(env.PUBLIC_CONTACT_ENDPOINT?.trim());
 
-  if (raw === 'formspree' && env.PUBLIC_FORMSPREE_ENDPOINT) return 'formspree';
-  if (raw === 'endpoint' && env.PUBLIC_CONTACT_ENDPOINT) return 'endpoint';
-  if (raw === 'mailto' && site.contact.emailConfigured) return 'mailto';
+  // 明示指定があり、必要な設定も揃っている場合はそれを使う
   if (raw === 'mock') return 'mock';
+  if (raw === 'formspree' && hasFormspree) return 'formspree';
+  if (raw === 'endpoint' && hasEndpoint) return 'endpoint';
+  if (raw === 'mailto' && site.contact.emailConfigured) return 'mailto';
 
   // 未指定、または指定はあるが設定が足りないとき。
-  // メールアドレスが用意できていれば mailto、まだなら mock。
+  // 送信先の URL があればそれを使い、無ければメール、それも無ければモック。
+  if (hasFormspree) return 'formspree';
+  if (hasEndpoint) return 'endpoint';
   return site.contact.emailConfigured ? 'mailto' : 'mock';
 }
 

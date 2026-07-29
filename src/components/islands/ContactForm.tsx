@@ -82,6 +82,7 @@ export default function ContactForm({
   const [errorDetail, setErrorDetail] = useState('');
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
+  const confirmRef = useRef<HTMLDivElement>(null);
   const submittedAt = useRef(0);
 
   const adapter = useMemo(() => getContactAdapter(), []);
@@ -128,7 +129,7 @@ export default function ContactForm({
   // 状態が変わったら、その領域へフォーカスを移して読み上げる
   useEffect(() => {
     if (phase === 'success' || phase === 'error') statusRef.current?.focus();
-    if (phase === 'confirm') statusRef.current?.focus();
+    else if (phase === 'confirm') confirmRef.current?.focus();
   }, [phase]);
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -306,9 +307,9 @@ export default function ContactForm({
         </div>
       )}
 
-      {/* --- 確認画面 --- */}
-      {phase === 'confirm' || phase === 'sending' ? (
-        <div class="cf__confirm" tabIndex={-1} ref={statusRef}>
+      {/* --- 確認画面（送信に失敗したときも、そのまま送り直せるよう残す） --- */}
+      {phase === 'confirm' || phase === 'sending' || phase === 'error' ? (
+        <div class="cf__confirm" tabIndex={-1} ref={confirmRef}>
           <h2 class="cf__confirm-title">
             {adapter.kind === 'mailto' ? 'この内容でメールを作成します' : 'この内容で送信します'}
           </h2>
@@ -349,9 +350,11 @@ export default function ContactForm({
             >
               {disabled
                 ? '送信中…'
-                : adapter.kind === 'mailto'
-                  ? 'メールを作成する'
-                  : 'この内容で送信する'}
+                : phase === 'error'
+                  ? 'もう一度送信する'
+                  : adapter.kind === 'mailto'
+                    ? 'メールを作成する'
+                    : 'この内容で送信する'}
             </button>
             <button
               type="button"

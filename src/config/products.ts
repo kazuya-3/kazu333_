@@ -343,6 +343,15 @@ export const productStatusLabel: Record<ProductStatus, string> = {
   soldOut: '販売終了',
 };
 
+/** 購入できる商品が 1 つでもあるか（販売準備中の案内を出すかの判定に使用） */
+export const hasPurchasableProduct = products.some((p) => isPurchasable(p));
+
+/** すべて準備中のときに、ショップ上部へ出す案内 */
+export const shopPreparingNotice = {
+  title: '現在、販売の準備を進めています',
+  body: '掲載している内容は決まっていますが、販売ページの用意がまだ整っていません。気になる商品があれば、各商品ページの「販売開始を知らせてもらう」からお知らせください。準備ができ次第ご連絡します。',
+};
+
 /** ショップ全体の注意書き */
 export const shopNotes = [
   'すべて完成済みのデータです。ご購入後すぐにお使いいただけます。',

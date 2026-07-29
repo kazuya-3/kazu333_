@@ -3,7 +3,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import SupportTip from '../../components/home/SupportTip.astro';
-import { products, productCategoryLabel, shopNotes, type ProductCategory } from '../../config/products';
+import {
+  products,
+  productCategoryLabel,
+  shopNotes,
+  hasPurchasableProduct,
+  shopPreparingNotice,
+  type ProductCategory,
+} from '../../config/products';
 import { url, absoluteUrl } from '../../lib/url';
 
 const usedCategories = [...new Set(products.map((p) => p.category))] as ProductCategory[];
@@ -44,6 +51,15 @@ const breadcrumbLd = {
           ダウンロードしてすぐお使いいただけます。使い方に迷ったら、購入前でもご相談ください。
         </p>
       </header>
+
+      {
+        !hasPurchasableProduct && (
+          <div class="shop-page__preparing">
+            <p class="shop-page__preparing-title">{shopPreparingNotice.title}</p>
+            <p class="shop-page__preparing-body">{shopPreparingNotice.body}</p>
+          </div>
+        )
+      }
 
       <div class="shop-page__filter" role="group" aria-label="カテゴリで絞り込む">
         {
@@ -110,8 +126,40 @@ const breadcrumbLd = {
     font-size: var(--fs-lead);
   }
 
-  .shop-page__filter {
+  .shop-page__preparing {
     margin-top: var(--sp-8);
+    padding: var(--sp-5);
+    border-radius: var(--r-lg);
+    background: #fff8e6;
+    border: 1px solid #f0dcae;
+  }
+
+  .shop-page__preparing-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-sm);
+    font-weight: 800;
+    color: #7a5d17;
+  }
+
+  .shop-page__preparing-title::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e0b64d;
+  }
+
+  .shop-page__preparing-body {
+    margin-top: var(--sp-2);
+    font-size: var(--fs-xs);
+    color: #7a5d17;
+    line-height: 1.9;
+  }
+
+  .shop-page__filter {
+    margin-top: var(--sp-6);
     display: flex;
     flex-wrap: wrap;
     gap: var(--sp-2);
