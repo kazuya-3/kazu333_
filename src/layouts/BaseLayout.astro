@@ -38,7 +38,13 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? site.seo.titleTemplate.replace('%s', title) : site.seo.defaultTitle;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com').href;
+
+// sitemap は末尾スラッシュ付きで出力されるため、canonical も揃えておく
+// （揃っていないと、検索エンジンから同じページが2つに見えることがある）
+const canonicalPath = Astro.url.pathname.endsWith('/')
+  ? Astro.url.pathname
+  : `${Astro.url.pathname}/`;
+const canonical = new URL(canonicalPath, Astro.site ?? 'https://example.com').href;
 const ogImage = absoluteUrl(image, Astro.site);
 const currentPath = Astro.url.pathname;
 
