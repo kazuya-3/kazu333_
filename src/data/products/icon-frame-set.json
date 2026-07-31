@@ -1,0 +1,60 @@
+{
+  "order": 10,
+  "slug": "icon-frame-set",
+  "name": "アイコンフレームセット",
+  "catch": "アイコンに重ねるだけで、印象が整う円形フレーム8種。",
+  "description": "プロフィール画像や配信画面のアイコンに重ねて使える、円形フレームのセットです。宝石・水・光・回路・植物など、雰囲気の違う8種類を同じ配色ルールで揃えているため、使い分けても並べたときに統一感が保たれます。背景は透過済みで、余白の規格も揃えてあります。",
+  "price": 1200,
+  "preview": {
+    "src": "/src/assets/works/icon-frame-demo-05.png",
+    "alt": "アイコンに宝石と唐草模様のフレームを重ねた使用イメージ"
+  },
+  "gallery": [
+    {
+      "src": "/src/assets/works/icon-frame-03.png",
+      "alt": "金属質のリング型フレーム"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-04.png",
+      "alt": "青い光が放射状に伸びるフレーム"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-05.png",
+      "alt": "水の粒が舞う円形フレーム"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-07.png",
+      "alt": "低ポリゴン調の青いリングフレーム"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-08.png",
+      "alt": "銀色のリングフレーム"
+    }
+  ],
+  "contents": [
+    "フレーム画像 8種（背景透過PNG / 1024×1024）",
+    "重ね方の説明（PDF 1枚）"
+  ],
+  "formats": [
+    "PNG（背景透過）",
+    "PDF"
+  ],
+  "environment": "画像を重ねられるアプリ全般（Photoshop / Canva / CLIP STUDIO など）",
+  "license": {
+    "scope": "個人・法人を問わず、ご自身のアイコンや配信画面へ使用できます。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "不要"
+  },
+  "updatedAt": "2025-11-24",
+  "purchaseUrl": "",
+  "featured": true,
+  "category": "design",
+  "status": "preparing",
+  "tags": [
+    "アイコン",
+    "透過PNG",
+    "8種セット"
+  ]
+}

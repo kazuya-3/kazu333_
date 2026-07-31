@@ -2,6 +2,9 @@
 dist/
 .astro/
 
+# 管理画面の本体（npm install 後に scripts/sync-cms.mjs が用意します）
+public/admin/sveltia-cms.js
+
 # dependencies
 node_modules/
 

@@ -1,0 +1,40 @@
+{
+  "order": 60,
+  "slug": "stream-comment-effects",
+  "name": "配信用コメント演出素材",
+  "catch": "コメント周りに、さりげない動きを添える小さな素材集。",
+  "description": "コメント欄まわりに使う、小さな装飾と動きのある素材のセットです。主張しすぎない動きにしているため、配信の内容を邪魔しません。",
+  "price": 1800,
+  "preview": {
+    "src": "/src/assets/works/icon-frame-05.png",
+    "alt": "水の粒が舞う円形の演出素材"
+  },
+  "contents": [
+    "ループアニメーション 6種",
+    "静止装飾 8種",
+    "使い方ガイド"
+  ],
+  "formats": [
+    "WebM（透過）",
+    "GIF",
+    "PNG"
+  ],
+  "environment": "OBS Studio ほか配信ソフト全般",
+  "license": {
+    "scope": "ご自身の配信活動に使用できます。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "任意"
+  },
+  "updatedAt": "2025-11-20",
+  "purchaseUrl": "",
+  "featured": false,
+  "category": "stream",
+  "status": "preparing",
+  "tags": [
+    "配信",
+    "透過WebM",
+    "ループ"
+  ]
+}

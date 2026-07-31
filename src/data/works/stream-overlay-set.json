@@ -1,0 +1,48 @@
+{
+  "order": 80,
+  "slug": "stream-overlay-set",
+  "title": "配信素材の制作",
+  "category": "creative",
+  "summary": "配信画面の枠・背景・切り替え素材を、ひとそろいで制作しました。",
+  "thumbnail": {
+    "src": "/src/assets/works/icon-frame-06.png",
+    "alt": "水をモチーフにした円形の配信用フレーム素材"
+  },
+  "challenge": "配信を始めたものの、画面の見た目がばらばらで、素材ごとに雰囲気が違ってしまうという相談でした。",
+  "solution": [
+    "配信の内容と伝えたい印象を聞き取り、色と形のルールを先に決定",
+    "枠・背景・待機画面・切り替えを同じルールで制作",
+    "配信ソフトへそのまま読み込める解像度とファイル形式で納品"
+  ],
+  "result": [
+    "画面全体の印象が揃い、配信の雰囲気が伝わりやすくなった",
+    "素材を追加するときの基準ができた"
+  ],
+  "tech": [
+    "AI画像生成",
+    "Photoshop",
+    "OBS想定の書き出し"
+  ],
+  "duration": "約1週間",
+  "gallery": [
+    {
+      "src": "/src/assets/works/icon-frame-04.png",
+      "alt": "青いリングが放射状に光る配信用フレーム"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-05.png",
+      "alt": "水の粒が舞う円形フレーム素材"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-07.png",
+      "alt": "低ポリゴン調の青いリング素材"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-08.png",
+      "alt": "金属質のリングフレーム素材"
+    }
+  ],
+  "visibility": "public",
+  "featured": true,
+  "publishedAt": "2025-11-18"
+}

@@ -1,0 +1,36 @@
+{
+  "order": 90,
+  "slug": "sns-cover-series",
+  "title": "SNS投稿カバーの制作",
+  "category": "creative",
+  "summary": "投稿の1枚目に使うカバー画像を、シリーズで揃えました。",
+  "thumbnail": {
+    "src": "/src/assets/works/icon-frame-01.png",
+    "alt": "白と銀の装飾を組み合わせた円形の飾り枠"
+  },
+  "challenge": "投稿ごとにデザインを考える時間がなく、見た目が揃わないという相談でした。",
+  "solution": [
+    "投稿の種類（お知らせ・作例紹介・振り返り）を3パターンに整理",
+    "それぞれに文字量の目安を決めて、崩れにくい配置を設計",
+    "差し替えるだけで使えるよう、文字と画像の位置を固定"
+  ],
+  "result": [
+    "毎回のデザイン検討がなくなり、投稿までの時間が短くなった",
+    "並べたときに一目で同じ発信だと分かるようになった"
+  ],
+  "tech": [
+    "Photoshop",
+    "テンプレート設計",
+    "PNG / JPG"
+  ],
+  "duration": "約4日",
+  "gallery": [
+    {
+      "src": "/src/assets/works/icon-frame-02.png",
+      "alt": "深い青の宇宙をモチーフにした円形カバー素材"
+    }
+  ],
+  "visibility": "public",
+  "featured": false,
+  "publishedAt": "2025-11-12"
+}

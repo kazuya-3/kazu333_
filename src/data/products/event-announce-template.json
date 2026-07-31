@@ -1,0 +1,34 @@
+{
+  "order": 40,
+  "slug": "event-announce-template",
+  "name": "イベント告知テンプレート",
+  "catch": "日時と会場を入れれば、告知画像が完成します。",
+  "description": "イベント告知用の画像テンプレートです。タイトル、日時、場所、参加方法という必要項目があらかじめ配置されているため、情報を差し替えるだけで告知画像が作れます。",
+  "price": 1500,
+  "contents": [
+    "告知テンプレート 4種",
+    "記載項目のチェックリスト"
+  ],
+  "formats": [
+    "PSD",
+    "PNG"
+  ],
+  "environment": "Photoshop / 画像編集アプリ全般",
+  "license": {
+    "scope": "ご自身または自社が主催・参加するイベントの告知に使用できます。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "不要"
+  },
+  "updatedAt": "2025-11-08",
+  "purchaseUrl": "",
+  "featured": false,
+  "category": "design",
+  "status": "preparing",
+  "tags": [
+    "告知",
+    "イベント",
+    "4種"
+  ]
+}

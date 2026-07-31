@@ -9,8 +9,11 @@ export const GET: APIRoute = ({ site }) => {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   const sitemapUrl = site ? new URL(`${base}/sitemap-index.xml`, site).href : '/sitemap-index.xml';
 
+  const adminPath = `${base}/admin/`;
+
   const body = `User-agent: *
 Allow: /
+Disallow: ${adminPath}
 
 Sitemap: ${sitemapUrl}
 `;

@@ -1,0 +1,626 @@
+# ==================================================================
+# 管理画面の設定
+#
+# ここで「管理画面から何を編集できるか」を決めています。
+# 項目を増やしたいときは、対応する JSON（src/data/）の形と合わせて
+# この fields に追記してください。
+#
+# 保存すると Git のコミットとして記録され、
+# main ブランチへの反映後、数分で公開サイトに出ます。
+# ==================================================================
+
+backend:
+  name: github
+  repo: kazuya-3/kazu333_
+  branch: main
+  # ブラウザ（スマホ含む）から編集するには、GitHub 認証の中継が必要です。
+  # 手順は README の「管理画面」を参照してください。
+  # 用意できたら、次の行のコメントを外して URL を入れてください。
+  # base_url: https://<あなたの認証中継アドレス>
+
+# パソコンのフォルダを直接編集するモード。
+# ローカルで npm run dev したときだけ有効になり、認証は不要です。
+local_backend: true
+
+# 画像の置き場所。src/assets 配下に置くと、公開時に自動で軽量化されます
+# （webp へ変換し、画面幅に応じた複数サイズを書き出します）。
+# 既にある画像もこのフォルダ配下なので、管理画面から選び直せます。
+media_folder: src/assets
+public_folder: /src/assets
+
+# 保存時のコミットメッセージ（履歴が読みやすくなります）
+backend_commit_messages:
+  create: '{{collection}}を追加: {{slug}}'
+  update: '{{collection}}を更新: {{slug}}'
+  delete: '{{collection}}を削除: {{slug}}'
+  uploadMedia: '画像を追加: {{path}}'
+  deleteMedia: '画像を削除: {{path}}'
+
+collections:
+  # ----------------------------------------------------------------
+  # 実績
+  # ----------------------------------------------------------------
+  - name: works
+    label: 実績
+    label_singular: 実績
+    description: 制作・開発の実績です。「課題 → 対応 → 結果」の順に書くと伝わりやすくなります。
+    folder: src/data/works
+    extension: json
+    format: json
+    create: true
+    delete: true
+    slug: '{{fields.slug}}'
+    identifier_field: title
+    summary: '{{title}}（{{category}}）'
+    sortable_fields: [order, publishedAt, title]
+    view_groups:
+      - label: 分野
+        field: category
+    fields:
+      - name: order
+        label: 並び順
+        widget: number
+        value_type: int
+        default: 100
+        hint: 小さいほど先に表示されます。10, 20, 30 のように間隔を空けておくと差し込みやすいです。
+      - name: slug
+        label: URLに使う名前
+        widget: string
+        pattern:
+          ['^[a-z0-9-]+$', '半角の英小文字・数字・ハイフンだけで入力してください']
+        hint: 例）icon-frame-collection　公開後に変えるとリンクが切れるため注意してください。
+      - name: title
+        label: タイトル
+        widget: string
+      - name: category
+        label: 分野
+        widget: select
+        options:
+          - { label: システム・データ, value: system }
+          - { label: 資料・ドキュメント, value: document }
+          - { label: デザイン・制作, value: creative }
+      - name: summary
+        label: 一覧に出る一言
+        widget: string
+        hint: カードに表示されます。40文字くらいまでが読みやすいです。
+      - name: thumbnail
+        label: サムネイル画像
+        widget: object
+        required: false
+        collapsed: false
+        hint: 未設定のときは、分野に合わせたイラストが自動で描かれます。
+        fields:
+          - { name: src, label: 画像, widget: image, required: false }
+          - name: alt
+            label: 画像の説明
+            widget: string
+            required: false
+            hint: 目の見えない方や、画像が表示できないときに読まれる文章です。
+      - name: coverStyle
+        label: 画像がないときのイラスト
+        widget: select
+        required: false
+        options:
+          - { label: 自動（分野に合わせる）, value: '' }
+          - { label: コード画面, value: system }
+          - { label: 書類, value: document }
+          - { label: 制作物, value: creative }
+          - { label: AI活用, value: ai }
+          - { label: 集計グラフ, value: neutral }
+      - name: challenge
+        label: 課題（どんな困りごとだったか）
+        widget: text
+      - name: solution
+        label: 対応（実際にやったこと）
+        widget: list
+        field: { name: item, label: 内容, widget: string }
+      - name: result
+        label: 結果（どうなったか）
+        widget: list
+        field: { name: item, label: 内容, widget: string }
+      - name: tech
+        label: 使用技術・ツール
+        widget: list
+        field: { name: item, label: 名称, widget: string }
+      - name: duration
+        label: 制作期間
+        widget: string
+        hint: 例）約1週間
+      - name: gallery
+        label: ギャラリー画像
+        widget: list
+        required: false
+        summary: '{{fields.alt}}'
+        fields:
+          - { name: src, label: 画像, widget: image }
+          - { name: alt, label: 画像の説明, widget: string, required: false }
+      - name: links
+        label: 関連リンク
+        widget: list
+        required: false
+        summary: '{{fields.label}}'
+        fields:
+          - { name: label, label: 表示名, widget: string }
+          - { name: url, label: URL, widget: string }
+      - name: visibility
+        label: 公開範囲
+        widget: select
+        default: public
+        options:
+          - { label: 公開する, value: public }
+          - { label: 公開するが内容を一部伏せる, value: limited }
+          - { label: 公開しない（サイトに出しません）, value: private }
+      - name: featured
+        label: トップページで優先的に見せる
+        widget: boolean
+        default: false
+      - name: publishedAt
+        label: 掲載日
+        widget: datetime
+        type: date
+        format: 'YYYY-MM-DD'
+
+  # ----------------------------------------------------------------
+  # 商品
+  # ----------------------------------------------------------------
+  - name: products
+    label: 商品
+    label_singular: 商品
+    description: ショップに並ぶ完成済みのデータです。購入URLを入れると購入ボタンが出ます。
+    folder: src/data/products
+    extension: json
+    format: json
+    create: true
+    delete: true
+    slug: '{{fields.slug}}'
+    identifier_field: name
+    summary: '{{name}}（{{price}}円）'
+    sortable_fields: [order, price, updatedAt, name]
+    view_groups:
+      - label: 状態
+        field: status
+    fields:
+      - name: order
+        label: 並び順
+        widget: number
+        value_type: int
+        default: 100
+        hint: 小さいほど先に表示されます。
+      - name: slug
+        label: URLに使う名前
+        widget: string
+        pattern:
+          ['^[a-z0-9-]+$', '半角の英小文字・数字・ハイフンだけで入力してください']
+      - name: name
+        label: 商品名
+        widget: string
+      - name: catch
+        label: キャッチコピー
+        widget: string
+        hint: カードに出る短い一文です。
+      - name: description
+        label: 説明
+        widget: text
+      - name: price
+        label: 価格（税込・円）
+        widget: number
+        value_type: int
+        min: 0
+      - name: salePrice
+        label: セール価格（税込・円）
+        widget: number
+        value_type: int
+        required: false
+        min: 0
+        hint: 入れると通常価格に取り消し線が付きます。使わないときは空のままにしてください。
+      - name: preview
+        label: プレビュー画像
+        widget: object
+        required: false
+        collapsed: false
+        fields:
+          - { name: src, label: 画像, widget: image, required: false }
+          - { name: alt, label: 画像の説明, widget: string, required: false }
+      - name: coverStyle
+        label: 画像がないときのイラスト
+        widget: select
+        required: false
+        options:
+          - { label: 自動（カテゴリに合わせる）, value: '' }
+          - { label: コード画面, value: system }
+          - { label: 書類, value: document }
+          - { label: 制作物, value: creative }
+          - { label: AI活用, value: ai }
+          - { label: 集計グラフ, value: neutral }
+      - name: gallery
+        label: ギャラリー画像
+        widget: list
+        required: false
+        summary: '{{fields.alt}}'
+        fields:
+          - { name: src, label: 画像, widget: image }
+          - { name: alt, label: 画像の説明, widget: string, required: false }
+      - name: contents
+        label: 内容物
+        widget: list
+        field: { name: item, label: 内容, widget: string }
+      - name: formats
+        label: ファイル形式
+        widget: list
+        field: { name: item, label: 形式, widget: string }
+      - name: environment
+        label: 対応環境
+        widget: string
+      - name: license
+        label: 利用範囲
+        widget: object
+        fields:
+          - { name: scope, label: 利用できる範囲, widget: text }
+          - { name: commercial, label: 商用利用を許可する, widget: boolean, default: true }
+          - { name: modify, label: 加工・改変を許可する, widget: boolean, default: true }
+          - name: redistribute
+            label: 再配布を許可する
+            widget: boolean
+            default: false
+            hint: 素材そのものの配布・再販売は、通常は許可しません。
+          - name: credit
+            label: クレジット表記
+            widget: select
+            options: [不要, 任意, 必須]
+            default: 不要
+      - name: updatedAt
+        label: 更新日
+        widget: datetime
+        type: date
+        format: 'YYYY-MM-DD'
+      - name: purchaseUrl
+        label: 購入ページのURL
+        widget: string
+        required: false
+        hint: Stripe / BOOTH / ココナラ などのURL。空のままだと「準備中」と表示されます。
+      - name: status
+        label: 販売状態
+        widget: select
+        default: preparing
+        options:
+          - { label: 販売中, value: onSale }
+          - { label: 準備中, value: preparing }
+          - { label: 販売終了, value: soldOut }
+      - name: category
+        label: カテゴリ
+        widget: select
+        options:
+          - { label: デザイン素材, value: design }
+          - { label: 配信素材, value: stream }
+          - { label: AI・プロンプト, value: ai }
+          - { label: 小型ツール, value: tool }
+          - { label: ドキュメント雛形, value: template }
+      - name: featured
+        label: トップページで優先的に見せる
+        widget: boolean
+        default: false
+      - name: tags
+        label: タグ
+        widget: list
+        field: { name: item, label: タグ, widget: string }
+
+  # ----------------------------------------------------------------
+  # ページの文言
+  # ----------------------------------------------------------------
+  - name: pages
+    label: ページの文言
+    description: サイト各所の文章を書き換えられます。保存すると公開サイトに反映されます。
+    files:
+      # --- サイト基本情報 ---
+      - name: site
+        label: サイト基本情報・トップの見出し
+        file: src/data/site.json
+        fields:
+          - { name: name, label: サイト名, widget: string }
+          - { name: nameEn, label: ロゴの表示（英字）, widget: string }
+          - { name: tagline, label: ひとことの説明, widget: string }
+          - { name: owner, label: 運営者名, widget: string }
+          - { name: ownerRole, label: 肩書き, widget: string }
+          - name: message
+            label: サイト全体のメッセージ
+            widget: object
+            fields:
+              - { name: main, label: メインメッセージ, widget: text }
+              - { name: sub, label: サブメッセージ, widget: text }
+              - { name: support, label: 補助メッセージ, widget: text }
+              - { name: world, label: world（フッターなどで使う一文）, widget: text }
+          - name: hero
+            label: ファーストビュー
+            widget: object
+            fields:
+              - { name: headline, label: 大見出し, widget: text }
+              - { name: body, label: 説明文, widget: text }
+              - name: points
+                label: 条件バッジ
+                widget: list
+                field: { name: item, label: 項目, widget: string }
+          - name: contact
+            label: 連絡先
+            widget: object
+            fields:
+              - { name: email, label: メールアドレス, widget: string }
+              - name: emailConfigured
+                label: このアドレスを公開して使う
+                widget: boolean
+                default: false
+                hint: オンにすると、問い合わせフォームがメールソフトを開く方式で動きます。
+              - { name: replyTime, label: 返信の目安, widget: string }
+          - name: availability
+            label: 対応時間
+            widget: object
+            fields:
+              - { name: hours, label: 対応時間, widget: string }
+              - { name: note, label: 補足, widget: text }
+              - { name: style, label: 受注形態, widget: string }
+          - name: social
+            label: SNSリンク
+            widget: list
+            required: false
+            summary: '{{fields.label}}'
+            fields:
+              - { name: label, label: 表示名, widget: string }
+              - { name: url, label: URL, widget: string }
+              - { name: handle, label: アカウント名, widget: string, required: false }
+          - name: seo
+            label: 検索・SNS共有の設定
+            widget: object
+            fields:
+              - { name: defaultTitle, label: 既定のページタイトル, widget: string }
+              - name: titleTemplate
+                label: タイトルの型
+                widget: string
+                hint: '%s がページ名に置き換わります。'
+              - { name: description, label: サイトの説明文, widget: text }
+              - { name: ogImage, label: 共有画像のパス, widget: string }
+              - { name: locale, label: 言語, widget: string }
+              - { name: twitterHandle, label: Xのアカウント, widget: string, required: false }
+          - { name: currency, label: 通貨, widget: hidden, default: JPY }
+
+      # --- できること・よくある相談 ---
+      - name: services
+        label: できること・よくある相談
+        file: src/data/services.json
+        fields:
+          - name: commonConcerns
+            label: よくある相談
+            widget: list
+            summary: '{{fields.text}}'
+            hint: 技術名ではなく、相談する人の言葉で書いてください。
+            fields:
+              - { name: text, label: 相談の内容, widget: string }
+              - name: category
+                label: 分野
+                widget: select
+                options:
+                  - { label: システム・データ, value: system }
+                  - { label: 資料・ドキュメント, value: document }
+                  - { label: デザイン・制作, value: creative }
+          - name: categories
+            label: 対応できること（3分野）
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - name: key
+                label: 分野
+                widget: select
+                options:
+                  - { label: システム・データ, value: system }
+                  - { label: 資料・ドキュメント, value: document }
+                  - { label: デザイン・制作, value: creative }
+              - { name: label, label: 英字ラベル, widget: string }
+              - { name: title, label: 見出し, widget: string }
+              - { name: description, label: 説明, widget: text }
+              - name: items
+                label: できることの一覧
+                widget: list
+                field: { name: item, label: 項目, widget: string }
+              - { name: priceHint, label: 価格の目安, widget: string }
+              - name: icon
+                label: アイコン
+                widget: select
+                options:
+                  - { label: システム, value: system }
+                  - { label: 資料, value: document }
+                  - { label: 制作, value: creative }
+          - { name: fallbackNote, label: 一覧にない依頼への案内文, widget: text }
+
+      # --- 依頼の流れ ---
+      - name: flow
+        label: 依頼の流れ
+        file: src/data/flow.json
+        fields:
+          - name: steps
+            label: 流れ（上から順に表示されます）
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { name: title, label: 見出し, widget: string }
+              - { name: body, label: 説明, widget: text }
+          - name: assurances
+            label: お約束していること
+            widget: list
+            field: { name: item, label: 項目, widget: string }
+
+      # --- 自己紹介 ---
+      - name: about
+        label: 自己紹介
+        file: src/data/about.json
+        fields:
+          - { name: heading, label: 見出し, widget: string }
+          - name: paragraphs
+            label: 本文（段落ごと）
+            widget: list
+            field: { name: item, label: 段落, widget: text }
+          - name: values
+            label: 大切にしていること
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { name: title, label: 見出し, widget: string }
+              - { name: body, label: 説明, widget: text }
+          - name: career
+            label: 経歴
+            widget: list
+            summary: '{{fields.period}}'
+            fields:
+              - { name: period, label: 区分, widget: string }
+              - { name: body, label: 内容, widget: string }
+          - name: skillGroups
+            label: できること（スキル）
+            widget: list
+            summary: '{{fields.label}}'
+            fields:
+              - { name: label, label: グループ名, widget: string }
+              - name: accent
+                label: 色
+                widget: select
+                options:
+                  - { label: 青（開発・データ）, value: system }
+                  - { label: 紫（資料・設計）, value: document }
+                  - { label: 赤（制作・AI）, value: creative }
+              - name: items
+                label: 項目
+                widget: list
+                field: { name: item, label: 名称, widget: string }
+          - name: tools
+            label: よく使うツール
+            widget: list
+            field: { name: item, label: 名称, widget: string }
+
+      # --- よくある質問 ---
+      - name: faq
+        label: よくある質問
+        file: src/data/faq.json
+        fields:
+          - name: items
+            label: 質問と回答
+            widget: list
+            summary: '{{fields.question}}'
+            fields:
+              - { name: question, label: 質問, widget: string }
+              - { name: answer, label: 回答, widget: text }
+
+      # --- 問い合わせフォーム ---
+      - name: contact
+        label: 問い合わせフォーム
+        file: src/data/contact.json
+        fields:
+          - name: intro
+            label: フォーム上部の案内
+            widget: object
+            fields:
+              - { name: heading, label: 見出し, widget: string }
+              - { name: lead, label: 案内文, widget: text }
+              - { name: replyNote, label: 返信についての注記, widget: text }
+          - name: fields
+            label: 相談分野の選択肢
+            widget: list
+            summary: '{{fields.label}}'
+            fields:
+              - { name: id, label: 値（英数字）, widget: string }
+              - { name: label, label: 表示名, widget: string }
+          - name: deadlineOptions
+            label: 希望納期の選択肢
+            widget: list
+            summary: '{{fields.label}}'
+            fields:
+              - { name: id, label: 値（英数字）, widget: string }
+              - { name: label, label: 表示名, widget: string }
+          - name: budgetOptions
+            label: ご予算の選択肢
+            widget: list
+            summary: '{{fields.label}}'
+            fields:
+              - { name: id, label: 値（英数字）, widget: string }
+              - { name: label, label: 表示名, widget: string }
+          - name: replyMethodOptions
+            label: 連絡方法の選択肢
+            widget: list
+            summary: '{{fields.label}}'
+            fields:
+              - { name: id, label: 値（英数字）, widget: string }
+              - { name: label, label: 表示名, widget: string }
+          - name: messages
+            label: 送信中・完了・失敗のメッセージ
+            widget: object
+            collapsed: true
+            fields:
+              - { name: sending, label: 送信中, widget: string }
+              - name: success
+                label: 送信完了
+                widget: object
+                fields:
+                  - { name: title, label: 見出し, widget: string }
+                  - { name: body, label: 本文, widget: text }
+                  - { name: note, label: 注記, widget: text }
+              - name: successMailto
+                label: 送信完了（メールソフト方式）
+                widget: object
+                fields:
+                  - { name: title, label: 見出し, widget: string }
+                  - { name: body, label: 本文, widget: text }
+                  - { name: note, label: 注記, widget: text }
+              - name: error
+                label: 送信失敗
+                widget: object
+                fields:
+                  - { name: title, label: 見出し, widget: string }
+                  - { name: body, label: 本文, widget: text }
+              - { name: mockNotice, label: 開発用設定のときの注意書き, widget: text }
+              - { name: mailtoNotice, label: メールソフト方式の案内, widget: text }
+              - { name: mailtoAttachmentNotice, label: 添付についての案内, widget: text }
+
+      # --- 応援チップ ---
+      - name: support
+        label: 応援チップ
+        file: src/data/support.json
+        fields:
+          - { name: heading, label: 見出し, widget: string }
+          - { name: lead, label: 説明, widget: text }
+          - { name: note, label: 注記, widget: text }
+          - { name: preparingText, label: 準備中のときの表示, widget: text }
+
+      # --- 法的表記 ---
+      - name: legal
+        label: 法的表記（特商法・プライバシー・利用規約）
+        file: src/data/legal.json
+        fields:
+          - name: updatedAt
+            label: 最終更新日
+            widget: datetime
+            type: date
+            format: 'YYYY-MM-DD'
+          - name: tokushoho
+            label: 特定商取引法に基づく表記
+            widget: list
+            summary: '{{fields.label}}'
+            hint: 値を空のままにすると、サイト上に「要入力」と表示されます。
+            fields:
+              - { name: label, label: 項目名, widget: string }
+              - { name: value, label: 内容, widget: text, required: false }
+              - { name: note, label: 補足, widget: text, required: false }
+          - name: privacySections
+            label: プライバシーポリシー
+            widget: list
+            summary: '{{fields.heading}}'
+            fields:
+              - { name: heading, label: 見出し, widget: string }
+              - name: body
+                label: 本文（段落ごと）
+                widget: list
+                field: { name: item, label: 段落, widget: text }
+          - name: termsSections
+            label: 利用規約
+            widget: list
+            summary: '{{fields.heading}}'
+            fields:
+              - { name: heading, label: 見出し, widget: string }
+              - name: body
+                label: 本文（段落ごと）
+                widget: list
+                field: { name: item, label: 段落, widget: text }

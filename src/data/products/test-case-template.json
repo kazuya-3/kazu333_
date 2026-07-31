@@ -1,0 +1,35 @@
+{
+  "order": 80,
+  "slug": "test-case-template",
+  "name": "テスト項目書テンプレート",
+  "catch": "書く項目に迷わない、確認漏れを減らすための雛形。",
+  "description": "動作確認の項目を書き出すためのテンプレートです。観点の一覧と記入例を付けているため、何を確認すべきか迷う時間を減らせます。小規模な改修の確認にも使いやすい分量にしています。",
+  "price": 1200,
+  "contents": [
+    "テスト項目書テンプレート（Excel）",
+    "観点チェックリスト",
+    "記入例つきサンプル"
+  ],
+  "formats": [
+    "XLSX",
+    "PDF"
+  ],
+  "environment": "Microsoft Excel / Googleスプレッドシート",
+  "license": {
+    "scope": "ご購入者と、その所属組織の業務で使用できます。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "不要"
+  },
+  "updatedAt": "2025-10-22",
+  "purchaseUrl": "",
+  "featured": false,
+  "category": "template",
+  "status": "preparing",
+  "tags": [
+    "テスト",
+    "QA",
+    "Excel"
+  ]
+}
