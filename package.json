@@ -5,10 +5,13 @@
   "private": true,
   "description": "KAZU WORKS - 個人のオンライン事務所兼ポートフォリオ兼ショップ",
   "scripts": {
+    "predev": "node scripts/sync-cms.mjs",
     "dev": "astro dev",
-    "start": "astro dev",
+    "start": "npm run dev",
+    "cms": "node scripts/sync-cms.mjs && astro dev",
+    "prebuild": "node scripts/sync-cms.mjs",
     "build": "astro check && astro build",
-    "build:only": "astro build",
+    "build:only": "node scripts/sync-cms.mjs && astro build",
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro"
@@ -21,6 +24,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@sveltia/cms": "^0.176.0",
     "typescript": "^5.9.2"
   }
 }

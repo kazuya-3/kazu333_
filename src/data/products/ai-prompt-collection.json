@@ -1,0 +1,35 @@
+{
+  "order": 50,
+  "slug": "ai-prompt-collection",
+  "name": "AI画像生成用プロンプト集",
+  "catch": "狙った雰囲気を出すための、書き方の型をまとめました。",
+  "description": "画像生成AIで、思った雰囲気の絵を出すためのプロンプト集です。単語を並べるのではなく「用途・被写体・色・質感・構図」に分けて書く型と、その調整例をまとめています。そのまま使うことも、部分的に書き換えて使うこともできます。",
+  "price": 900,
+  "contents": [
+    "プロンプト雛形 20種",
+    "調整の考え方ガイド（PDF）",
+    "そのまま貼れるテキスト集"
+  ],
+  "formats": [
+    "PDF",
+    "TXT"
+  ],
+  "environment": "主要な画像生成AIサービス全般",
+  "license": {
+    "scope": "ご自身の制作に使用できます。生成した画像の利用は各AIサービスの規約に従ってください。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "不要"
+  },
+  "updatedAt": "2025-11-02",
+  "purchaseUrl": "",
+  "featured": true,
+  "category": "ai",
+  "status": "preparing",
+  "tags": [
+    "AI",
+    "プロンプト",
+    "20種"
+  ]
+}

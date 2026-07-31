@@ -1,0 +1,40 @@
+{
+  "order": 30,
+  "slug": "stream-background-overlay",
+  "name": "配信背景・オーバーレイ",
+  "catch": "枠・背景・待機画面を、同じ色ルールでひとそろい。",
+  "description": "配信画面に使う背景とオーバーレイのセットです。枠、背景、待機画面を同じ配色ルールで作っているため、場面が切り替わっても雰囲気が途切れません。配信ソフトへそのまま読み込める解像度で書き出しています。",
+  "price": 2000,
+  "preview": {
+    "src": "/src/assets/works/icon-frame-04.png",
+    "alt": "青い光が放射状に広がる配信用オーバーレイ素材"
+  },
+  "contents": [
+    "背景 3種",
+    "オーバーレイ枠 2種",
+    "待機画面 1種",
+    "配置の目安ガイド"
+  ],
+  "formats": [
+    "PNG（一部透過）",
+    "PDF"
+  ],
+  "environment": "OBS Studio ほか配信ソフト全般（1920×1080 想定）",
+  "license": {
+    "scope": "ご自身の配信活動に使用できます。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "任意"
+  },
+  "updatedAt": "2025-11-18",
+  "purchaseUrl": "",
+  "featured": false,
+  "category": "stream",
+  "status": "preparing",
+  "tags": [
+    "配信",
+    "OBS",
+    "フルHD"
+  ]
+}

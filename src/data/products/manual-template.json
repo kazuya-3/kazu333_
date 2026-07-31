@@ -1,0 +1,36 @@
+{
+  "order": 90,
+  "slug": "manual-template",
+  "name": "操作マニュアルテンプレート",
+  "catch": "画面の説明が、順番どおりに書ける構成です。",
+  "description": "操作マニュアルを作るためのテンプレートです。目的、前提、手順、困ったときの確認先という並びを最初から用意しているので、書きながら構成に悩む時間が減ります。スクリーンショットの配置枠も含みます。",
+  "price": 1500,
+  "contents": [
+    "マニュアルテンプレート（Word / PowerPoint）",
+    "構成の考え方ガイド",
+    "記入例"
+  ],
+  "formats": [
+    "DOCX",
+    "PPTX",
+    "PDF"
+  ],
+  "environment": "Microsoft Word / PowerPoint（Googleドキュメントでも利用可）",
+  "license": {
+    "scope": "ご購入者と、その所属組織の業務で使用できます。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "不要"
+  },
+  "updatedAt": "2025-10-18",
+  "purchaseUrl": "",
+  "featured": false,
+  "category": "template",
+  "status": "preparing",
+  "tags": [
+    "マニュアル",
+    "Word",
+    "雛形"
+  ]
+}

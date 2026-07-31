@@ -1,0 +1,54 @@
+{
+  "name": "KAZU WORKS",
+  "nameEn": "KAZU WORKS",
+  "tagline": "IT・資料・デザインの“小さな困りごと”を、形にします。",
+  "owner": "KAZUYA",
+  "ownerRole": "システムエンジニア / 個人制作",
+  "message": {
+    "main": "IT・資料・デザインの“小さな困りごと”を、形にします。",
+    "sub": "システム修正、データ整理、資料作成、SNS素材まで。完全オンライン・固定報酬で、小さな相談から対応します。",
+    "support": "まだ依頼内容がまとまっていなくても大丈夫です。“こういうことはできる？”という段階から、一緒に整理します。",
+    "world": "見るだけでも、買うだけでも、相談だけでも。小さな困りごとやアイデアを、形にする入口。"
+  },
+  "hero": {
+    "headline": "小さな仕事ほど、頼める人が\n見つからない。",
+    "body": "システム修正、データ整理、資料作成、SNS素材まで。完全オンライン・固定報酬で、小さな相談から対応します。",
+    "points": [
+      "平日夜・土日対応",
+      "小規模案件歓迎",
+      "オンライン完結",
+      "固定報酬",
+      "相談から対応可能"
+    ]
+  },
+  "contact": {
+    "email": "hello@example.com",
+    "emailConfigured": false,
+    "replyTime": "2〜3日以内（平日夜・土日を中心に確認しています）"
+  },
+  "availability": {
+    "hours": "平日 20:00〜23:00 / 土日 10:00〜21:00",
+    "note": "本業と両立しているため、平日日中の連絡はお返事が遅れることがあります。",
+    "style": "完全オンライン・固定報酬・納品型"
+  },
+  "social": [
+    {
+      "label": "X (Twitter)",
+      "url": "https://x.com/",
+      "handle": "@your_account"
+    },
+    {
+      "label": "BOOTH",
+      "url": "https://booth.pm/"
+    }
+  ],
+  "seo": {
+    "defaultTitle": "KAZU WORKS｜IT・資料・デザインの小さな困りごとを形にします",
+    "titleTemplate": "%s｜KAZU WORKS",
+    "description": "システムの軽微な修正、Excel・CSVのデータ整理、SQL作成、操作マニュアルや仕様書づくり、SNS画像や配信素材の制作まで。完全オンライン・固定報酬で、小さな相談から個人が対応します。簡易見積もりもその場で確認できます。",
+    "ogImage": "/og-image.png",
+    "locale": "ja_JP",
+    "twitterHandle": ""
+  },
+  "currency": "JPY"
+}

@@ -8,11 +8,13 @@ IT・資料・デザインの“小さな困りごと”を形にする、個人
 - **技術構成**: Astro 5（静的生成）+ Preact islands + 素の CSS（デザイントークン）
 - **JavaScript**: トップページは 0KB。見積もりウィザードと問い合わせフォームのみ島として読み込み（全島合計 約 62KB / gzip 約 22KB）
 - **依存パッケージ**: `astro` / `@astrojs/preact` / `@astrojs/sitemap` / `preact` の 4 つだけ
+  （管理画面の `@sveltia/cms` は開発用。公開サイトの表示には読み込まれません）
 
 ---
 
 ## 目次
 
+0. [管理画面（いちばんよく使います）](#0-管理画面)
 1. [開発環境の起動](#1-開発環境の起動)
 2. [ビルドとプレビュー](#2-ビルドとプレビュー)
 3. [デプロイ](#3-デプロイ)
@@ -26,6 +28,94 @@ IT・資料・デザインの“小さな困りごと”を形にする、個人
 11. [法的情報を変える](#11-法的情報を変える)
 12. [本番公開前のチェックリスト](#12-本番公開前のチェックリスト)
 13. [ディレクトリ構成](#13-ディレクトリ構成)
+
+---
+
+## 0. 管理画面
+
+実績・商品の投稿、画像のアップロード、ページ文言の修正は、
+**コードを触らずに管理画面から**できます。
+
+保存すると Git のコミットとして記録され、`main` に入った数分後に公開サイトへ反映されます。
+
+### 使い方は 2 通り
+
+#### A. パソコンから（設定なしですぐ使えます）
+
+```bash
+npm run cms
+```
+
+ブラウザで `http://localhost:4321/kazu333_/admin/` を開き、
+**「Work with Local Repository」** を押して、このリポジトリのフォルダを選びます。
+
+- 認証もアカウント登録も不要です
+- 編集内容はローカルのファイルに直接保存されます
+- 保存後、`git add -A && git commit && git push` で公開されます
+- Chrome / Edge が必要です（File System Access API を使うため）
+
+#### B. ブラウザから（外出先・スマホでも）
+
+公開中の `https://kazuya-3.github.io/kazu333_/admin/` を開き、
+**「Sign In Using Access Token」** を押して、GitHub のアクセストークンを貼り付けます。
+
+トークンの作り方:
+
+1. GitHub → Settings → Developer settings → **Personal access tokens → Fine-grained tokens**
+2. **Generate new token**
+3. Repository access: **Only select repositories** → `kazu333_` を選択
+4. Permissions → Repository permissions → **Contents: Read and write**
+5. 生成されたトークンをコピーし、管理画面に貼り付ける
+
+保存すると GitHub へ直接コミットされ、自動でデプロイまで走ります。
+
+> トークンは他人に渡さないでください。漏れた場合は GitHub の設定画面から失効させられます。
+> 有効期限を短めにしておくと安全です。
+
+「Sign In with GitHub」（OAuth）を使いたい場合は、認証を中継するサーバーが別途必要です。
+用意できたら `public/admin/config.yml` の `base_url` のコメントを外して設定してください。
+アクセストークン方式で足りていれば、この準備は不要です。
+
+### 管理画面から編集できること
+
+| メニュー | 内容 |
+| --- | --- |
+| **実績** | 実績の追加・編集・削除・並べ替え。画像、課題／対応／結果、使用技術、公開範囲 |
+| **商品** | 商品の追加・編集・削除。価格、セール価格、内容物、利用範囲、購入URL、販売状態 |
+| **ページの文言** | トップの見出し、できること、依頼の流れ、自己紹介、FAQ、問い合わせフォームの文言、応援チップ、法的表記 |
+
+画像は編集画面からドラッグ＆ドロップでアップロードできます。
+アップロードした画像は `src/assets/` に保存され、公開時に自動で webp へ変換され、
+画面幅に応じた複数サイズが書き出されます（速度対策）。
+
+### 管理画面で扱わないもの
+
+次の 2 つは、誤操作の影響が大きいためファイル編集のままにしています。
+
+- **料金・見積もりのルール** → `src/config/pricing.ts`（[7章](#7-価格見積もりルールを変える)）
+- **決済リンク・フォーム送信先** → `.env`（[8章](#8-問い合わせフォームの送信先を設定する)・[9章](#9-決済リンク応援リンクを設定する)）
+
+### コンテンツの実体
+
+管理画面が読み書きしているのは、次の JSON ファイルです。
+管理画面を使わず、直接編集しても構いません。
+
+```
+src/data/
+├── works/*.json      実績（1件 = 1ファイル）
+├── products/*.json   商品（1件 = 1ファイル）
+├── site.json         サイト名・ファーストビュー・連絡先・SEO
+├── services.json     よくある相談・できること
+├── flow.json         依頼の流れ・お約束
+├── about.json        自己紹介・スキル・経歴
+├── faq.json          よくある質問
+├── contact.json      問い合わせフォームの文言と選択肢
+├── support.json      応援チップの文言
+└── legal.json        特商法・プライバシー・利用規約
+```
+
+`src/config/*.ts` は、この JSON に型を付けて画面へ渡すだけの薄い層です。
+項目を増やすときは、JSON・`src/config` の型・`public/admin/config.yml` の 3 つを揃えてください。
 
 ---
 
@@ -110,69 +200,79 @@ BASE_PATH=/
 
 ## 4. サイト名・プロフィールを変える
 
-すべて **`src/config/site.ts`** の 1 ファイルで完結します。
+管理画面（[0章](#0-管理画面)）の **「ページの文言 → サイト基本情報」** から編集できます。
 
-```ts
-export const site = {
-  name: 'KAZU WORKS',        // サイト名（ヘッダー・フッター・タイトル）
-  nameEn: 'KAZU WORKS',      // 英字ロゴ表示
-  owner: 'KAZUYA',           // 運営者名
-  message: { ... },          // メイン/サブ/補助メッセージ
-  hero: { headline, body, points },  // ファーストビュー
-  contact: {
-    email: 'hello@example.com',
-    emailConfigured: false,  // ← 実アドレスを設定したら true にする
-  },
-  availability: { hours, note, style },
-  social: [ ... ],           // SNS リンク（不要なら削除）
-  seo: { defaultTitle, description, ogImage, twitterHandle },
-};
-```
+ファイルを直接編集する場合は **`src/data/site.json`** です。
+
+| 項目 | 内容 |
+| --- | --- |
+| `name` / `nameEn` | サイト名（ヘッダー・フッター・タイトル） |
+| `owner` / `ownerRole` | 運営者名・肩書き |
+| `message` | メイン／サブ／補助メッセージ |
+| `hero` | ファーストビューの見出し・説明・条件バッジ |
+| `contact` | メールアドレス・返信の目安 |
+| `availability` | 対応時間・受注形態 |
+| `social` | SNS リンク（不要なら配列から削除） |
+| `seo` | タイトル・説明文・OGP 画像・X アカウント |
 
 `contact.emailConfigured` が `false` の間は、サイト上にメールアドレスを表示せず
 「ご相談フォームから」と案内します。実アドレスを設定したら `true` にしてください。
 
-自己紹介・スキル・経歴・使用ツールは **`src/config/about.ts`** です。
-ナビゲーションの項目は **`src/config/nav.ts`**、FAQ は **`src/config/faq.ts`**、
-依頼の流れは **`src/config/flow.ts`** にあります。
+自己紹介は `src/data/about.json`、ナビゲーションは `src/config/nav.ts`、
+FAQ は `src/data/faq.json`、依頼の流れは `src/data/flow.json` です。
 
 ---
 
 ## 5. 実績を追加する
 
-**`src/config/works.ts`** の `works` 配列へ 1 件足すだけです。
-一覧ページ・詳細ページ・sitemap へ自動的に反映されます。
+**いちばん簡単なのは管理画面（[0章](#0-管理画面)）からの追加です。**
+ここではファイルを直接編集する場合の書き方を説明します。
 
-```ts
+`src/data/works/` に JSON を 1 つ足すと、一覧・詳細・sitemap へ自動的に反映されます
+（ファイル名は `<slug>.json`）。
+
+```json
 {
-  slug: 'my-new-work',        // URL になります（半角英数とハイフン）
-  title: 'タイトル',
-  category: 'system',         // 'system' | 'document' | 'creative'
-  summary: 'カードに出る一言',
-  challenge: 'どんな困りごとだったか',
-  solution: ['やったこと1', 'やったこと2'],
-  result: ['どうなったか1', 'どうなったか2'],
-  tech: ['C#', 'SQL'],
-  duration: '約1週間',
-  visibility: 'public',       // 'public' | 'limited' | 'private'
-  featured: false,            // true でトップページに優先表示
-  publishedAt: '2026-01-15',  // 並び順に使用
+  "order": 100,
+  "slug": "my-new-work",
+  "title": "タイトル",
+  "category": "system",
+  "summary": "カードに出る一言",
+  "challenge": "どんな困りごとだったか",
+  "solution": ["やったこと1", "やったこと2"],
+  "result": ["どうなったか1", "どうなったか2"],
+  "tech": ["C#", "SQL"],
+  "duration": "約1週間",
+  "visibility": "public",
+  "featured": false,
+  "publishedAt": "2026-01-15"
 }
 ```
 
+`category` は `system` / `document` / `creative`、
+`visibility` は `public` / `limited` / `private` から選びます。
+`order` は小さいほど先に表示されます。
+
 ### 画像を付ける
 
-1. 画像を `src/assets/works/` へ置く
-2. `works.ts` の先頭で `import myImage from '../assets/works/my-image.png';`
-3. `thumbnail: { src: myImage, alt: '説明' }` を追加（`gallery` も同じ形式）
+管理画面ならドラッグ＆ドロップで完了します。手で書く場合は:
+
+1. 画像を `src/assets/` の下（どのフォルダでも可）へ置く
+2. JSON に次を追加する
+
+```json
+"thumbnail": { "src": "/src/assets/works/my-image.png", "alt": "説明" }
+```
+
+`gallery` は同じ形の配列です。パスは `/src/assets/` から始まる形で書いてください。
 
 **`thumbnail` を省略すると**、カテゴリに合わせたカバーイラストが自動生成されます
 （システム→コード画面、資料→書類、制作→アートボード）。壊れた画像は出ません。
 
 イラストの種類を指定したいときは `coverStyle` を足してください。
 
-```ts
-coverStyle: 'neutral',   // 'system' | 'document' | 'creative' | 'ai' | 'neutral'
+```json
+"coverStyle": "neutral"
 ```
 
 `neutral` は集計・一覧をあらわすグラフ図、`ai` は AI 活用をあらわす図です。
@@ -193,36 +293,53 @@ coverStyle: 'neutral',   // 'system' | 'document' | 'creative' | 'ai' | 'neutral
 
 ## 6. 商品を追加する
 
-**`src/config/products.ts`** の `products` 配列へ 1 件足します。
+管理画面（[0章](#0-管理画面)）から追加できます。
+ファイルを直接編集する場合は、`src/data/products/<slug>.json` を 1 つ足します。
 
-```ts
+```json
 {
-  slug: 'my-product',
-  name: '商品名',
-  catch: 'カードに出る短いコピー',
-  description: '詳細ページの説明',
-  price: 1200,                // 税込
-  salePrice: 900,             // 任意。設定すると通常価格に取り消し線が付く
-  contents: ['内容物1', '内容物2'],
-  formats: ['PNG', 'PDF'],
-  environment: '対応環境',
-  license: {
-    scope: '利用範囲の説明',
-    commercial: true,         // 商用利用
-    modify: true,             // 加工
-    redistribute: false,      // 再配布（常に false）
-    credit: '不要',           // '不要' | '任意' | '必須'
+  "order": 100,
+  "slug": "my-product",
+  "name": "商品名",
+  "catch": "カードに出る短いコピー",
+  "description": "詳細ページの説明",
+  "price": 1200,
+  "salePrice": 900,
+  "contents": ["内容物1", "内容物2"],
+  "formats": ["PNG", "PDF"],
+  "environment": "対応環境",
+  "license": {
+    "scope": "利用範囲の説明",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "不要"
   },
-  updatedAt: '2026-01-15',
-  purchaseUrl: 'https://...', // 外部販売ページ。空なら購入ボタンを出さない
-  featured: false,
-  category: 'design',         // 'design'|'stream'|'ai'|'tool'|'template'
-  status: 'onSale',           // 'onSale'|'preparing'|'soldOut'
-  tags: ['タグ1', 'タグ2'],
+  "updatedAt": "2026-01-15",
+  "purchaseUrl": "https://...",
+  "featured": false,
+  "category": "design",
+  "status": "onSale",
+  "tags": ["タグ1", "タグ2"]
 }
 ```
 
-プレビュー画像は実績と同じ方法（`src/assets/` に置いて import → `preview: { src, alt }`）です。
+| 項目 | 選べる値 |
+| --- | --- |
+| `category` | `design` / `stream` / `ai` / `tool` / `template` |
+| `status` | `onSale` / `preparing` / `soldOut` |
+| `license.credit` | `不要` / `任意` / `必須` |
+
+`salePrice` は任意です（入れると通常価格に取り消し線が付きます）。
+`purchaseUrl` が空なら購入ボタンは出ません。
+`redistribute` は素材そのものの再配布可否で、通常は `false` のままにします。
+
+プレビュー画像は実績と同じ形式です。
+
+```json
+"preview": { "src": "/src/assets/works/my-image.png", "alt": "説明" }
+```
+
 省略するとカバーイラストが自動生成されます（`coverStyle` で種類を指定できます）。
 
 ### 販売準備中のあいだ
@@ -296,13 +413,13 @@ coverStyle: 'neutral',   // 'system' | 'document' | 'creative' | 'ai' | 'neutral
 
 ### いちばん早く動かす方法（外部サービス不要）
 
-`src/config/site.ts` を 2 行変えるだけです。
+`src/data/site.json` の 2 行を変えるだけです（管理画面からも変えられます）。
 
-```ts
-contact: {
-  email: 'あなたのアドレス@example.com',
-  emailConfigured: true,   // ← true にする
-},
+```json
+"contact": {
+  "email": "あなたのアドレス@example.com",
+  "emailConfigured": true
+}
 ```
 
 これだけで、フォームの送信ボタンが利用者のメールソフトを開き、
@@ -398,7 +515,8 @@ PUBLIC_UPLOAD_ACCEPT=.png,.jpg,.pdf,.zip,.xlsx,.csv
 
 ### 商品の購入リンク
 
-`src/config/products.ts` の各商品の `purchaseUrl` に、外部販売ページの URL を入れるだけです。
+各商品の `purchaseUrl` に、外部販売ページの URL を入れるだけです。
+管理画面の「商品」から設定できます（ファイルなら `src/data/products/<slug>.json`）。
 
 - Stripe Payment Links
 - BOOTH
@@ -448,7 +566,8 @@ node scripts/generate-og.mjs
 
 ## 11. 法的情報を変える
 
-**`src/config/legal.ts`** にまとまっています。
+管理画面（[0章](#0-管理画面)）の **「ページの文言 → 法的表記」** から編集できます。
+ファイルは **`src/data/legal.json`** です。
 
 > ⚠ 同梱の文章は **雛形** です。法律上の判断を確定させたものではありません。
 > 公開前に実際の運営内容へ合わせて見直し、必要に応じて専門家へご確認ください。
@@ -461,7 +580,7 @@ node scripts/generate-og.mjs
 | `legalUpdatedAt` | 各ページの最終更新日 |
 
 氏名・住所・電話番号などは、勝手な仮の値を入れていません。
-`value: ''`（空文字）のままの項目はサイト上に **「要入力」** と黄色く表示され、
+値が空のままの項目はサイト上に **「要入力」** と黄色く表示され、
 ページ上部にも注意書きが出ます。公開前に必ず埋めてください。
 
 ---
@@ -470,20 +589,21 @@ node scripts/generate-og.mjs
 
 `src/config/` を上から順に見ていけば終わります。
 
-- [ ] `site.ts` — `name` / `owner` を実際のものにする
-- [ ] `site.ts` — `contact.email` を実アドレスにし、`contact.emailConfigured` を `true` にする
-- [ ] `site.ts` — `social` のリンクを実際のアカウントにする（不要なら配列から削除）
-- [ ] `site.ts` — `seo.twitterHandle` を設定する（任意）
-- [ ] `about.ts` — 自己紹介・経歴・スキル・使用ツールを自分の内容にする
-- [ ] `works.ts` — サンプル実績を実際の実績に差し替える（**機密情報は載せない**）
-- [ ] `products.ts` — サンプル商品を差し替え、`purchaseUrl` と `status` を設定する
+- [ ] サイト基本情報 — `name` / `owner` を実際のものにする
+- [ ] サイト基本情報 — `contact.email` を実アドレスにし、`contact.emailConfigured` を `true` にする
+- [ ] サイト基本情報 — `social` のリンクを実際のアカウントにする（不要なら配列から削除）
+- [ ] サイト基本情報 — `seo.twitterHandle` を設定する（任意）
+- [ ] 自己紹介 — 自己紹介・経歴・スキル・使用ツールを自分の内容にする
+- [ ] 実績 — サンプル実績を実際の実績に差し替える（**機密情報は載せない**）
+- [ ] 商品 — サンプル商品を差し替え、`purchaseUrl` と `status` を設定する
 - [ ] `pricing.ts` — 金額と加算率を自分の相場に合わせる
-- [ ] `legal.ts` — 「要入力」の項目をすべて埋め、内容を確認する
+- [ ] 法的表記 — 「要入力」の項目をすべて埋め、内容を確認する
 - [ ] `.env` — `SITE_URL` / `BASE_PATH` を公開先に合わせる
 - [ ] 問い合わせが届く状態にする（Formspree のエンドポイント URL を設定するか、
       `site.ts` にメールを書いて `emailConfigured: true` にする）。**必ず一度送信テストをする**
 - [ ] `.env` — 応援チップのリンクを設定する（使う場合）
 - [ ] `public/og-image.png` を必要なら差し替える
+- [ ] 管理画面から 1 件編集して、公開サイトに反映されることを確認する
 - [ ] `npm run build` が通ることを確認する
 
 ---
@@ -500,24 +620,28 @@ node scripts/generate-og.mjs
 ├── scripts/
 │   └── generate-og.mjs       OGP 画像・アイコンの生成
 ├── public/                   そのまま配信されるファイル
+│   ├── admin/                管理画面（index.html + config.yml）
 │   ├── favicon.svg
 │   ├── og-image.png
 │   └── apple-touch-icon.png
 └── src/
-    ├── config/               ★ サイトの内容はここだけで変えられます
-    │   ├── site.ts             サイト名・運営者・連絡先・SEO
+    ├── data/                 ★ サイトの内容（管理画面が読み書きします）
+    │   ├── works/*.json        実績（1件 = 1ファイル）
+    │   ├── products/*.json     商品（1件 = 1ファイル）
+    │   ├── site.json           サイト名・ファーストビュー・連絡先・SEO
+    │   ├── services.json       よくある相談・できること
+    │   ├── flow.json           依頼の流れ・お約束
+    │   ├── about.json          自己紹介・スキル
+    │   ├── faq.json            FAQ
+    │   ├── contact.json        フォームの文言と選択肢
+    │   ├── support.json        応援チップの文言
+    │   └── legal.json          法的表記（雛形）
+    ├── config/               data に型を付けて画面へ渡す層
     │   ├── nav.ts              ナビゲーション
-    │   ├── services.ts         よくある相談・対応できること
-    │   ├── works.ts            実績
-    │   ├── products.ts         商品
-    │   ├── pricing.ts          見積もりの選択肢と料金ルール
-    │   ├── contact.ts          フォームの選択肢・送信方式
-    │   ├── about.ts            自己紹介・スキル
-    │   ├── faq.ts              FAQ
-    │   ├── flow.ts             依頼の流れ・お約束
-    │   ├── support.ts          応援チップ
-    │   └── legal.ts            法的表記（雛形）
+    │   ├── pricing.ts          見積もりの選択肢と料金ルール（管理画面では扱いません）
+    │   └── （他は data/*.json の読み込み）
     ├── lib/
+    │   ├── images.ts         データの画像パスを最適化画像へ変換
     │   ├── estimate.ts       見積もり計算（純関数）
     │   ├── validate.ts       フォーム検証
     │   ├── url.ts            BASE_PATH を考慮した URL 生成

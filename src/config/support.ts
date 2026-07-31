@@ -1,17 +1,21 @@
 /**
  * 応援チップ（任意の支援）。
  *
- * ▼ 設定方法
- *   .env に外部決済リンクを設定します。
+ * ▼ 文言の編集
+ *   見出しや説明文は src/data/support.json にあります。
+ *   管理画面（/admin/）の「応援チップ」から編集できます。
+ *
+ * ▼ 決済リンクの設定
+ *   URL は .env で設定します（管理画面では扱いません）。
  *     PUBLIC_TIP_URL_300=https://buy.stripe.com/xxxx
  *     PUBLIC_TIP_URL_500=...
  *     PUBLIC_TIP_URL_1000=...
  *     PUBLIC_TIP_URL_CUSTOM=...   （金額自由入力ページの URL）
  *
- *   Stripe Payment Links、PayPal.me、Buy Me a Coffee など、
- *   金額ごとのページ URL を貼るだけで動きます。
- *   未設定の項目はボタンを出さず、「準備中」と表示します。
+ *   未設定の項目はボタンを出さず、すべて未設定なら「準備中」と表示します。
  */
+
+import supportData from '../data/support.json';
 
 const env = import.meta.env;
 
@@ -21,12 +25,14 @@ export interface TipOption {
   url: string;
 }
 
-export const support = {
-  heading: '活動を応援する',
-  lead: '制作や新しいツール開発を応援していただけると、とても励みになります。',
-  note: '特典や個別対応を伴わない、任意の応援です。ご依頼や商品購入とは関係ありません。',
-  preparingText: '応援の受け付けは準備中です。もう少しお待ちください。',
-};
+export interface SupportText {
+  heading: string;
+  lead: string;
+  note: string;
+  preparingText: string;
+}
+
+export const support = supportData as SupportText;
 
 export const tipOptions: TipOption[] = [
   { amount: 300, label: '300円', url: env.PUBLIC_TIP_URL_300 ?? '' },

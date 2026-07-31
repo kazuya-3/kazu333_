@@ -1,0 +1,58 @@
+{
+  "order": 70,
+  "slug": "icon-frame-collection",
+  "title": "アイコンフレーム制作",
+  "category": "creative",
+  "summary": "アイコンの雰囲気に合わせた円形フレームを、シリーズで制作しました。",
+  "thumbnail": {
+    "src": "/src/assets/works/icon-frame-demo-05.png",
+    "alt": "アイコンに装飾フレームを重ねた作例。青い宝石と唐草模様の縁取り"
+  },
+  "challenge": "SNSや配信で使うアイコンに統一感を持たせたいが、毎回どんな装飾が合うか分からない、という相談でした。",
+  "solution": [
+    "使いたい場面（プロフィール、配信画面、告知画像）を先に整理",
+    "世界観の方向性を「宝石」「水」「回路」「植物」など複数案で提示",
+    "同じ配色ルールで揃えたフレームをシリーズとして制作",
+    "差し替えしやすいよう、背景透過と余白の規格を統一"
+  ],
+  "result": [
+    "場面ごとに使い分けても、並べたときに揃って見えるようになった",
+    "フレームだけを差し替えられるため、季節やイベントに合わせて更新できる"
+  ],
+  "tech": [
+    "AI画像生成",
+    "プロンプト設計",
+    "Photoshop",
+    "PNG(透過)"
+  ],
+  "duration": "約5日",
+  "gallery": [
+    {
+      "src": "/src/assets/works/icon-frame-demo-01.png",
+      "alt": "銀のリングフレームを合わせた作例"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-demo-02.png",
+      "alt": "水しぶきをモチーフにしたフレームの作例"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-demo-03.png",
+      "alt": "濃紺のブラシフレームの作例"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-demo-04.png",
+      "alt": "青い花と葉の輪で囲んだフレームの作例"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-demo-06.png",
+      "alt": "放射状に光が伸びるフレームの作例"
+    },
+    {
+      "src": "/src/assets/works/icon-frame-demo-07.png",
+      "alt": "回路模様を円形に配したフレームの作例"
+    }
+  ],
+  "visibility": "public",
+  "featured": true,
+  "publishedAt": "2025-11-24"
+}

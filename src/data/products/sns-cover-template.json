@@ -1,0 +1,40 @@
+{
+  "order": 20,
+  "slug": "sns-cover-template",
+  "name": "SNS投稿カバーテンプレート",
+  "catch": "文字を差し替えるだけ。投稿1枚目が毎回そろいます。",
+  "description": "SNS投稿の1枚目に使うカバー画像のテンプレートです。「お知らせ」「作例紹介」「振り返り」の3パターンを用意し、それぞれ文字数の目安を決めた配置にしてあるため、長い見出しを入れてもレイアウトが崩れにくくなっています。",
+  "price": 1500,
+  "salePrice": 1200,
+  "preview": {
+    "src": "/src/assets/works/icon-frame-demo-02.png",
+    "alt": "青い水のフレームを使ったカバー画像の作例"
+  },
+  "contents": [
+    "カバーテンプレート 3種（正方形 / 横長 の2サイズ）",
+    "使い方ガイド（PDF）"
+  ],
+  "formats": [
+    "PSD",
+    "PNG",
+    "PDF"
+  ],
+  "environment": "Photoshop（PSD） / 画像編集アプリ全般（PNG）",
+  "license": {
+    "scope": "ご自身または自社の発信に使用できます。",
+    "commercial": true,
+    "modify": true,
+    "redistribute": false,
+    "credit": "不要"
+  },
+  "updatedAt": "2025-11-12",
+  "purchaseUrl": "",
+  "featured": true,
+  "category": "design",
+  "status": "preparing",
+  "tags": [
+    "SNS",
+    "テンプレート",
+    "3パターン"
+  ]
+}
