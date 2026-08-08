@@ -1,0 +1,24 @@
+{
+  // 保存したら自動で整形する
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode"
+  },
+
+  // プロジェクトの TypeScript を使う（型チェックの結果がビルドと揃います）
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // 検索から外して見通しをよくする
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.astro": true,
+    "package-lock.json": true,
+    "public/admin/sveltia-cms.js": true
+  },
+
+  "files.eol": "\n"
+}

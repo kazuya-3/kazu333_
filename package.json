@@ -26,5 +26,8 @@
     "@astrojs/check": "^0.9.4",
     "@sveltia/cms": "^0.176.0",
     "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=18.20"
   }
 }
