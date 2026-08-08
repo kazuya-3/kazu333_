@@ -12,6 +12,9 @@ IT・資料・デザインの“小さな困りごと”を形にする、個人
 
 ---
 
+> **パソコンで開いて編集したい方へ** — 手順を [`docs/local-setup.md`](docs/local-setup.md) に
+> まとめています（Git / Node.js / Cursor の準備から公開まで）。
+
 ## 目次
 
 0. [管理画面（いちばんよく使います）](#0-管理画面)
@@ -613,7 +616,9 @@ node scripts/generate-og.mjs
 ```
 ├── astro.config.mjs          Astro 設定（SITE_URL / BASE_PATH を読む）
 ├── .env.example              環境変数のサンプル
+├── CLAUDE.md                 AIアシスタント向けのプロジェクト手引き
 ├── docs/
+│   ├── local-setup.md           パソコンで開いて編集する手順
 │   ├── implementation-plan.md   実装計画・設計判断
 │   ├── design-tokens.md         デザイントークンの説明
 │   └── roadmap.md               今後の拡張候補

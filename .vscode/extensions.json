@@ -1,0 +1,11 @@
+{
+  // Cursor / VS Code でこのフォルダを開くと、インストールを案内してくれます。
+  "recommendations": [
+    // .astro ファイルの色分け・補完・エラー表示（これだけは入れてください）
+    "astro-build.astro-vscode",
+    // 保存時の自動整形
+    "esbenp.prettier-vscode",
+    // .editorconfig を反映
+    "editorconfig.editorconfig"
+  ]
+}

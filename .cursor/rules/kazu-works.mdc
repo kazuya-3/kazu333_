@@ -1,0 +1,25 @@
+---
+description: KAZU WORKS の構造と守るべき約束ごと
+alwaysApply: true
+---
+
+このリポジトリは Astro 5 の静的サイトです。詳しい手引きは @CLAUDE.md にあります。
+作業前に目を通してください。
+
+特に外せない点:
+
+1. 文章・実績・商品は `src/data/*.json` に置く。`src/config/*.ts` は
+   JSON に型を付けるだけの層で、ここに文章を直接書かない
+   （管理画面 `/admin/` から編集できなくなるため）。
+2. 内部リンクは `src/lib/url.ts` の `url()` を通す。公開先がサブディレクトリ
+   （`/kazu333_`）のため、素の `href="/works"` は壊れる。
+3. 画像は `src/assets/` に置き、JSON からはパス文字列で参照する
+   （`src/lib/images.ts` が解決し、webp 変換と複数サイズ書き出しが効く）。
+4. 色はベタ書きせず `src/styles/tokens.css` のトークン（`var(--c-blue)` など）を使う。
+5. 金額の条件分岐を画面に書かない。料率は `src/config/pricing.ts`、
+   計算は `src/lib/estimate.ts` の `calculateEstimate()` に閉じる。
+6. 依存を増やさない（本番依存は astro / @astrojs/preact / @astrojs/sitemap / preact のみ）。
+7. 動きを足すときは `prefers-reduced-motion` の分岐を必ず入れる。
+8. `src/data/legal.json` の氏名・住所・電話番号は空のままにする（運営者が埋める箇所）。
+
+変更後は `npm run build` が通ることを確認してください。
